@@ -8,7 +8,7 @@ const Main = () => {
         backgroundImage: `url(${backgroundImage})`,
     };
     return (
-        <div style={backgroundStyles} className='relative h-[100vh] w-[100%] bg-cover bg-center max-sm:flex max-sm:justify-center'>
+        <div style={backgroundStyles} className='h-[100vh] w-[100%] bg-cover bg-center max-sm:flex max-sm:justify-center'>
             <Intro />
         </div>
     )
