@@ -1,6 +1,6 @@
 import React from 'react';
 import backgroundImage from '../../assets/backgroung-image.png';
-import Intro from './Intro';
+import Intro from './components/Intro';
 
 const Main = () => {
 
