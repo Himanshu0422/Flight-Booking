@@ -1,74 +1,90 @@
 import React, { useState } from 'react';
+import { GiAirplaneArrival, GiAirplaneDeparture } from "react-icons/gi";
+import { GoArrowSwitch } from "react-icons/go";
+import CustomSelectCity from './CustomSelectCity';
+
+const cities = [
+    "New York, USA",
+    "Los Angeles, USA",
+    "Chicago, USA",
+    "Houston, USA",
+    "Phoenix, USA",
+    "Philadelphia, USA",
+    "San Antonio, USA",
+    "San Diego, USA",
+    "Dallas, USA",
+    "San Jose, USA"
+];
 
 const SearchFlight = () => {
-    const [departureCity, setDepartureCity] = useState('Jakarta (CGK), Indonesia');
-    const [arrivalCity, setArrivalCity] = useState('Seoul (ICN), South Korea');
-    const [departureArrival, setDepartureArrival] = useState('23 Feb 2024 - One way');
-    const [passengerClass, setPassengerClass] = useState('1 Adults - Economy');
+    const [departureCity, setDepartureCity] = useState('Select City');
+    const [arrivalCity, setArrivalCity] = useState('Select City');
 
-    const handleSearch = () => {
-        // Implement search logic here
-        console.log('Searching for flight...');
+    const handleDepartureChange = (event) => {
+        setDepartureCity(event.target.value);
+    };
+
+    const handleArrivalChange = (event) => {
+        setArrivalCity(event.target.value);
     };
 
     return (
-        <div className="absolute bottom-40 height-20vh left-100 bg-white p-4 rounded-md shadow-md flex flex-col items-center">
-            <h1 className="text-2xl font-bold mb-4 right-20">Search Flights</h1>
-            <div className="flex items-center">
-                <div className="flex items-center mr-4">
-                    <div className="bg-orange-100 text-orange-500 rounded-full px-3 py-1 mr-2">
-                        <i className="fas fa-plane-departure" />
+        <div className='bg-white p-4 space-y-5 w-max'>
+            <div className='flex space-x-5'>
+                <button><i className="fa-solid fa-plane"></i> Flights</button>
+                <div>|</div>
+                <button><i className="fa-solid fa-hotel"></i> Hotels</button>
+            </div>
+            <div className='flex'>
+                <div className='flex max-sm:flex-col justify-center items-center gap-5 border p-3 rounded-md'>
+                    <div className='flex gap-3 items-center flex-1'>
+                        <div className='bg-orange-400 text-white rounded-full text-xl p-2 flex justify-center items-center'>
+                            <GiAirplaneDeparture />
+                        </div>
+                        <div className="flex flex-col w-full">
+                            <div className='text-sm'>Departure City</div>
+                            <CustomSelectCity
+                                value={departureCity}
+                                onChange={handleDepartureChange}
+                                options={cities}
+                            />
+                        </div>
                     </div>
-                    <input
-                        type="text"
-                        value={departureCity}
-                        onChange={(e) => setDepartureCity(e.target.value)}
-                        className="border border-gray-300 rounded-md px-3 py-2"
-                        placeholder="Departure city"
-                    />
-                </div>
-                <div className="flex items-center mr-4">
-                    <div className="bg-amber-100 text-amber-500 rounded-full px-3 py-1 mr-2">
-                        <i className="fas fa-plane-arrival" />
+                    <div className='border rounded-full p-2'>
+                        <GoArrowSwitch />
                     </div>
-                    <input
-                        type="text"
-                        value={arrivalCity}
-                        onChange={(e) => setArrivalCity(e.target.value)}
-                        className="border border-gray-300 rounded-md px-3 py-2"
-                        placeholder="Arrival city"
-                    />
-                </div>
-                <div className="flex items-center mr-4">
-                    <div className="bg-blue-100 text-blue-500 rounded-full px-3 py-1 mr-2">
-                        <i className="fas fa-calendar-alt" />
+                    <div className='flex gap-3 items-center flex-1'>
+                        <div className='bg-orange-400 text-white rounded-full text-xl p-2 flex justify-center items-center'>
+                            <GiAirplaneArrival />
+                        </div>
+                        <div className="flex flex-col w-full">
+                            <div className='text-sm'>Arrival City</div>
+                            <CustomSelectCity
+                                value={arrivalCity}
+                                onChange={handleArrivalChange}
+                                options={cities}
+                            />
+                        </div>
                     </div>
-                    <input
-                        type="text"
-                        value={departureArrival}
-                        onChange={(e) => setDepartureArrival(e.target.value)}
-                        className="border border-gray-300 rounded-md px-3 py-2"
-                        placeholder="Departure - Arrival"
-                    />
                 </div>
-                <div className="flex items-center mr-4">
-                    <div className="bg-green-100 text-green-500 rounded-full px-3 py-1 mr-2">
-                        <i className="fas fa-user" />
+                <div className='border p-3 rounded-md flex justify-center items-center'>
+                    <div className='border rounded-full p-3 flex justify-center'>
+                        <i className="fa-solid fa-calendar-days"></i>
                     </div>
-                    <input
-                        type="text"
-                        value={passengerClass}
-                        onChange={(e) => setPassengerClass(e.target.value)}
-                        className="border border-gray-300 rounded-md px-3 py-2"
-                        placeholder="Passenger - Class"
-                    />
+                    <div>
+                        <div className='text-sm'>Departure - Arrival</div>
+                        <div className='flex'>
+                            <input
+                                type='date'
+                            />
+                            <div>-</div>
+                            <input
+                                type='date'
+                                value='One Way'
+                            />
+                        </div>
+                    </div>
                 </div>
-                <button
-                    onClick={handleSearch}
-                    className="bg-orange-500 text-white rounded-md px-4 py-2 hover:bg-orange-600 transition-colors duration-300"
-                >
-                    Search Flight
-                </button>
             </div>
         </div>
     );

@@ -10,7 +10,7 @@ const Main = () => {
         backgroundImage: `url(${backgroundImage})`,
     };
     return (
-        <div style={backgroundStyles} className='relative h-[100vh] w-[100%] bg-cover bg-center max-sm:flex max-sm:justify-center'>
+        <div style={backgroundStyles} className='flex flex-col gap-20 justify-center max-sm:items-center h-[100vh] w-[100%] bg-cover bg-center'>
             <Intro />
             <SearchFlight />
         </div>

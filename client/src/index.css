@@ -2,14 +2,8 @@
 @tailwind components;
 @tailwind utilities;
 
-@media only screen and (max-height: 700px) {
-    .main {
-        top: 6rem;        
-    }
-}
+@media screen and (max-height: 800px) {
+    .main{
 
-@media only screen and (max-width: 500px) {
-    .trip-card {
-        width: 30%;        
     }
 }
