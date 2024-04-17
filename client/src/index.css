@@ -2,8 +2,33 @@
 @tailwind components;
 @tailwind utilities;
 
-@media screen and (max-height: 800px) {
-    .main{
+@media screen and (max-width: 1250px) {
+    .search-flight{
+        flex-direction: column;
+        gap: 16px;
+    }
+    
+    .intro{
+        display: none;
+    }
 
+    .search-flight-main{
+        width: 40%;
+    }
+}
+
+@media screen and (min-width: 1250px) {
+
+    .search-flight > div:nth-child(1){
+        width: 32%;
+    }
+    .search-flight > div:nth-child(2){
+        width: 18%;
+    }
+    .search-flight > div:nth-child(3){
+        width: 18%;
+    }
+    .search-flight > div:nth-child(5){
+        width: 10%;
     }
 }
