@@ -1,7 +1,7 @@
 import React from 'react';
 import backgroundImage from '../../assets/backgroung-image.png';
 import Intro from './components/Intro';
-import SearchFlight from './components/Search';
+import SearchFlight from './components/SearchFlight';
 
 
 const Main = () => {
@@ -10,9 +10,11 @@ const Main = () => {
         backgroundImage: `url(${backgroundImage})`,
     };
     return (
-        <div style={backgroundStyles} className='flex flex-col gap-20 justify-center max-sm:items-center h-[100vh] w-[100%] bg-cover bg-center'>
+        <div style={backgroundStyles} className='flex flex-col gap-32 justify-center max-sm:items-center h-[100vh] w-[100%] bg-cover bg-center'>
             <Intro />
-            <SearchFlight />
+            <div className='flex justify-center w-full'>
+                <SearchFlight />
+            </div>
         </div>
     )
 }

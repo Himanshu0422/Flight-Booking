@@ -1,9 +1,10 @@
-import { useState } from "react";
+import { useState, useRef, useEffect } from "react";
 import { GiAirplaneDeparture } from "react-icons/gi";
 
 const CustomSelectCity = ({ value, onChange, options }) => {
     const [isOpen, setIsOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
+    const dropdownRef = useRef(null);
 
     const toggleDropdown = () => {
         setIsOpen(!isOpen);
@@ -22,18 +23,31 @@ const CustomSelectCity = ({ value, onChange, options }) => {
         toggleDropdown();
     };
 
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+                setIsOpen(false);
+            }
+        };
+
+        document.addEventListener("mousedown", handleClickOutside);
+        return () => {
+            document.removeEventListener("mousedown", handleClickOutside);
+        };
+    }, []);
+
     return (
-        <div className="relative">
+        <div className="relative" ref={dropdownRef}>
             <div className="relative">
                 <div
-                    className="w-full cursor-pointer"
+                    className="w-full cursor-pointer text-sm"
                     onClick={toggleDropdown}
                 >
                     {value}
                 </div>
             </div>
             {isOpen && (
-                <div className="w-[300px] h-[200px] overflow-auto absolute z-10 -mt-5 bg-white border border-gray-300 rounded-md shadow-lg">
+                <div className="w-[300px] h-[200px] overflow-auto absolute z-10 -mt-5 max-sm:-top-5 max-sm:-left-32 bg-white border border-gray-300 rounded-md shadow-lg">
                     <input
                         className="block w-full border-b border-gray-300 px-4 py-2 focus:outline-none focus:border-blue-500"
                         type="text"
@@ -52,8 +66,7 @@ const CustomSelectCity = ({ value, onChange, options }) => {
                                     <GiAirplaneDeparture />
                                 </div>
                                 <div>
-                                    <div className="text-sm">Mumbai, India</div>
-                                    <div className="text-[10px]">Chhatrapati Shivaji International Airport</div>
+                                    <div className="text-sm">{option}</div>
                                 </div>
                             </div>
                         ))}
