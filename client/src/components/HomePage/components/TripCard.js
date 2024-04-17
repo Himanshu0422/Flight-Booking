@@ -10,8 +10,6 @@ const TripCard = () => {
                 <div className='font-bold'>Baku, Azerbaijan</div>
                 <div className='flex lg:gap-3 md:gap-1 gap-4'>
                     <div>Flights</div>
-                    <div>Hotels</div>
-                    <div>Resorts</div>
                 </div>
             </div>
         </div>

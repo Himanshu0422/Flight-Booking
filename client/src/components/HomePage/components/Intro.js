@@ -2,7 +2,7 @@ import React from 'react';
 
 const Intro = () => {
     return (
-        <div className='space-y-4 mx-10 max-sm:hidden'>
+        <div className='space-y-4 mx-10 intro'>
             <div className='text-5xl font-extrabold max-sm:text-4xl max-sm:font-bold'>
                 Let's Flight Now.
             </div>

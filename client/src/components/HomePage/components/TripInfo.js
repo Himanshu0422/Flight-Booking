@@ -8,7 +8,7 @@ const TripInfo = () => {
                     Plan your perfect trip
                 </div>
                 <div className='text-sm'>
-                    Search Flights and Hotels from our most popular destinations
+                    Search Flights for the most popular destinations
                 </div>
             </div>
             <div>
