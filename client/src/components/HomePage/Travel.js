@@ -22,7 +22,7 @@ const Travel = () => {
                     <button className='border p-2 text-sm'>See All</button>
                 </div>
             </div>
-            <div className='flex gap-3'>
+            <div className='flex justify-between'>
                 <TravelCard />
                 <TravelCard />
                 <TravelCard />
