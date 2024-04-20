@@ -53,9 +53,9 @@ const SearchFlight = () => {
             <div className="ml-2">
                 <i className="fa-solid fa-plane"></i> Search Flights
             </div>
-            <div className="flex justify-around search-flight">
-                <div className="flex max-sm:flex-col justify-center items-center gap-5 border p-3 rounded-lg">
-                    <div className="flex gap-3 items-center flex-1">
+            <div className="flex justify-around gap-3 search-flight">
+                <div className="flex flex-1 max-sm:flex-col justify-around items-center gap-5 border p-3 rounded-lg">
+                    <div className="flex gap-3 items-center">
                         <div className="bg-orange-400 text-white rounded-full text-xl p-2 flex justify-center items-center">
                             <GiAirplaneDeparture />
                         </div>
@@ -71,7 +71,7 @@ const SearchFlight = () => {
                     <div className="border rounded-full p-2">
                         <GoArrowSwitch />
                     </div>
-                    <div className="flex gap-3 items-center flex-1">
+                    <div className="flex gap-3 items-center">
                         <div className="bg-orange-400 text-white rounded-full text-xl p-2 flex justify-center items-center">
                             <GiAirplaneArrival />
                         </div>
