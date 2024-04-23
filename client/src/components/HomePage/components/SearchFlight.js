@@ -1,52 +1,64 @@
+import axios from 'axios';
 import React, { useState } from "react";
-import { GiAirplaneArrival, GiAirplaneDeparture } from "react-icons/gi";
+import { toast } from "react-hot-toast";
 import { CiSearch } from "react-icons/ci";
-import { GoArrowSwitch } from "react-icons/go";
-import { IoPersonOutline } from "react-icons/io5";
 import getTodayDate from "../../../utils/Date";
-import BasicDatePicker from "../../../utils/DatePicker";
-import CustomSelectCity from "./CustomSelectCity";
-import PassengerClass from "./PassengerClass";
-
-const cities = [
-    "New York, USA",
-    "Los Angeles, USA",
-    "Chicago, USA",
-    "Houston, USA",
-    "Phoenix, USA",
-    "Philadelphia, USA",
-    "San Antonio, USA",
-    "San Diego, USA",
-    "Dallas, USA",
-    "San Jose, USA",
-];
+import ArrivalDate from "./ArrivalDate";
+import CitySelect from "./CitySelect";
+import DepartureDate from "./DepartureDate";
+import Passenger from "./Passenger";
+import { setFlights } from '../../../redux/flightsSlice';
+import { useDispatch, useSelector } from 'react-redux';
 
 const SearchFlight = () => {
-    const [departureCity, setDepartureCity] = useState("Select City");
-    const [arrivalCity, setArrivalCity] = useState("Select City");
+    const [departureCity, setDepartureCity] = useState("");
+    const [arrivalCity, setArrivalCity] = useState("");
     const [departureDate, setDepartureDate] = useState(getTodayDate());
     const [arrivalDate, setArrivalDate] = useState(getTodayDate());
     const [passenger, setPassenger] = useState(1);
     const [flightClass, setFlightClass] = useState("Economy");
-    const [popup, setPopup] = useState(false);
-    const [oneway, setOneway] = useState(true);
-    const minDate = getTodayDate();
+    const dispatch = useDispatch();
+    const { flights } = useSelector((state) => state.flights);
+    const URL = process.env.REACT_APP_BACKEND_API;
 
-    const handleDepartureChange = (event) => {
-        setDepartureCity(event.target.value);
-    };
+    const handleSearchFlight = async (e) => {
+        e.preventDefault();
+        try {
 
-    const handleArrivalChange = (event) => {
-        setArrivalCity(event.target.value);
-    };
+            if(!departureCity || !arrivalCity){
+                toast.error('Select the cities to search for flights');
+                return;
+            }
+            
+            if(departureCity === arrivalCity){
+                toast.error(`Departure and Arrival City can't be same`);
+                return;
+            }
 
-    const handleDepartureDateChange = (date) => {
-        setDepartureDate(date);
-    };
+            const response1 = await axios.get(`${URL}/airport`, {
+                params: {
+                    city: departureCity
+                }
+            });
+            const response2 = await axios.get(`${URL}/airport`, {
+                params: { city: arrivalCity }
+            });
 
-    const handleArrivalDateChange = (date) => {
-        setArrivalDate(date);
-    };
+            const departureAirportId = response1.data.data.id;
+            const arrivalAirportId = response2.data.data.id;
+
+
+            const response = await axios.get(`${URL}/flights`, {
+                params: {
+                    departureAirportId,
+                    arrivalAirportId
+                }
+            });
+            dispatch(setFlights(response.data.data))
+        } catch (error) {
+            console.log(error);
+        }
+    }
 
     return (
         <div className="bg-white p-4 space-y-5 w-[96%] max-lg:w-[50%] max-md:w-[60%] max-sm:w-[80%] rounded-2xl search-flight-main">
@@ -54,117 +66,27 @@ const SearchFlight = () => {
                 <i className="fa-solid fa-plane"></i> Search Flights
             </div>
             <div className="flex justify-around gap-3 search-flight">
-                <div className="flex flex-1 max-sm:flex-col justify-around items-center gap-5 border p-3 rounded-lg">
-                    <div className="flex gap-3 items-center">
-                        <div className="bg-orange-400 text-white rounded-full text-xl p-2 flex justify-center items-center">
-                            <GiAirplaneDeparture />
-                        </div>
-                        <div className="flex flex-col w-full">
-                            <div className="text-xs">Departure City</div>
-                            <CustomSelectCity
-                                value={departureCity}
-                                onChange={handleDepartureChange}
-                                options={cities}
-                            />
-                        </div>
-                    </div>
-                    <div className="border rounded-full p-2">
-                        <GoArrowSwitch />
-                    </div>
-                    <div className="flex gap-3 items-center">
-                        <div className="bg-orange-400 text-white rounded-full text-xl p-2 flex justify-center items-center">
-                            <GiAirplaneArrival />
-                        </div>
-                        <div className="flex flex-col w-full">
-                            <div className="text-xs">Arrival City</div>
-                            <CustomSelectCity
-                                value={arrivalCity}
-                                onChange={handleArrivalChange}
-                                options={cities}
-                            />
-                        </div>
-                    </div>
-                </div>
-                <div className="border p-3 rounded-lg flex gap-2 justify-center items-center">
-                    <div className="border rounded-full p-3 flex justify-center">
-                        <i className="fa-solid fa-calendar-days"></i>
-                    </div>
-                    <div className="space-y-1">
-                        <div className="text-xs">Departure</div>
-                        <BasicDatePicker
-                            minDate={minDate}
-                            value={departureDate}
-                            onChange={handleDepartureDateChange}
-                            type='departure'
-                        />
-                    </div>
-                </div>
-                <div className="">
-                    {oneway ? (
-                        <div
-                            className="border p-3 rounded-lg flex gap-2 cursor-pointer justify-center items-center h-full"
-                            onClick={() => setOneway(false)}
-                        >
-                            <div className="border rounded-full p-3 flex justify-center">
-                                <i className="fa-solid fa-calendar-days"></i>
-                            </div>
-                            <div>
-                                <div>Return</div>
-                                <div className="text-xs">Tap to add a return date</div>
-                            </div>
-                        </div>
-                    ) : (
-                        <div className="border p-3 rounded-lg flex gap-2 justify-center items-center">
-                            <div className="border rounded-full p-3 flex justify-center">
-                                <i className="fa fa-calendar-days"></i>
-                            </div>
-                            <div className="space-y-1">
-                                <div className="flex justify-between">
-                                    <div className="text-xs">Arrival</div>
-                                    <div
-                                        className="text-xs cursor-pointer"
-                                        onClick={() => setOneway(true)}
-                                    >
-                                        One Way
-                                    </div>
-                                </div>
-                                <BasicDatePicker
-                                    minDate={minDate}
-                                    value={arrivalDate}
-                                    onChange={handleArrivalDateChange}
-                                    type='arrival'
-                                />
-                            </div>
-                        </div>
-                    )}
-                </div>
-                <div className="relative flex justify-center cursor-pointer items-center gap-4 border p-3 rounded-lg">
-                    <div className="border rounded-full p-3 flex justify-center">
-                        <IoPersonOutline />
-                    </div>
-                    <div onClick={() => setPopup(true)}>
-                        <div className="flex text-xs gap-1">
-                            <div>Passenger</div>
-                            <div>-</div>
-                            <div>Class</div>
-                        </div>
-                        <div className="flex gap-1 text-sm">
-                            <div>{passenger} Passenger</div>
-                            <div>-</div>
-                            <div>{flightClass}</div>
-                        </div>
-                    </div>
-                    {popup && (
-                        <PassengerClass
-                            setPassenger={setPassenger}
-                            setFlightClass={setFlightClass}
-                            setPopup={setPopup}
-                            passenger={passenger}
-                            flightClass={flightClass}
-                        />
-                    )}
-                </div>
-                <div className="">
+                <CitySelect
+                    departureCity={departureCity}
+                    setDepartureCity={setDepartureCity}
+                    arrivalCity={arrivalCity}
+                    setArrivalCity={setArrivalCity}
+                />
+                <DepartureDate
+                    departureDate={departureDate}
+                    setDepartureDate={setDepartureDate}
+                />
+                <ArrivalDate
+                    arrivalDate={arrivalDate}
+                    setArrivalDate={setArrivalDate}
+                />
+                <Passenger
+                    passenger={passenger}
+                    setPassenger={setPassenger}
+                    flightClass={flightClass}
+                    setFlightClass={setFlightClass}
+                />
+                <div className="cursor-pointer" onClick={handleSearchFlight}>
                     <button className="h-full flex justify-center items-center gap-1 border p-3 bg-orange-400 rounded-lg">
                         Search Flights <CiSearch size='40px' />
                     </button>
