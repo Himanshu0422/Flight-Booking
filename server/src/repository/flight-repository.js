@@ -1,25 +1,50 @@
-const {Flights} = require('../models/index');
-const { Op } = require('sequelize');
+const { Flights } = require("../models/index");
+const { Op } = require("sequelize");
 
 class FlightRepository {
-
     #createFilter(data) {
         let filter = {};
-        if(data.arrivalAirportId) {
+
+        if (data.arrivalAirportId) {
             filter.arrivalAirportId = data.arrivalAirportId;
         }
-        if(data.departureAirportId) {
+
+        if (data.departureAirportId) {
             filter.departureAirportId = data.departureAirportId;
         }
 
         let priceFilter = [];
-        if(data.minPrice) {
-            priceFilter.push({price: {[Op.gte]: data.minPrice}});
+        if (data.minPrice) {
+            priceFilter.push({ price: { [Op.gte]: data.minPrice } });
         }
-        if(data.maxPrice) {
-            priceFilter.push({price: {[Op.lte]: data.maxPrice}});
+        if (data.maxPrice) {
+            priceFilter.push({ price: { [Op.lte]: data.maxPrice } });
         }
-        Object.assign(filter, {[Op.and]: priceFilter});
+
+        let timeFilter = [];
+        if (data.time) {
+            const [hours, minutes] = data.time.split(":").map(Number);
+            
+            let nextHour = hours + 1;
+
+            if (nextHour === 24) {
+                nextHour = 0;
+            }
+
+            const nextHourString = nextHour.toString().padStart(2, "0");
+
+            const updatedTime = `${nextHourString}:${minutes}`;
+
+            timeFilter.push({ departureTime: { [Op.gte]: updatedTime } });
+        }
+
+        Object.assign(filter, {
+            [Op.and]: [
+                ...(priceFilter.length > 0 ? [{ [Op.and]: priceFilter }] : []),
+                ...(timeFilter.length > 0 ? [{ [Op.and]: timeFilter }] : []),
+            ],
+        });
+
         return filter;
     }
 
@@ -29,7 +54,7 @@ class FlightRepository {
             return flight;
         } catch (error) {
             console.log("Something went wrong in the repository layer");
-            throw {error};
+            throw { error };
         }
     }
 
@@ -39,7 +64,7 @@ class FlightRepository {
             return flight;
         } catch (error) {
             console.log("Something went wrong in the repository layer");
-            throw {error};
+            throw { error };
         }
     }
 
@@ -47,30 +72,28 @@ class FlightRepository {
         try {
             const filterObject = this.#createFilter(filter);
             const flight = await Flights.findAll({
-                where: filterObject
+                where: filterObject,
             });
             return flight;
         } catch (error) {
             console.log("Something went wrong in the repository layer");
-            throw {error};
+            throw { error };
         }
     }
 
     async updateFlights(flightId, data) {
-         try {
+        try {
             await Flights.update(data, {
                 where: {
-                    id: flightId
-                }
+                    id: flightId,
+                },
             });
             return true;
         } catch (error) {
             console.log("Something went wrong in the repository layer");
-            throw {error};
+            throw { error };
         }
     }
-
-
 }
 
 module.exports = FlightRepository;
