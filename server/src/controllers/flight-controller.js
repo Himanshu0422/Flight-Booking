@@ -15,7 +15,7 @@ const create = async (req, res) => {
         }
 
         const flight = await flightService.createFlight(flightRequestData);
-        return res.status(401).json({
+        return res.status(201).json({
             data: flight,
             success: true,
             err: {},
@@ -34,9 +34,8 @@ const create = async (req, res) => {
 
 const getAll = async (req, res) => {
     try {
-        console.log(req.query);
         const response = await flightService.getAllFlightData(req.query);
-        return res.status(400).json({
+        return res.status(200).json({
             data: response,
             success: true,
             err: {},
@@ -56,7 +55,7 @@ const getAll = async (req, res) => {
 const get = async (req, res) => {
     try {
         const response = await flightService.getFlight(req.params.id);
-        return res.status(400).json({
+        return res.status(200).json({
             data: response,
             success: true,
             err: {},
@@ -76,8 +75,8 @@ const get = async (req, res) => {
 const update = async (req, res) => {
     try {
         const response = await flightService.updateFlight(req.params.id, req.body);
-        return res.status(400).json({
-            data: response,
+        return res.status(200).json({
+            data: response.data.id,
             success: true,
             err: {},
             message: 'Successfully updated the flight'
