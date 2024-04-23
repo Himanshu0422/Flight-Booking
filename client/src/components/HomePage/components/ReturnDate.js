@@ -1,15 +1,19 @@
 import React, { useState } from 'react';
-import getTodayDate from '../../../utils/Date';
+import { getDate } from '../../../utils/Date';
 import BasicDatePicker from '../../../utils/DatePicker';
 
-const ArrivalDate = ({ arrivalDate, setArrivalDate }) => {
+const ReturnDate = ({ returnDate, setReturnDate }) => {
 
     const [oneway, setOneway] = useState(true);
-    const minDate = getTodayDate();
+    const minDate = getDate();
 
-    const handleArrivalDateChange = (date) => {
-        setArrivalDate(date);
+    const handleReturnDateChange = (date) => {
+        setReturnDate(getDate(date));
     };
+    const handleOneWay = () => {
+        setOneway(true);
+        setReturnDate("");
+    }
 
     return (
         <div>
@@ -33,19 +37,19 @@ const ArrivalDate = ({ arrivalDate, setArrivalDate }) => {
                     </div>
                     <div className="space-y-1">
                         <div className="flex justify-between">
-                            <div className="text-xs">Arrival</div>
+                            <div className="text-xs">Return</div>
                             <div
                                 className="text-xs cursor-pointer"
-                                onClick={() => setOneway(true)}
+                                onClick={handleOneWay}
                             >
                                 One Way
                             </div>
                         </div>
                         <BasicDatePicker
                             minDate={minDate}
-                            value={arrivalDate}
-                            onChange={handleArrivalDateChange}
-                            type='arrival'
+                            value={returnDate}
+                            onChange={handleReturnDateChange}
+                            type='return'
                         />
                     </div>
                 </div>
@@ -54,4 +58,4 @@ const ArrivalDate = ({ arrivalDate, setArrivalDate }) => {
     )
 }
 
-export default ArrivalDate
+export default ReturnDate;

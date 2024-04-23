@@ -1,13 +1,13 @@
 import React from 'react';
-import getTodayDate from '../../../utils/Date';
+import { getDate } from '../../../utils/Date';
 import BasicDatePicker from '../../../utils/DatePicker';
 
 const DepartureDate = ({departureDate, setDepartureDate}) => {
 
-    const minDate = getTodayDate();
+    const minDate = getDate();
 
     const handleDepartureDateChange = (date) => {
-        setDepartureDate(date);
+        setDepartureDate(getDate(date));
     };
 
     return (
@@ -28,4 +28,4 @@ const DepartureDate = ({departureDate, setDepartureDate}) => {
     )
 }
 
-export default DepartureDate
+export default DepartureDate;
