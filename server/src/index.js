@@ -2,11 +2,18 @@ const express = require('express');
 const bodyParser = require('body-parser');
 const { PORT } = require('./config/serverConfig');
 const ApiRoutes = require('./routes/index');
+const cors = require('cors');
 
 const db = require('./models/index');
 
 const startUpServer = () => {
     const app = express();
+    app.use(
+        cors({
+            origin: "http://localhost:3000",
+            credentials: true,
+        })
+    );
     app.use(bodyParser.json());
     app.use(bodyParser.urlencoded({extended: true}));
 
