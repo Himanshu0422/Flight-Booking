@@ -9,15 +9,15 @@ const Navbar = () => {
 
             {/* Middle */}
             <div className="hidden md:flex space-x-4 text-black gap-4 md:gap-20">
-                <a href="#" className="hover:text-gray-600">
+                <div className="hover:text-gray-600">
                     All Flights
-                </a>
-                <a href="#" className="hover:text-gray-400">
+                </div>
+                <div className="hover:text-gray-400">
                     Your Orders
-                </a>
-                <a href="#" className="hover:text-gray-600">
+                </div>
+                <div className="hover:text-gray-600">
                     Flights & Hotels
-                </a>
+                </div>
             </div>
 
             {/* Right side */}
