@@ -43,7 +43,7 @@ const CustomSelectCity = ({ value, onChange, options }) => {
                     className="w-full cursor-pointer text-sm"
                     onClick={toggleDropdown}
                 >
-                    {value}
+                    {value ? value : 'Select City'}
                 </div>
             </div>
             {isOpen && (
