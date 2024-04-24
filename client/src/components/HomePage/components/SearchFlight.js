@@ -2,7 +2,7 @@ import axios from "axios";
 import React, { useState } from "react";
 import { toast } from "react-hot-toast";
 import { CiSearch } from "react-icons/ci";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { setDepartureFlight } from "../../../redux/departureFlightSlice";
 import { setReturnFlight } from "../../../redux/returnFlightSlice";
 import {
@@ -18,18 +18,20 @@ import CitySelect from "./CitySelect";
 import DepartureDate from "./DepartureDate";
 import Passenger from "./Passenger";
 import ReturnDate from "./ReturnDate";
+import dayjs from "dayjs";
 
 const SearchFlight = () => {
     const [searchParams, setSearchParams] = useState({
         departureCity: "",
         arrivalCity: "",
-        departureDate: getDate(),
-        returnDate: "",
+        departureDate: dayjs(new Date()),
+        returnDate: null,
         passenger: 1,
         flightClass: "Economy",
     });
 
     const dispatch = useDispatch();
+
     const URL = process.env.REACT_APP_BACKEND_API;
 
     const handleInputChange = (name, value) => {
@@ -50,7 +52,7 @@ const SearchFlight = () => {
                 passenger,
                 flightClass,
             } = searchParams;
-
+            console.log(searchParams);
             if (!departureCity || !arrivalCity) {
                 return toast.error("Select the cities to search for flights");
             }
@@ -65,10 +67,14 @@ const SearchFlight = () => {
                 );
             }
 
+            if(getDate(departureDate) === getDate() && getCurrentTime() >= '23:00'){
+                handleInputChange("departureDate", departureDate.add(1, "day"));
+            }
+
             dispatch(setDepartureCity(departureCity));
             dispatch(setArrivalCity(arrivalCity));
-            dispatch(setDepartureDate(departureDate));
-            dispatch(setReturnDate(returnDate));
+            dispatch(setDepartureDate(departureDate?.toISOString()));
+            dispatch(setReturnDate(returnDate?.toISOString()));
             dispatch(setPassenger(passenger));
             dispatch(setFlightClass(flightClass));
 
@@ -83,7 +89,7 @@ const SearchFlight = () => {
             const arrivalAirportId = response2.data.data.id;
             let time = getCurrentTime();
 
-            time = getDate(departureDate) !== getDate() ? "23:00" : time;
+            time = departureDate !== new Date() ? "23:00" : time;
 
             const [response, returnResponse] = await Promise.all([
                 axios.get(`${URL}/flights`, {

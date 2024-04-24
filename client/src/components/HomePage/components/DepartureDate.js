@@ -1,13 +1,13 @@
 import React from 'react';
-import { getDate } from '../../../utils/Date';
 import BasicDatePicker from '../../../utils/DatePicker';
+import dayjs from 'dayjs';
 
 const DepartureDate = ({departureDate, setDepartureDate}) => {
 
-    const minDate = getDate();
+    const minDate = dayjs(new Date());
 
     const handleDepartureDateChange = (date) => {
-        setDepartureDate(getDate(date));
+        setDepartureDate(date);
     };
 
     return (

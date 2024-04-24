@@ -1,18 +1,22 @@
 import React, { useState } from 'react';
-import { getDate } from '../../../utils/Date';
 import BasicDatePicker from '../../../utils/DatePicker';
+import dayjs from 'dayjs';
 
 const ReturnDate = ({ returnDate, setReturnDate }) => {
 
     const [oneway, setOneway] = useState(true);
-    const minDate = getDate();
+    const minDate = dayjs(new Date());
 
     const handleReturnDateChange = (date) => {
-        setReturnDate(getDate(date));
+        setReturnDate(date);
     };
     const handleOneWay = () => {
         setOneway(true);
-        setReturnDate("");
+        setReturnDate(null);
+    }
+    const handleReturnWay = () => {
+        setOneway(false);
+        setReturnDate(new Date());
     }
 
     return (
@@ -20,7 +24,7 @@ const ReturnDate = ({ returnDate, setReturnDate }) => {
             {oneway ? (
                 <div
                     className="border p-3 rounded-lg flex gap-2 cursor-pointer justify-center items-center h-full"
-                    onClick={() => setOneway(false)}
+                    onClick={handleReturnWay}
                 >
                     <div className="border rounded-full p-3 flex justify-center">
                         <i className="fa-solid fa-calendar-days"></i>
