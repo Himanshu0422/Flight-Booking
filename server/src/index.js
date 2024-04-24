@@ -3,6 +3,7 @@ const bodyParser = require('body-parser');
 const { PORT } = require('./config/serverConfig');
 const ApiRoutes = require('./routes/index');
 const cors = require('cors');
+const colors = require('colors');
 
 const db = require('./models/index');
 
@@ -20,7 +21,7 @@ const startUpServer = () => {
     app.use('/api', ApiRoutes);
 
     app.listen(PORT, () => {
-        console.log(`Server started at ${PORT}`);
+        console.log(`Server started at ${PORT}`.bgCyan);
         if(process.env.SYNC_DB === 'true') {
             db.sequelize.sync({alter: true});
         }
