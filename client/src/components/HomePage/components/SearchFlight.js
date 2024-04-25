@@ -1,8 +1,9 @@
 import axios from "axios";
+import dayjs from "dayjs";
 import React, { useState } from "react";
 import { toast } from "react-hot-toast";
 import { CiSearch } from "react-icons/ci";
-import { useDispatch, useSelector } from "react-redux";
+import { useDispatch } from "react-redux";
 import { setDepartureFlight } from "../../../redux/departureFlightSlice";
 import { setReturnFlight } from "../../../redux/returnFlightSlice";
 import {
@@ -18,7 +19,6 @@ import CitySelect from "./CitySelect";
 import DepartureDate from "./DepartureDate";
 import Passenger from "./Passenger";
 import ReturnDate from "./ReturnDate";
-import dayjs from "dayjs";
 
 const SearchFlight = () => {
     const [searchParams, setSearchParams] = useState({
@@ -52,7 +52,6 @@ const SearchFlight = () => {
                 passenger,
                 flightClass,
             } = searchParams;
-            console.log(searchParams);
             if (!departureCity || !arrivalCity) {
                 return toast.error("Select the cities to search for flights");
             }
@@ -113,7 +112,6 @@ const SearchFlight = () => {
             if(returnResponse){
                 dispatch(setReturnFlight(returnResponse?.data?.data))
             }
-            console.log(response?.data?.data, returnResponse?.data?.data);
         } catch (error) {
             toast.error("An error occurred while searching for flights");
             console.error(error);
@@ -121,7 +119,7 @@ const SearchFlight = () => {
     };
 
     return (
-        <div className="bg-white p-4 space-y-5 w-[96%] max-lg:w-[50%] max-md:w-[60%] max-sm:w-[80%] rounded-2xl search-flight-main">
+        <div className="bg-white p-4 space-y-5 w-max rounded-2xl search-flight-main">
             <div className="ml-2">
                 <i className="fa-solid fa-plane"></i> Search Flights
             </div>
