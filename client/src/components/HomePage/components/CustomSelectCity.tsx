@@ -1,16 +1,26 @@
-import { useState, useRef, useEffect } from "react";
+import React, { useState, useRef, useEffect, ChangeEvent } from "react";
 import { GiAirplaneDeparture } from "react-icons/gi";
 
-const CustomSelectCity = ({ value, onChange, options }) => {
+interface CustomSelectCityProps {
+    value: string;
+    onChange: any; // Adjusted to accept only HTMLSelectElement events
+    options: string[];
+}
+
+const CustomSelectCity: React.FC<CustomSelectCityProps> = ({
+    value,
+    onChange,
+    options
+}) => {
     const [isOpen, setIsOpen] = useState(false);
     const [searchTerm, setSearchTerm] = useState('');
-    const dropdownRef = useRef(null);
+    const dropdownRef = useRef<HTMLDivElement>(null);
 
     const toggleDropdown = () => {
         setIsOpen(!isOpen);
     };
 
-    const handleSearchChange = (event) => {
+    const handleSearchChange = (event: ChangeEvent<HTMLInputElement>) => {
         setSearchTerm(event.target.value);
     };
 
@@ -18,14 +28,19 @@ const CustomSelectCity = ({ value, onChange, options }) => {
         option.toLowerCase().includes(searchTerm.toLowerCase())
     );
 
-    const handleCityClick = (city) => {
-        onChange({ target: { value: city } });
+    const handleCityClick = (city: string) => {
+        const event: any = {
+            target: {
+                value: city,
+            },
+        };
+        onChange(event);
         toggleDropdown();
     };
 
     useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (dropdownRef.current && !dropdownRef.current.contains(event.target)) {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (dropdownRef.current && !dropdownRef.current.contains(event.target as Node)) {
                 setIsOpen(false);
             }
         };

@@ -1,7 +1,7 @@
 import React from 'react';
 import TravelCard from './components/TravelCard';
 
-const Travel = () => {
+const Travel: React.FC = () => {
     return (
         <div className='w-[90%] mx-auto space-y-10'>
             <div className='flex justify-between'>

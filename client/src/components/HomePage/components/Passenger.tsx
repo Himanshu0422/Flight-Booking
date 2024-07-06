@@ -2,9 +2,20 @@ import React, { useState } from 'react';
 import { IoPersonOutline } from 'react-icons/io5';
 import PassengerClass from './PassengerClass';
 
-const Passenger = ({passenger, setPassenger, flightClass, setFlightClass}) => {
+interface PassengerProps {
+    passenger: number;
+    setPassenger: (value: number) => void;
+    flightClass: string;
+    setFlightClass: (value: string) => void;
+}
 
-    const [popup, setPopup] = useState(false);
+const Passenger: React.FC<PassengerProps> = ({
+    passenger,
+    setPassenger,
+    flightClass,
+    setFlightClass,
+}) => {
+    const [popup, setPopup] = useState<boolean>(false);
 
     return (
         <div className="relative flex justify-center cursor-pointer items-center gap-4 border p-3 rounded-lg">
@@ -33,7 +44,7 @@ const Passenger = ({passenger, setPassenger, flightClass, setFlightClass}) => {
                 />
             )}
         </div>
-    )
+    );
 }
 
-export default Passenger
+export default Passenger;

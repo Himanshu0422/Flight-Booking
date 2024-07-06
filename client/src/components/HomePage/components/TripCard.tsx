@@ -1,6 +1,6 @@
 import React from 'react';
 
-const TripCard = () => {
+const TripCard: React.FC = () => {
     return (
         <div className='flex border w-full sm:w-[48%] md:w-[31%] lg:w-[31%] xl:w-[31%] rounded-lg items-center py-4 px-3 gap-4'>
             <div className='sm:w-1/3 w-[20%]'>
@@ -13,7 +13,7 @@ const TripCard = () => {
                 </div>
             </div>
         </div>
-    )
+    );
 }
 
 export default TripCard;

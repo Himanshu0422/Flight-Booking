@@ -1,7 +1,7 @@
 import React from 'react';
 import { BellIcon, UserCircleIcon } from '@heroicons/react/24/solid';
 
-const Navbar = () => {
+const Navbar: React.FC = () => {
     return (
         <nav className="flex justify-between items-center bg-gray-100 px-4 py-4 md:px-8">
             {/* Left side */}

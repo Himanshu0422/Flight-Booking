@@ -1,13 +1,27 @@
 import React, { useState, useEffect, useRef } from "react";
 
-const PassengerClass = ({ setPassenger, setFlightClass, setPopup, passenger, flightClass }) => {
-    const [selectedPassenger, setSelectedPassenger] = useState(passenger);
-    const [selectedFlightClass, setSelectedFlightClass] = useState(flightClass);
-    const popupRef = useRef(null);
+interface PassengerClassProps {
+    setPassenger: (passenger: number) => void;
+    setFlightClass: (flightClass: string) => void;
+    setPopup: (popup: boolean) => void;
+    passenger: number;
+    flightClass: string;
+}
+
+const PassengerClass: React.FC<PassengerClassProps> = ({
+    setPassenger,
+    setFlightClass,
+    setPopup,
+    passenger,
+    flightClass,
+}) => {
+    const [selectedPassenger, setSelectedPassenger] = useState<number>(passenger);
+    const [selectedFlightClass, setSelectedFlightClass] = useState<string>(flightClass);
+    const popupRef = useRef<HTMLDivElement>(null);
 
     useEffect(() => {
-        const handleClickOutside = (event) => {
-            if (popupRef.current && !popupRef.current.contains(event.target)) {
+        const handleClickOutside = (event: MouseEvent) => {
+            if (popupRef.current && !popupRef.current.contains(event.target as Node)) {
                 // Clicked outside the popup, so close it
                 setPopup(false);
             }
@@ -19,7 +33,7 @@ const PassengerClass = ({ setPassenger, setFlightClass, setPopup, passenger, fli
         };
     }, [setPopup]);
 
-    const handleFlightClassChange = (classType) => {
+    const handleFlightClassChange = (classType: string) => {
         setSelectedFlightClass(classType);
     };
 

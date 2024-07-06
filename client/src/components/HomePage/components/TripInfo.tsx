@@ -1,6 +1,6 @@
 import React from 'react';
 
-const TripInfo = () => {
+const TripInfo: React.FC = () => {
     return (
         <div className='flex justify-between gap-2'>
             <div className='flex flex-col gap-2'>
@@ -17,7 +17,7 @@ const TripInfo = () => {
                 </button>
             </div>
         </div>
-    )
+    );
 }
 
 export default TripInfo;

@@ -1,8 +1,7 @@
 import React from 'react';
 
-const TravelCard = () => {
-
-	const backgroundStyles = {
+const TravelCard: React.FC = () => {
+	const backgroundStyles: React.CSSProperties = {
 		backgroundImage: `url(https://www.flydubai.com/en/media/baku_tcm8-6178.jpg)`,
 	};
 
@@ -14,7 +13,7 @@ const TravelCard = () => {
 					<div className='text-sm'>An amazing journey</div>
 				</div>
 				<div className='p-3'>
-					<button className='bg-blue-500 h-[45px] w-[100%] rounded-md'>Book Fight</button>
+					<button className='bg-blue-500 h-[45px] w-[100%] rounded-md'>Book Flight</button>
 				</div>
 			</div>
 		</div>

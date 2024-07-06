@@ -1,6 +1,6 @@
 import React from 'react';
 
-const Intro = () => {
+const Intro: React.FC = () => {
     return (
         <div className='space-y-4 mx-10 intro'>
             <div className='text-5xl font-extrabold max-sm:text-4xl max-sm:font-bold'>
@@ -13,7 +13,7 @@ const Intro = () => {
                 We Provide ticket services with most comfortable system in India.
             </div>
         </div>
-    )
+    );
 }
 
 export default Intro;

@@ -1,13 +1,19 @@
 import React from 'react';
 import BasicDatePicker from '../../../utils/DatePicker';
-import dayjs from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 
-const DepartureDate = ({departureDate, setDepartureDate}) => {
+interface DepartureDateProps {
+    departureDate: Dayjs; // Assuming departureDate is a dayjs object
+    setDepartureDate: (date: Dayjs) => void; // Function to set departureDate
+}
 
-    const minDate = dayjs(new Date());
+const DepartureDate: React.FC<DepartureDateProps> = ({ departureDate, setDepartureDate }) => {
+    const minDate = dayjs(); // Current date as minimum date
 
-    const handleDepartureDateChange = (date) => {
-        setDepartureDate(date);
+    const handleDepartureDateChange = (date: Dayjs | null) => {
+        if (date) {
+            setDepartureDate(date);
+        }
     };
 
     return (
@@ -25,7 +31,7 @@ const DepartureDate = ({departureDate, setDepartureDate}) => {
                 />
             </div>
         </div>
-    )
-}
+    );
+};
 
 export default DepartureDate;

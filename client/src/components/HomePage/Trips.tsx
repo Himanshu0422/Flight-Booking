@@ -2,7 +2,7 @@ import React from 'react';
 import TripCard from './components/TripCard';
 import TripInfo from './components/TripInfo';
 
-const Trips = () => {
+const Trips: React.FC = () => {
     return (
         <div className='w-[90%] mx-auto mt-8 space-y-10'>
             <TripInfo />
@@ -15,7 +15,7 @@ const Trips = () => {
                 <TripCard />
             </div>
         </div>
-    )
-}
+    );
+};
 
 export default Trips;

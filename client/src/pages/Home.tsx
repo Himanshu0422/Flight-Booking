@@ -1,16 +1,16 @@
-import React from 'react'
+import React from 'react';
 import Main from '../components/HomePage/Main';
 import Trips from '../components/HomePage/Trips';
 import Travel from '../components/HomePage/Travel';
 
-const Home = () => {
+const Home: React.FC = () => {
 	return (
 		<div className='flex flex-col items-center gap-20'>
 			<Main />
 			<Trips />
 			<Travel />
 		</div>
-	)
+	);
 }
 
 export default Home;
