@@ -1,10 +1,10 @@
 import dayjs from "dayjs";
 
-export function getDate(data?: dayjs.Dayjs | Date | string | number): string {
+export function getDate(data?: dayjs.Dayjs | Date | string | number | null): string {
 	if (data) {
-		return dayjs(data).locale('hi').format('YYYY MMMM DD');
+		return dayjs(data).locale('hi').format('DD MMMM YYYY');
 	}
-	const today = dayjs(new Date()).locale('hi').format('YYYY MMMM DD');
+	const today = dayjs(new Date()).locale('hi').format('DD MMMM YYYY');
 	
 	return today;
 }

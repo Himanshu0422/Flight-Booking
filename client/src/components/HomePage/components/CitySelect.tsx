@@ -1,7 +1,7 @@
 import React from "react";
 import { GiAirplaneArrival, GiAirplaneDeparture } from "react-icons/gi";
 import { GoArrowSwitch } from "react-icons/go";
-import CustomSelectCity from "./CustomSelectCity";
+import CustomSelectCity from "../../common/CustomSelectCity";
 
 interface CitySelectProps {
   departureCity: string;
@@ -29,7 +29,7 @@ const CitySelect: React.FC<CitySelectProps> = ({
   };
 
   return (
-    <div className="flex flex-1 max-sm:flex-col justify-around items-center gap-5 border p-3 rounded-lg">
+    <div className="flex flex-1 h-full max-sm:flex-col justify-around items-center gap-5 border p-3 rounded-xl">
       <div className="flex gap-3 items-center">
         <div className="bg-orange-400 text-white rounded-full text-xl p-2 flex justify-center items-center">
           <GiAirplaneDeparture />

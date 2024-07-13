@@ -1,12 +1,12 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { Dayjs } from 'dayjs';
 
 interface SearchState {
   departureCity: string | null;
   arrivalCity: string | null;
-  departureDate: string | null;  // Use appropriate date type if not string
-  returnDate: string | null | undefined;     // Use appropriate date type if not string
-  passenger: number | null;      // Adjust type based on actual data (e.g., object if more details)
-  flightClass: string | null;    // Adjust type based on actual data (e.g., enum for classes)
+  departureDate: Dayjs | null;
+  returnDate: Dayjs | null;
+  passenger: number;
 }
 
 const initialState: SearchState = {
@@ -14,8 +14,7 @@ const initialState: SearchState = {
   arrivalCity: null,
   departureDate: null,
   returnDate: null,
-  passenger: null,
-  flightClass: null,
+  passenger: 1,
 };
 
 const searchSlice = createSlice({
@@ -28,17 +27,14 @@ const searchSlice = createSlice({
     setArrivalCity: (state, action: PayloadAction<string | null>) => {
       state.arrivalCity = action.payload;
     },
-    setDepartureDate: (state, action: PayloadAction<string | null>) => {
+    setDepartureDate: (state, action: PayloadAction<Dayjs | null>) => {
       state.departureDate = action.payload;
     },
-    setReturnDate: (state, action: PayloadAction<string | null>) => {
+    setReturnDate: (state, action: PayloadAction<Dayjs | null>) => {
       state.returnDate = action.payload;
     },
-    setPassenger: (state, action: PayloadAction<number | null>) => {
+    setPassenger: (state, action: PayloadAction<number>) => {
       state.passenger = action.payload;
-    },
-    setFlightClass: (state, action: PayloadAction<string | null>) => {
-      state.flightClass = action.payload;
     },
   },
 });
@@ -49,7 +45,6 @@ export const {
   setDepartureDate,
   setReturnDate,
   setPassenger,
-  setFlightClass,
 } = searchSlice.actions;
 
 export default searchSlice.reducer;
