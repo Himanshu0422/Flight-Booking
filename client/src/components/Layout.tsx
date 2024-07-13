@@ -7,11 +7,11 @@ interface LayoutProps {
 
 const Layout: React.FC<LayoutProps> = ({ children }) => {
   return (
-    <div className='relative'>
-      <div className='z-10 w-full fixed'>
+    <div className=''>
+      <div className='w-full fixed'>
         <Navbar />
       </div>
-      <div>
+      <div className='pt-[75px]'>
         {children}
       </div>
     </div>
