@@ -1,7 +1,7 @@
 import React from 'react';
 import { Toaster } from 'react-hot-toast';
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
-import Layout from './components/Layout';
+import Layout from './layout/Layout';
 import Flights from './pages/Flights';
 import Home from './pages/Home';
 
