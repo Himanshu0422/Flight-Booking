@@ -1,24 +1,17 @@
 import React from 'react';
-import { useSelector } from 'react-redux';
-import { RootState } from '../redux/store';
+import Filter from '../components/FlightsPage/Filter';
+import FlightSection from '../components/FlightsPage/FlightSection';
+import FlightsCount from '../components/FlightsPage/FlightsCount';
 import Search from '../components/FlightsPage/Search';
 
 const Flights: React.FC = () => {
 
-  const { departureFlight } = useSelector(
-    (state: RootState) => state.flight
-  )
-  const { returnFlight } = useSelector(
-    (state: RootState)=> state.flight
-  )
-
-  console.log(departureFlight, 'departureFlight');
-  console.log(returnFlight, 'returnFlight');
-  
-
   return (
-    <div className=''>
+    <div className='bg-gray-100 min-h-[calc(100vh-75px)] w-full overflow-x-hidden'>
       <Search />
+      <FlightsCount />
+      <Filter />
+      <FlightSection />
     </div>
   );
 }
