@@ -16,10 +16,11 @@ import {
 } from "../../../redux/searchSlice";
 import { AppDispatch, RootState } from "../../../redux/store";
 import { getCurrentTime, getDate } from "../../../utils/Date";
+import CitySelect from "../../common/CitySelect";
 import DepartureDate from "../../common/DepartureDate";
 import Passenger from "../../common/Passenger";
 import ReturnDate from "../../common/ReturnDate";
-import CitySelect from "./CitySelect";
+import Button from "../../common/Button";
 
 interface SearchParams {
   departureCity: string;
@@ -75,20 +76,19 @@ const SearchFlight: React.FC = () => {
           `Return date should be equal to or greater than departure date`
         );
       }
+
       if (
         getDate(departureDate) === getDate(new Date()) &&
         getCurrentTime() >= "23:00"
       ) {
         handleInputChange("departureDate", departureDate.add(1, "day"));
       }
-
+      dispatch(setLoading(true));
       dispatch(setDepartureCity(departureCity));
       dispatch(setArrivalCity(arrivalCity));
       dispatch(setDepartureDate(departureDate));
       dispatch(setReturnDate(returnDate ? returnDate : null));
       dispatch(setPassenger(passenger));
-
-      dispatch(setLoading(true));
 
       const departureCityDetails = await dispatch(
         getAirportId({ city: departureCity })
@@ -172,12 +172,9 @@ const SearchFlight: React.FC = () => {
           />
         </div>
         <div>
-          <button
-            onClick={handleSearchFlight}
-            className="h-full w-full cursor-pointer flex justify-center items-center gap-1 border p-3 bg-orange-400 rounded-xl"
-          >
+          <Button onClick={handleSearchFlight}>
             Search Flights <CiSearch size="30px" />
-          </button>
+          </Button>
         </div>
       </div>
     </div>

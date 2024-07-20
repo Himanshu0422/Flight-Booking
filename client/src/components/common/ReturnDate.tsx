@@ -51,20 +51,28 @@ const ReturnDate: React.FC<ReturnDateProps> = ({
           <div className="space-y-1 w-[70%]">
             <div className="flex justify-between">
               <div className="text-xs">Return</div>
-              <div className="text-xs text-blue-400 cursor-pointer" onClick={handleOneWay}>
+              <div
+                className="text-xs text-blue-400 cursor-pointer"
+                onClick={handleOneWay}
+              >
                 One Way
               </div>
             </div>
-            <div onClick={() => setReturnModalOpen(true)}>{getDate(returnDate)}</div>
+            <div
+              className="cursor-pointer"
+              onClick={() => setReturnModalOpen(true)}
+            >
+              {getDate(returnDate)}
+            </div>
           </div>
           <DatePickerModal
-              open={returnModalOpen}
-              handleClose={() => setReturnModalOpen(false)}
-              selectedDate={returnDate}
-              handleDateChange={handleReturnDateChange}
-              title="Select Return Date"
-              minDate={minDate}
-            />
+            open={returnModalOpen}
+            handleClose={() => setReturnModalOpen(false)}
+            selectedDate={returnDate}
+            handleDateChange={handleReturnDateChange}
+            title="Select Return Date"
+            minDate={minDate}
+          />
         </div>
       )}
     </div>

@@ -12,8 +12,7 @@ const DepartureDate: React.FC<DepartureDateProps> = ({
   departureDate,
   setDepartureDate,
 }) => {
-
-	const minDate = dayjs(new Date());
+  const minDate = dayjs(new Date());
 
   const [departureModalOpen, setDepartureModalOpen] = useState(false);
 
@@ -28,7 +27,10 @@ const DepartureDate: React.FC<DepartureDateProps> = ({
       </div>
       <div className="space-y-1">
         <div className="text-xs">Departure</div>
-        <div onClick={() => setDepartureModalOpen(true)}>
+        <div
+          className="cursor-pointer"
+          onClick={() => setDepartureModalOpen(true)}
+        >
           {getDate(departureDate)}
         </div>
       </div>
