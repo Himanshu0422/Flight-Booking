@@ -1,11 +1,33 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { useDispatch } from "react-redux";
-import { setLoading } from "../loadingSlice";
 import { getFlightsData } from "./flightsAction";
 
+interface Airplane {
+  modelNumber: string;
+  capacity: number;
+}
+
+interface Airport {
+  name: string;
+  city: string;
+}
+
+export interface Flight {
+  id: number;
+  flightNumber: string;
+  flight: Airplane;
+  arrivalAirport: Airport;
+  arrivalTime: string;
+  departureAirport: Airport;
+  departureTime: string;
+  price: number;
+  nextDay: number;
+  flightTime: string;
+}
+
+
 interface FlightState {
-  departureFlight: string | null;
-  returnFlight: string | null;
+  departureFlight: Flight[] | null;
+  returnFlight: Flight[] | null;
 }
 
 const initialState: FlightState = {
@@ -17,13 +39,13 @@ const flightSlice = createSlice({
   name: "flight",
   initialState,
   reducers: {
-    setDepartureFlight: (state, action: PayloadAction<string | null>) => {
+    setDepartureFlight: (state, action: PayloadAction<Flight[] | null>) => {
       state.departureFlight = action.payload;
     },
     resetDepartureFlightState: (state) => {
       state.departureFlight = null;
     },
-    setReturnFlight: (state, action: PayloadAction<string | null>) => {
+    setReturnFlight: (state, action: PayloadAction<Flight[] | null>) => {
       state.returnFlight = action.payload;
     },
     resetReturnFlightState: (state) => {

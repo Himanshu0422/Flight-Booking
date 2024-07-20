@@ -5,7 +5,7 @@ interface loadingState {
 }
 
 const initialState: loadingState = {
-  loading: true
+  loading: false
 };
 
 const loadingSlice = createSlice({

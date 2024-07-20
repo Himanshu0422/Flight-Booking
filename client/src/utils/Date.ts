@@ -9,6 +9,15 @@ export function getDate(data?: dayjs.Dayjs | Date | string | number | null): str
 	return today;
 }
 
+export function getDay(data?: dayjs.Dayjs | Date | string | number | null): string {
+	if (data) {
+		return dayjs(data).format('dddd');
+	}
+	const today = dayjs(new Date()).format('dddd');
+	
+	return today;
+}
+
 export function getCurrentTime(): string {
 	const currentDate = new Date();
 
@@ -20,3 +29,11 @@ export function getCurrentTime(): string {
 
 	return time;
 }
+
+
+export const convertTo12HourFormat = (time24: string): { time: string; period: string } => {
+	const [hours, minutes] = time24.split(':').map(Number);
+	const period = hours >= 12 ? 'PM' : 'AM';
+	const hours12 = hours % 12 || 12;
+	return { time: `${hours12}:${minutes.toString().padStart(2, '0')}`, period };
+};

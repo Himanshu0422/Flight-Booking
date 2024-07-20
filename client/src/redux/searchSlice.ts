@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { Dayjs } from 'dayjs';
+import dayjs, { Dayjs } from 'dayjs';
 
 interface SearchState {
   departureCity: string | null;
@@ -12,7 +12,7 @@ interface SearchState {
 const initialState: SearchState = {
   departureCity: null,
   arrivalCity: null,
-  departureDate: null,
+  departureDate: dayjs(new Date()),
   returnDate: null,
   passenger: 1,
 };
