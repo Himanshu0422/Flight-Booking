@@ -25,7 +25,7 @@ module.exports = (sequelize, DataTypes) => {
 				as: 'Airplane',
 				foreignKey: 'airplaneId',
 				targetKey: 'id'
-			})
+			});
 		}
 	}
 	Flights.init({
@@ -37,26 +37,14 @@ module.exports = (sequelize, DataTypes) => {
 		airplaneId: {
 			type: DataTypes.INTEGER,
 			allowNull: false,
-			references: {
-				model: 'Airplane',
-				key: 'id'
-			}
 		},
 		departureAirportId: {
 			type: DataTypes.INTEGER,
 			allowNull: false,
-			references: {
-				model: 'Airport',
-				key: 'id'
-			}
 		},
 		arrivalAirportId: {
 			type: DataTypes.INTEGER,
 			allowNull: false,
-			references: {
-				model: 'Airport',
-				key: 'id'
-			}
 		},
 		arrivalTime: {
 			allowNull: false,
@@ -77,6 +65,11 @@ module.exports = (sequelize, DataTypes) => {
 		nextDay: {
 			type: DataTypes.INTEGER,
 			allowNull: false
+		},
+		operatingDays: {
+			type: DataTypes.JSON,
+			allowNull: false,
+			defaultValue: []
 		}
 	}, {
 		sequelize,

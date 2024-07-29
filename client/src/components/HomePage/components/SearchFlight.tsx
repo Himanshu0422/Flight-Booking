@@ -112,6 +112,7 @@ const SearchFlight: React.FC = () => {
         getFlightsData({
           departureAirportId,
           arrivalAirportId,
+          date: departureDate,
           time: time1,
           type: "Departure",
         })
@@ -122,6 +123,7 @@ const SearchFlight: React.FC = () => {
           getFlightsData({
             departureAirportId: arrivalAirportId,
             arrivalAirportId: departureAirportId,
+            date: returnDate,
             time: time2,
             type: "Return",
           })

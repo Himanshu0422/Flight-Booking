@@ -1,4 +1,4 @@
-const { Flights, Airplane, Airport } = require("../models/index");
+const { Flights, Airplane, Airport, sequelize } = require("../models/index");
 const { Op } = require("sequelize");
 
 class FlightRepository {
@@ -39,8 +39,27 @@ class FlightRepository {
 			timeFilter.push({ departureTime: { [Op.gte]: updatedTime } });
 		}
 
+		let dateFilter = [];
+		if (data.date) {
+			const date = new Date(data.date);
+			const dayOfWeek = date.toLocaleDateString('en-US', { weekday: 'long' });
 
-		if (priceFilter.length > 0 || timeFilter.length > 0) {
+			console.log(dayOfWeek, 'dayofWeek');
+
+			dateFilter.push({
+				[Op.and]: [
+					sequelize.where(
+						sequelize.json('operatingDays'),
+						Op.like,
+						`%${dayOfWeek}%`
+					)
+				]
+			});
+
+		}
+
+
+		if (priceFilter.length > 0 || timeFilter.length > 0 || dateFilter.length > 0) {
 			filter[Op.and] = [];
 
 			if (priceFilter.length > 0) {
@@ -49,6 +68,10 @@ class FlightRepository {
 
 			if (timeFilter.length > 0) {
 				filter[Op.and].push({ [Op.and]: timeFilter });
+			}
+
+			if (dateFilter.length > 0) {
+				filter[Op.and].push(...dateFilter);
 			}
 		}
 
