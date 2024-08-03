@@ -44,8 +44,6 @@ class FlightRepository {
 			const date = new Date(data.date);
 			const dayOfWeek = date.toLocaleDateString('en-US', { weekday: 'long' });
 
-			console.log(dayOfWeek, 'dayofWeek');
-
 			dateFilter.push({
 				[Op.and]: [
 					sequelize.where(
@@ -118,10 +116,13 @@ class FlightRepository {
 		}
 	}
 
-	async getAllFlights(filter) {
+	async getAllFlights(filter, page = 1) {
 		try {
+			const pageSize = 1;
+			const offset = (page - 1) * pageSize;
 			const filterObject = this.#createFilter(filter);
-			const flights = await Flights.findAll({
+
+			const { count, rows: flights } = await Flights.findAndCountAll({
 				where: filterObject,
 				include: [
 					{
@@ -140,14 +141,28 @@ class FlightRepository {
 						attributes: ['name', 'city']
 					}
 				],
-				attributes: ['id', 'flightNumber', 'departureTime', 'arrivalTime', 'price', 'flightTime', 'nextDay']
+				order: [['departureTime', 'ASC']],
+				attributes: ['id', 'flightNumber', 'departureTime', 'arrivalTime', 'price', 'flightTime', 'nextDay'],
+				limit: pageSize,
+				offset: offset
 			});
-			return flights;
+
+			const totalPages = Math.ceil(count / pageSize);
+
+			return {
+				flights,
+				pagination: {
+					currentPage: page,
+					totalPages,
+					totalFlights: count
+				}
+			};
 		} catch (error) {
 			console.error("Something went wrong in the repository layer:", error);
 			throw new Error('Error fetching flights');
 		}
 	}
+
 
 
 	async updateFlights(flightId, data) {
