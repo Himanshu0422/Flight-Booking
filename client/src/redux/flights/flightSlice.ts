@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { Dayjs } from "dayjs";
 import { getFlightsData } from "./flightsAction";
 
 interface Airplane {
@@ -26,38 +27,94 @@ export interface Flight {
 
 
 interface FlightState {
-  departureFlight: Flight[] | null;
-  returnFlight: Flight[] | null;
+  departureFlight: Flight[];
+  returnFlight: Flight[];
+  departurePage: number;
+  returnPage: number;
+  totalDeparturePages: number;
+  totalReturnPages: number;
+  totalFlights: number;
+  filterTime: Dayjs | null;
+  isDeparture: boolean
+  maxPrice: number,
+  minPrice: number
 }
 
 const initialState: FlightState = {
-  departureFlight: null,
-  returnFlight: null,
-};
+  departureFlight: [],
+  returnFlight: [],
+  departurePage: 1,
+  returnPage: 1,
+  totalDeparturePages: 1,
+  totalReturnPages: 1,
+  totalFlights: 0,
+  filterTime: null,
+  maxPrice: 50000,
+  minPrice: 2000,
+  isDeparture: true
+}
 
 const flightSlice = createSlice({
   name: "flight",
   initialState,
   reducers: {
-    setDepartureFlight: (state, action: PayloadAction<Flight[] | null>) => {
+    setDepartureFlight: (state: FlightState, action: PayloadAction<Flight[]>) => {
       state.departureFlight = action.payload;
     },
-    resetDepartureFlightState: (state) => {
-      state.departureFlight = null;
+    resetDepartureFlightState: (state: FlightState) => {
+      state.departureFlight = [];
     },
-    setReturnFlight: (state, action: PayloadAction<Flight[] | null>) => {
+    setReturnFlight: (state: FlightState, action: PayloadAction<Flight[]>) => {
       state.returnFlight = action.payload;
     },
-    resetReturnFlightState: (state) => {
-      state.returnFlight = null;
+    resetReturnFlightState: (state: FlightState) => {
+      state.returnFlight = [];
     },
+    increaseDeparturePage: (state: FlightState) => {
+      state.departurePage += 1;
+    },
+    increaseReturnPage: (state: FlightState) => {
+      state.returnPage += 1;
+    },
+    resetDeparturePage: (state: FlightState) => {
+      state.departurePage = 0
+    },
+    resetReturnPage: (state: FlightState) => {
+      state.returnPage = 0
+    },
+    setFilterTime: (state: FlightState, action: PayloadAction<Dayjs | null>) => {
+      state.filterTime = action.payload
+    },
+    setisDeparture: (state: FlightState, action: PayloadAction<boolean>) => {
+      state.isDeparture = action.payload
+    },
+    setMaxPrice: (state: FlightState, action: PayloadAction<number>) => {
+      state.maxPrice = action.payload
+    },
+    setMinPrice: (state: FlightState, action: PayloadAction<number>) => {
+      state.minPrice = action.payload
+    }
   },
   extraReducers: (builder) => {
     builder.addCase(getFlightsData.fulfilled, (state, action) => {
       if (action.payload.type === "Departure") {
-        state.departureFlight = action.payload.data;
+        if(action.payload.page == 1){
+          state.departureFlight = action.payload.data
+        }else {
+          state.departureFlight = [...state.departureFlight, ...action.payload.data];
+        }
+        state.totalFlights = action.payload.totalFlights;
+        state.totalDeparturePages = action.payload.totalPages
+        state.departurePage = action.payload.page
       } else if (action.payload.type === "Return") {
-        state.returnFlight = action.payload.data;
+        if(action.payload.page == 1){
+          state.returnFlight = action.payload.data
+        }else {
+          state.returnFlight = [...state.returnFlight,  ...action.payload.data];
+        }
+        state.totalFlights = action.payload.totalFlights;
+        state.totalReturnPages = action.payload.totalPages
+        state.returnPage = action.payload.page
       }
     });
     builder.addCase(getFlightsData.rejected, (state, action) => {
@@ -71,6 +128,14 @@ export const {
   resetDepartureFlightState,
   setReturnFlight,
   resetReturnFlightState,
+  increaseDeparturePage,
+  increaseReturnPage,
+  resetDeparturePage,
+  resetReturnPage,
+  setFilterTime,
+  setisDeparture,
+  setMaxPrice,
+  setMinPrice
 } = flightSlice.actions;
 
 export default flightSlice.reducer;

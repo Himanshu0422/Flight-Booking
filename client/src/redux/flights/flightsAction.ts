@@ -5,13 +5,38 @@ import flights from "../../api/services/flights";
 export const getFlightsData = createAsyncThunk(
   "/flights",
   async (
-    data: { departureAirportId: number; arrivalAirportId: number; date: Dayjs, time: string, type:string },
+    data: {
+      departureAirportId: number;
+      arrivalAirportId: number;
+      date: Dayjs;
+      time: string;
+      type: string;
+      page: number;
+      minPrice?: number;
+      maxPrice?: number;
+    },
     thunkApi: any
   ) => {
     try {
-      const {departureAirportId, arrivalAirportId, date, time, type} = data;
-      const response = await flights.getFlightsData({departureAirportId, arrivalAirportId, date, time});
-      return { data: response.data.data, type };
+      const { departureAirportId, arrivalAirportId, date, time, type, page, minPrice, maxPrice } =
+        data;
+      const response = await flights.getFlightsData({
+        departureAirportId,
+        arrivalAirportId,
+        date,
+        time,
+        page,
+        minPrice,
+        maxPrice
+      });
+      
+      return {
+        data: response.data.data.flights,
+        type,
+        page,
+        totalPages: response.data.data.pagination.totalPages,
+        totalFlights: response.data.data.pagination.totalFlights
+      };
     } catch (error) {
       console.log(error);
       return thunkApi.rejectWithValue(error as SerializedError);
