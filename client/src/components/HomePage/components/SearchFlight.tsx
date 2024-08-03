@@ -21,6 +21,7 @@ import DepartureDate from "../../common/DepartureDate";
 import Passenger from "../../common/Passenger";
 import ReturnDate from "../../common/ReturnDate";
 import Button from "../../common/Button";
+import { resetDepartureFlightState, resetReturnFlightState, setFilterTime, setMaxPrice, setMinPrice } from "../../../redux/flights/flightSlice";
 
 interface SearchParams {
   departureCity: string;
@@ -89,6 +90,9 @@ const SearchFlight: React.FC = () => {
       dispatch(setDepartureDate(departureDate));
       dispatch(setReturnDate(returnDate ? returnDate : null));
       dispatch(setPassenger(passenger));
+      dispatch(setMinPrice(2000));
+      dispatch(setMaxPrice(50000));
+      dispatch(setFilterTime(null));
 
       const departureCityDetails = await dispatch(
         getAirportId({ city: departureCity })
@@ -115,6 +119,7 @@ const SearchFlight: React.FC = () => {
           date: departureDate,
           time: time1,
           type: "Departure",
+          page: 1,
         })
       );
 
@@ -126,6 +131,7 @@ const SearchFlight: React.FC = () => {
             date: returnDate,
             time: time2,
             type: "Return",
+            page: 1,
           })
         );
       }

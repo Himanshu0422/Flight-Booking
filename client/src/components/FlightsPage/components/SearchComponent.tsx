@@ -1,5 +1,5 @@
 import dayjs, { Dayjs } from "dayjs";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { CiSearch } from "react-icons/ci";
 import { useDispatch, useSelector } from "react-redux";
@@ -20,6 +20,7 @@ import DepartureDate from "../../common/DepartureDate";
 import Passenger from "../../common/Passenger";
 import ReturnDate from "../../common/ReturnDate";
 import Button from "../../common/Button";
+import { setFilterTime, setMaxPrice, setMinPrice } from "../../../redux/flights/flightSlice";
 
 interface SearchParams {
   departureCity: string;
@@ -49,8 +50,7 @@ const SearchComponent = () => {
     }));
   };
 
-  const handleSearchFlight = async (e: React.MouseEvent<HTMLButtonElement>) => {
-    e.preventDefault();
+  const handleSearchFlight = async () => {
     try {
       const {
         departureCity,
@@ -86,6 +86,9 @@ const SearchComponent = () => {
       dispatch(setDepartureDate(departureDate));
       dispatch(setReturnDate(returnDate ? returnDate : null));
       dispatch(setPassenger(passenger));
+      dispatch(setMinPrice(2000));
+      dispatch(setMaxPrice(50000));
+      dispatch(setFilterTime(null));
 
       const departureCityDetails = await dispatch(
         getAirportId({ city: departureCity })
@@ -112,6 +115,7 @@ const SearchComponent = () => {
           date: departureDate,
           time: time1,
           type: "Departure",
+          page: 1
         })
       );
 
@@ -123,6 +127,7 @@ const SearchComponent = () => {
             date: returnDate,
             time: time2,
             type: "Return",
+            page: 1
           })
         );
       }
@@ -157,7 +162,7 @@ const SearchComponent = () => {
       />
       <div>
         <Button
-          onClick={(e: React.MouseEvent<HTMLButtonElement>) => handleSearchFlight(e)}
+          onClick={() => handleSearchFlight()}
         >
           Search Flights <CiSearch size="30px" />
         </Button>
