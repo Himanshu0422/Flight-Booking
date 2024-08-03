@@ -14,7 +14,7 @@ const Passenger: React.FC<PassengerProps> = ({
   const [popup, setPopup] = useState<boolean>(false);
 
   return (
-    <div className="relative flex justify-center cursor-pointer items-center gap-4 border p-3 rounded-xl">
+    <div className="flex justify-center cursor-pointer items-center gap-4 border p-3 rounded-xl">
       <div className="border rounded-full p-3 flex justify-center">
         <IoPersonOutline />
       </div>

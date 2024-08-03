@@ -2,7 +2,7 @@ import { instance } from "./instance"
 
 
 export const http = {
-  get: (url: string, params: any = undefined || null, headers?: string) =>
+  get: (url: string, params: any, headers?: string) =>
     instance({
       method: 'GET',
       url,

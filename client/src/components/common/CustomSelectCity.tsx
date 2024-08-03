@@ -60,8 +60,11 @@ const CustomSelectCity: React.FC<CustomSelectCityProps> = ({
           {value ? value : "Select City"}
         </div>
       </div>
-      {isOpen && (
-        <div className="w-[300px] h-[200px] overflow-auto absolute z-10 -mt-5 max-sm:-top-5 max-sm:-left-32 bg-white border border-gray-300 rounded-md shadow-lg">
+      {isOpen &&
+      <div
+      className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"
+    >
+        <div className="w-[300px] h-[200px] bg-white border border-gray-300 rounded-md shadow-lg">
           <input
             className="block w-full border-b border-gray-300 px-4 py-2 focus:outline-none focus:border-blue-500"
             type="text"
@@ -86,7 +89,8 @@ const CustomSelectCity: React.FC<CustomSelectCityProps> = ({
             ))}
           </div>
         </div>
-      )}
+        </div>
+      }
     </div>
   );
 };

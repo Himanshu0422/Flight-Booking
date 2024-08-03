@@ -18,6 +18,11 @@ export function getDay(data?: dayjs.Dayjs | Date | string | number | null): stri
 	return today;
 }
 
+export function getTime(data: dayjs.Dayjs | null): string {
+  if (!data) return '';
+  return data.subtract(1, 'hour').format('HH:mm');
+}
+
 export function getCurrentTime(): string {
 	const currentDate = new Date();
 

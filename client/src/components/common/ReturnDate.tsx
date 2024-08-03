@@ -16,7 +16,7 @@ const ReturnDate: React.FC<ReturnDateProps> = ({
 
   const [returnModalOpen, setReturnModalOpen] = useState(false);
 
-  const handleReturnDateChange = (date: any) => {
+  const handleReturnDateChange = (date: Dayjs | null) => {
     setReturnDate(date);
   };
 
@@ -44,11 +44,11 @@ const ReturnDate: React.FC<ReturnDateProps> = ({
           </div>
         </div>
       ) : (
-        <div className="border p-3 rounded-lg flex gap-2 items-center">
+        <div className="border p-3 rounded-xl flex gap-2 items-center w-auto">
           <div className="border rounded-full p-3 flex justify-center">
             <i className="fa fa-calendar-days"></i>
           </div>
-          <div className="space-y-1 w-[70%]">
+          <div className="flex-1 space-y-1">
             <div className="flex justify-between">
               <div className="text-xs">Return</div>
               <div

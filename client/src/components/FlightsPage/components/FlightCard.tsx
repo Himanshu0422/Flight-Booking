@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { GiAirplaneDeparture } from "react-icons/gi";
 import { useSelector } from "react-redux";
 import { Flight } from "../../../redux/flights/flightSlice";
@@ -6,27 +6,33 @@ import { RootState } from "../../../redux/store";
 import { convertTo12HourFormat, getDay } from "../../../utils/Date";
 import Button from "../../common/Button";
 
-const FlightCard: React.FC<{ flight: Flight }> = ({ flight }) => {
+interface FlightCardProps {
+  flight: Flight;
+  isDeparture: boolean;
+}
+
+const FlightCard: React.FC<FlightCardProps> = ({ flight, isDeparture }) => {
   const { time: departureTime, period: departurePeriod } =
     convertTo12HourFormat(flight.departureTime);
   const { time: arrivalTime, period: arrivalPeriod } = convertTo12HourFormat(
     flight.arrivalTime
   );
 
-  const { departureDate } = useSelector((state: RootState) => state.search);
+  const { departureDate, returnDate } = useSelector((state: RootState) => state.search);
+  const flightDate = isDeparture ? departureDate : returnDate;
 
   return (
     <div className="flex max-md:flex-col bg-white rounded-xl gap-10 max-md:gap-4 justify-center items-center w-max max-lg:px-10 px-20 max-md:p-5 py-8 h-max shadow-lg">
       <div className="flex gap-10 xs:gap-5">
         <TimeInfo
-          day={getDay(departureDate)}
+          day={getDay(flightDate)}
           time={departureTime}
           period={departurePeriod}
           location={flight.departureAirport.city}
         />
         <ConnectionDot time={flight.flightTime} />
         <TimeInfo
-          day={getDay(departureDate!.add(flight.nextDay, "day"))}
+          day={getDay(flightDate!.add(flight.nextDay, "day"))}
           time={arrivalTime}
           period={arrivalPeriod}
           location={flight.arrivalAirport.city}
@@ -65,7 +71,7 @@ const TimeInfo = ({
 );
 
 const ConnectionDot = ({ time }: { time: string }) => (
-  <div className="text-center">
+  <div className="text-center space-y-1">
     <div className="text-xs">{time}</div>
     <div className="flex items-center">
       <div className="w-[10px] h-[10px] rounded-full border border-blue-500 max-xs:hidden" />
@@ -78,7 +84,7 @@ const ConnectionDot = ({ time }: { time: string }) => (
       <div className="border max-lg:w-[50px] w-[100px] border-dashed h-[0] max-xs:hidden" />
       <div className="w-[10px] h-[10px] rounded-full bg-blue-500 max-xs:hidden" />
     </div>
-    <div className="text-xs">{time}</div>
+    <div className="text-xs">Direct</div>
   </div>
 );
 

@@ -16,11 +16,7 @@ const PassengerClass: React.FC<PassengerClassProps> = ({
 
   useEffect(() => {
     const handleClickOutside = (event: MouseEvent) => {
-      if (
-        popupRef.current &&
-        !popupRef.current.contains(event.target as Node)
-      ) {
-        // Clicked outside the popup, so close it
+      if (popupRef.current && !popupRef.current.contains(event.target as Node)) {
         setPopup(false);
       }
     };
@@ -38,33 +34,37 @@ const PassengerClass: React.FC<PassengerClassProps> = ({
 
   return (
     <div
-      className="absolute rounded-xl space-y-5 bg-white border z-10 p-4 w-[350px]"
-      ref={popupRef}
+      className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50"
     >
-      <div>
-        <div className="font-semibold text-lg mb-2">Passenger</div>
-        <div className="flex flex-wrap gap-2 border p-1 rounded-md">
-          {Array.from({ length: 10 }, (_, i) => (
-            <div
-              className={`px-3 py-1 rounded-md cursor-pointer ${
-                selectedPassenger === i + 1
-                  ? "bg-blue-500 text-white"
-                  : "hover:bg-gray-100"
-              }`}
-              key={i + 1}
-              onClick={() => setSelectedPassenger(i + 1)}
-            >
-              {i == 9 ? '>9' : i + 1}
-            </div>
-          ))}
-        </div>
-      </div>
-      <button
-        className="bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-700 hover:to-blue-900 text-white font-bold py-2 px-4 rounded"
-        onClick={handleApply}
+      <div
+        className="rounded-xl space-y-5 bg-white border p-4 w-[350px]"
+        ref={popupRef}
       >
-        Apply
-      </button>
+        <div>
+          <div className="font-semibold text-lg mb-2">Passenger</div>
+          <div className="flex flex-wrap gap-2 border p-1 rounded-md">
+            {Array.from({ length: 10 }, (_, i) => (
+              <div
+                className={`px-3 py-1 rounded-md cursor-pointer ${
+                  selectedPassenger === i + 1
+                    ? "bg-blue-500 text-white"
+                    : "hover:bg-gray-100"
+                }`}
+                key={i + 1}
+                onClick={() => setSelectedPassenger(i + 1)}
+              >
+                {i == 9 ? '>9' : i + 1}
+              </div>
+            ))}
+          </div>
+        </div>
+        <button
+          className="bg-gradient-to-r from-blue-500 to-blue-700 hover:from-blue-700 hover:to-blue-900 text-white font-bold py-2 px-4 rounded"
+          onClick={handleApply}
+        >
+          Apply
+        </button>
+      </div>
     </div>
   );
 };
