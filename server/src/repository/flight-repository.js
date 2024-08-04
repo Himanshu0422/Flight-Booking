@@ -89,7 +89,8 @@ class FlightRepository {
 
 	async getFlight(flightId) {
 		try {
-			const flight = await Flights.findByPk({
+			const flight = await Flights.findOne({
+				where: { flightNumber: flightId },
 				include: [
 					{
 						model: Airplane,
