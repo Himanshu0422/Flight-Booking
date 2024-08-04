@@ -1,10 +1,15 @@
-const { Booking } = require('../models/index');
+const { Booking, Passenger } = require('../models/index');
 
 class BookingRepository {
-    async create(data) {
+    async create(bookingPayload, passengersData) {
         try {
-            const booking = await Booking.create(data);
-            return booking;
+            const booking = await Booking.create(bookingPayload);
+            const updatedPassengersData = passengersData.map(passenger => ({
+                ...passenger,
+                bookingId: booking.id
+            }));
+            const passengers = await Passenger.bulkCreate(updatedPassengersData);
+            return { booking, passengers };
         } catch (error) {
             console.log('Failed in repository layer', error);
         }
@@ -13,7 +18,7 @@ class BookingRepository {
     async update(bookingId, data) {
         try {
             const booking = await Booking.findByPk(bookingId);
-            if(data.status) {
+            if (data.status) {
                 booking.status = data.status;
             }
             await booking.save();

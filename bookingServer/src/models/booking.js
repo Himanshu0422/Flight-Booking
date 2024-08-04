@@ -1,23 +1,21 @@
 'use strict';
-const {
-  Model
-} = require('sequelize');
-module.exports = (sequelize, DataTypes) => {
+const { Model, DataTypes } = require('sequelize');
+
+module.exports = (sequelize) => {
   class Booking extends Model {
-    /**
-     * Helper method for defining associations.
-     * This method is not a part of Sequelize lifecycle.
-     * The `models/index` file will call this method automatically.
-     */
     static associate(models) {
-      // define association here
       this.belongsTo(models.BookedFlights, {
         as: 'bookedFlight',
         foreignKey: 'bookedFlightId',
         targetKey: 'id'
       });
+      this.hasMany(models.Passenger, {
+        as: 'passengers',
+        foreignKey: 'bookingId',
+      });
     }
   }
+
   Booking.init({
     flightId: {
       type: DataTypes.INTEGER,
@@ -51,5 +49,6 @@ module.exports = (sequelize, DataTypes) => {
     sequelize,
     modelName: 'Booking',
   });
+
   return Booking;
 };

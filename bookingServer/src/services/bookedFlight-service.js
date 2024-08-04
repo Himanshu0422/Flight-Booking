@@ -21,7 +21,6 @@ class BookedFlightService {
       if (bookedFlight) {
         const noOfSeats = data.noOfSeats;
         bookedFlight.noOfSeats += noOfSeats;
-
         bookedFlight = await bookedFlight.save();
       } else {
         bookedFlight = await this.bookedFlightRepository.create(data);
