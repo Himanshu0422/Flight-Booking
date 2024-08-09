@@ -21,7 +21,7 @@ module.exports = {
         type: Sequelize.ENUM,
         allowNull: false,
         defaultValue: 'InProcess',
-        values: ['InProcess', 'Booked', 'Cancelled']
+        values: ['InProcess', 'Booked', 'Cancelled', 'Rejected'],
       },
       bookedSeats: {
         type: Sequelize.INTEGER,
