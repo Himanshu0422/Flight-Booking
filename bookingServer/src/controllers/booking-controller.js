@@ -1,6 +1,8 @@
 const { StatusCodes } = require('http-status-codes');
 const BookingService = require('../services/booking-service');
 const BookedFlightController = require('./bookedFlight-controller');
+const { scheduleBookingStatusUpdate } = require('../services/scheduler');
+const {Booking} = require('../models/index');
 
 const bookingService = new BookingService();
 const bookedFlightController = new BookedFlightController();
@@ -17,16 +19,15 @@ class BookingController {
                 noOfSeats: req.body.bookingData.bookedSeats
             };
             const bookedFlight = await bookedFlightController.create(bookingData);
-            console.log(bookedFlight, 'bookedFlight');
 
             bookingData = {
                 ...req.body.bookingData,
                 bookedFlightId: bookedFlight.id
             };
             const passengersData = req.body.passengersData;
-            console.log(bookingData, passengersData);
 
             const response = await bookingService.createBooking(bookingData, passengersData);
+            scheduleBookingStatusUpdate(response.booking.id, response.booking.createdAt)
 
             return res.status(StatusCodes.OK).json({
                 message: 'Successfully completed booking',
