@@ -1,25 +1,34 @@
-import { createSlice, PayloadAction } from '@reduxjs/toolkit';
+import { createSlice } from "@reduxjs/toolkit";
+import { isPending, isFulfilled, isRejected } from '@reduxjs/toolkit';
+import { getAirportId, getAllAirports } from "./airports/airportAction";
+import { getFlight, getFlightsData } from "./flights/flightsAction";
 
-interface loadingState {
-  loading: boolean
+interface LoadingState {
+  loading: boolean;
 }
 
-const initialState: loadingState = {
-  loading: false
+const initialState: LoadingState = {
+  loading: false,
 };
 
 const loadingSlice = createSlice({
-  name: 'loading',
+  name: "loading",
   initialState,
-  reducers: {
-    setLoading: (state, action: PayloadAction<boolean>) => {
-      state.loading = action.payload;
-    },
+  reducers: {},
+  extraReducers: (builder) => {
+    builder
+      .addMatcher(isPending(getAirportId, getAllAirports, getFlight, getFlightsData), (state) => {
+        state.loading = true;
+      })
+      .addMatcher(isFulfilled(getAirportId, getAllAirports, getFlight, getFlightsData), (state) => {
+        state.loading = false;
+      })
+      .addMatcher(isRejected(getAirportId, getAllAirports, getFlight, getFlightsData), (state) => {
+        state.loading = false;
+      });
   },
 });
 
-export const {
-  setLoading,
-} = loadingSlice.actions;
+const loadingReducer = loadingSlice.reducer
 
-export default loadingSlice.reducer;
+export default loadingReducer;
