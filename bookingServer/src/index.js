@@ -1,6 +1,7 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const colors = require('colors')
+const colors = require('colors');
+const cors = require('cors')
 const app = express();
 
 const { PORT } = require('./config/serverConfig');
@@ -8,7 +9,12 @@ const db = require('./models/index');
 const apiRoutes = require('./routes/index');
 
 const setupAndStartServer = () => {
-
+  app.use(
+    cors({
+      origin: "http://localhost:3000",
+      credentials: true,
+    })
+  );
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({ extended: true }));
 
