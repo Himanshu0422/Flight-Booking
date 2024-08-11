@@ -70,6 +70,11 @@ module.exports = (sequelize, DataTypes) => {
 			type: DataTypes.JSON,
 			allowNull: false,
 			defaultValue: []
+		},
+		isInternational: {
+			type: DataTypes.BOOLEAN,
+			allowNull: false,
+			defaultValue: false
 		}
 	}, {
 		sequelize,

@@ -38,9 +38,23 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: false
       },
-      availableSeats: {
+      flightTime: {
+        type: Sequelize.STRING,
+        allowNull: false
+      },
+      nextDay: {
         type: Sequelize.INTEGER,
         allowNull: false
+      },
+      operatingDays: {
+        type: Sequelize.JSON,
+        allowNull: false,
+        defaultValue: []
+      },
+      isInternational: {
+        type: Sequelize.BOOLEAN,
+        allowNull: false,
+        defaultValue: false
       },
       createdAt: {
         allowNull: false,

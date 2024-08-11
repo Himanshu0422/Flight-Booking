@@ -42,7 +42,28 @@ const get = async (req, res) => {
     }
 }
 
+const getAll = async (req, res) => {
+    try {
+        const response = await airportService.getAll();
+        return res.status(200).json({
+            message: 'Successfully fetched the airport',
+            err: {},
+            data: response,
+            success: true
+        })
+    } catch (error) {
+        console.log(error);
+        return res.status(500).json({
+            data: {},
+            success: false,
+            err: error,
+            message: 'Cannot find the airport'
+        })
+    }
+}
+
 module.exports = {
     create,
-    get
+    get,
+    getAll
 }

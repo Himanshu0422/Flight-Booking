@@ -108,7 +108,7 @@ class FlightRepository {
 						attributes: ['name', 'city']
 					}
 				],
-				attributes: ['id', 'flightNumber', 'departureTime', 'arrivalTime', 'price', 'flightTime', 'nextDay']
+				attributes: ['id', 'flightNumber', 'departureTime', 'arrivalTime', 'price', 'flightTime', 'nextDay', 'isInternational']
 			});
 			return flight;
 		} catch (error) {
@@ -143,7 +143,7 @@ class FlightRepository {
 					}
 				],
 				order: [['departureTime', 'ASC']],
-				attributes: ['id', 'flightNumber', 'departureTime', 'arrivalTime', 'price', 'flightTime', 'nextDay'],
+				attributes: ['id', 'flightNumber', 'departureTime', 'arrivalTime', 'price', 'flightTime', 'nextDay', 'isInternational'],
 				limit: pageSize,
 				offset: offset
 			});

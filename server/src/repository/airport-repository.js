@@ -20,6 +20,16 @@ class AirportRepository{
             throw {error};
         }
     }
+
+    async getAll(){
+        try {
+            const airport = await Airport.findAll();
+            return airport;
+        } catch (error) {
+            console.log('Something went wrong in repository layer');
+            throw {error};
+        }
+    }
 }
 
 module.exports = AirportRepository;

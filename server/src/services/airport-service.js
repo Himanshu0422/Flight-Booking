@@ -22,6 +22,16 @@ class AirportService{
             throw {error};
         }
     }
+
+    async getAll(){
+        try {
+            const response = await airportRepository.getAll();
+            return response;
+        } catch (error) {
+            console.log('Something went wrong in service layer');
+            throw {error};
+        }
+    }
 }
 
 module.exports = AirportService;
