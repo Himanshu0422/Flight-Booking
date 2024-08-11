@@ -23,6 +23,7 @@ export interface Flight {
   price: number;
   nextDay: number;
   flightTime: string;
+  isInternational: boolean
 }
 
 
@@ -37,7 +38,7 @@ interface FlightState {
   filterTime: Dayjs | null;
   isDeparture: boolean
   maxPrice: number,
-  minPrice: number
+  minPrice: number,
 }
 
 const initialState: FlightState = {
@@ -98,7 +99,7 @@ const flightSlice = createSlice({
   extraReducers: (builder) => {
     builder.addCase(getFlightsData.fulfilled, (state, action) => {
       if (action.payload.type === "Departure") {
-        if(action.payload.page == 1){
+        if(action.payload.page === 1){
           state.departureFlight = action.payload.data
         }else {
           state.departureFlight = [...state.departureFlight, ...action.payload.data];
@@ -107,7 +108,7 @@ const flightSlice = createSlice({
         state.totalDeparturePages = action.payload.totalPages
         state.departurePage = action.payload.page
       } else if (action.payload.type === "Return") {
-        if(action.payload.page == 1){
+        if(action.payload.page === 1){
           state.returnFlight = action.payload.data
         }else {
           state.returnFlight = [...state.returnFlight,  ...action.payload.data];

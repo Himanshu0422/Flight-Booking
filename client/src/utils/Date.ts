@@ -9,6 +9,10 @@ export function getDate(data?: dayjs.Dayjs | Date | string | number | null): str
 	return today;
 }
 
+export const formatDate = (date: dayjs.Dayjs | null) => {
+	return date ? dayjs(date).format('YYYY-MM-DD') : '';
+};
+
 export function getDay(data?: dayjs.Dayjs | Date | string | number | null): string {
 	if (data) {
 		return dayjs(data).format('dddd');

@@ -43,3 +43,17 @@ export const getFlightsData = createAsyncThunk(
     }
   }
 );
+
+export const getFlight = createAsyncThunk(
+  'flights:id',
+  async (id: string, thunkApi: any) => {
+    try {
+      const response = await flights.getFlight(id);
+      return {
+        data: response.data.data
+      }
+    } catch (error) {
+      return thunkApi.rejectWithValue(error as SerializedError);
+    }
+  }
+)

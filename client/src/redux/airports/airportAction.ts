@@ -1,4 +1,5 @@
 import { createAsyncThunk, SerializedError } from "@reduxjs/toolkit";
+import airport from "../../api/services/airport";
 import flights from "../../api/services/flights";
 
 export const getAirportId = createAsyncThunk(
@@ -16,3 +17,18 @@ export const getAirportId = createAsyncThunk(
     }
   }
 );
+
+export const getAllAirports = createAsyncThunk(
+  "/getAllAirports",
+  async (
+    _, thunkApi
+  ) => {
+    try {
+      const response = await airport.getAllAirports();
+      return response.data.data
+    } catch (error) {
+      console.log(error);
+      return thunkApi.rejectWithValue(error as SerializedError);
+    }
+  }
+)

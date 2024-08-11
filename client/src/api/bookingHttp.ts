@@ -1,9 +1,9 @@
-import { instance } from "./instance"
+import { bookingInstance } from "./instance"
 
 
-export const http = {
+export const bookingHttp = {
   get: (url: string, params?: any, headers?: string) =>
-    instance({
+    bookingInstance({
       method: 'GET',
       url,
       params: params || undefined,
@@ -13,7 +13,7 @@ export const http = {
       transformResponse: [data => JSON.parse(data)],
     }),
   post: (url: string, payload: any = {}, headers?: string) =>
-    instance({
+    bookingInstance({
       method: 'POST',
       url,
       data: payload,
@@ -24,7 +24,7 @@ export const http = {
     }),
   put: (url: string, params: any = {}, headers?: string) => {
     console.log('PUT', url, ' :: ', headers, ' :: ', params);
-    return instance({
+    return bookingInstance({
       method: 'PUT',
       url,
       headers: {
@@ -35,7 +35,7 @@ export const http = {
     });
   },
   patch: (url: string, params: any = {}, headers?: string) =>
-    instance({
+    bookingInstance({
       method: 'PATCH',
       url,
       data: params,
@@ -48,13 +48,13 @@ export const http = {
             return JSON.parse(data);
           } catch (error) {
             console.error('Error parsing JSON:', error);
-            return null; // or handle the error in a different way
+            return null;
           }
         },
       ],
     }),
   delete: (url: string, params: any = {}, headers?: string) =>
-    instance({
+    bookingInstance({
       method: 'DELETE',
       url,
       data: params,

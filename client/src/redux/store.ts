@@ -1,13 +1,19 @@
 import { configureStore, combineReducers } from '@reduxjs/toolkit';
 import flightReducer from './flights/flightSlice';
 import searchReducer from './searchSlice';
+import singleFlightReducer from './flights/singleFlightSlice';
+import passengerReducer from './passengers/passengerReducer';
+import airportReducer from './airports/airportSlice';
 import loadingReducer from './loadingSlice';
 
 // Define the root reducer and its type
 const rootReducer = combineReducers({
   flight: flightReducer,
   search: searchReducer,
-  loading: loadingReducer,
+  singleFlight: singleFlightReducer,
+  passengers: passengerReducer,
+  airport: airportReducer,
+  loading: loadingReducer
 });
 
 export type RootState = ReturnType<typeof rootReducer>;
