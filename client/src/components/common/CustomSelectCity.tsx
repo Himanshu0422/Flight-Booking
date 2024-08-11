@@ -4,7 +4,7 @@ import { Airplane } from "../../redux/airports/airportSlice";
 
 interface CustomSelectCityProps {
   value: string | null;
-  onChange: any; // Adjusted to accept only HTMLSelectElement events
+  onChange: any;
   options: Airplane[];
 }
 
