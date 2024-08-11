@@ -96,6 +96,12 @@ export default function PriceFilterModal({
     fetchMoreFlights(isDeparture ? "Departure" : "Return");
   };
 
+  const resetFilter = () => {
+    setValue([2000, 50000])
+    dispatch(setMinPrice(2000));
+    dispatch(setMaxPrice(50000));
+  }
+
   return (
     <Dialog open={priceFilter} onClose={handleClose}>
       <DialogTitle>Adjust Price Range</DialogTitle>
@@ -117,6 +123,7 @@ export default function PriceFilterModal({
         </Box>
       </DialogContent>
       <DialogActions>
+        <Button onClick={resetFilter}>Reset</Button>
         <Button onClick={handleClose}>Cancel</Button>
         <Button onClick={applyFilter}>Apply</Button>
       </DialogActions>

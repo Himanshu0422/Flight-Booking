@@ -6,7 +6,7 @@ import { getFlightsData } from "../redux/flights/flightsAction";
 import { setFilterTime, setMaxPrice, setMinPrice } from "../redux/flights/flightSlice";
 import { setArrivalCity, setDepartureCity, setDepartureDate, setPassenger, setReturnDate } from "../redux/searchSlice";
 import { AppDispatch } from "../redux/store";
-import { getCurrentTime, getDate } from "../utils/Date";
+import { getCurrentTime, getDate, getTime } from "../utils/Date";
 
 interface SearchParams {
   departureCity: string;
@@ -14,6 +14,9 @@ interface SearchParams {
   departureDate: Dayjs;
   returnDate: Dayjs | null;
   passenger: number;
+  filterTime?: Dayjs | null;
+  maxPrice?: number,
+  minPrice?: number,
 }
 
 const useSearchFlights = () => {
@@ -21,8 +24,8 @@ const useSearchFlights = () => {
 
   const searchFlights = async (searchParams: SearchParams) => {
     try {
-      const { departureCity, arrivalCity, departureDate, returnDate, passenger } = searchParams;
-
+      const { departureCity, arrivalCity, departureDate, returnDate, passenger, filterTime, maxPrice, minPrice } = searchParams;
+      
       if (!departureCity || !arrivalCity) {
         return toast.error("Select the cities to search for flights");
       }
@@ -47,9 +50,9 @@ const useSearchFlights = () => {
       dispatch(setDepartureDate(departureDate));
       dispatch(setReturnDate(returnDate ? returnDate : null));
       dispatch(setPassenger(passenger));
-      dispatch(setMinPrice(2000));
-      dispatch(setMaxPrice(50000));
-      dispatch(setFilterTime(null));
+      dispatch(setMinPrice(minPrice ? minPrice : 2000));
+      dispatch(setMaxPrice(maxPrice ? maxPrice : 50000));
+      dispatch(setFilterTime(filterTime ? filterTime: null));
 
       const departureCityDetails = await dispatch(getAirportId({ city: departureCity }));
       const arrivalCityDetails = await dispatch(getAirportId({ city: arrivalCity }));
@@ -67,7 +70,9 @@ const useSearchFlights = () => {
           departureAirportId,
           arrivalAirportId,
           date: departureDate,
-          time: time1,
+          time: filterTime ? getTime(filterTime) : time1,
+          minPrice: minPrice ? minPrice : 2000,
+          maxPrice: maxPrice ? maxPrice : 50000,
           type: "Departure",
           page: 1,
         })
@@ -79,7 +84,9 @@ const useSearchFlights = () => {
             departureAirportId: arrivalAirportId,
             arrivalAirportId: departureAirportId,
             date: returnDate,
-            time: time2,
+            time: filterTime ? getTime(filterTime) : time2,
+            minPrice: minPrice ? minPrice : 2000,
+            maxPrice: maxPrice ? maxPrice : 50000,
             type: "Return",
             page: 1,
           })

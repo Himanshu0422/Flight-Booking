@@ -1,5 +1,7 @@
+import { Dayjs } from "dayjs";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
+import useSearchFlights from "../../hooks/useSearchFlight";
 import { getAirportId } from "../../redux/airports/airportAction";
 import {
   Flight,
@@ -21,10 +23,15 @@ const FlightSection = () => {
     returnPage,
     totalDeparturePages,
     totalReturnPages,
-    isDeparture
+    isDeparture,
+    filterTime,
+    maxPrice,
+    minPrice
   } = useSelector((state: RootState) => state.flight);
 
-  const { departureCity, arrivalCity, departureDate, returnDate } =
+  const searchFlights = useSearchFlights();
+
+  const { departureCity, arrivalCity, departureDate, returnDate, passenger } =
     useSelector((state: RootState) => state.search);
 
   const fetchMoreFlights = async (type: "Departure" | "Return") => {
@@ -75,6 +82,22 @@ const FlightSection = () => {
     fetchMoreFlights(isDeparture ? "Departure" : "Return");
   };
 
+  const handleToggle = () => {
+    dispatch(setisDeparture(!isDeparture));
+    const searchParams = {
+      departureCity: departureCity,
+      arrivalCity: arrivalCity,
+      departureDate: departureDate,
+      returnDate: returnDate,
+      passenger: passenger,
+      filterTime: filterTime,
+      maxPrice: maxPrice,
+      minPrice: minPrice
+    }
+
+    searchFlights(searchParams);
+  }
+
   const flightsArray = isDeparture ? departureFlight : returnFlight;
   const isFlightsEmpty = flightsArray.length === 0;
 
@@ -87,7 +110,7 @@ const FlightSection = () => {
               className={`py-2 px-6 rounded-full cursor-pointer ${
                 isDeparture ? "bg-orange-400 text-gray-100" : "text-gray-700"
               }`}
-              onClick={() => dispatch(setisDeparture(true))}
+              onClick={() => handleToggle()}
             >
               Departure
             </div>
@@ -95,7 +118,7 @@ const FlightSection = () => {
               className={`py-2 px-6 rounded-full cursor-pointer ${
                 !isDeparture ? "bg-orange-400 text-gray-100" : "text-gray-700"
               }`}
-              onClick={() => dispatch(setisDeparture(false))}
+              onClick={() => handleToggle()}
             >
               Return
             </div>

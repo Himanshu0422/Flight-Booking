@@ -81,6 +81,10 @@ export default function TimePickerModal({
     }
   };
 
+  const handleReset = () => {
+    dispatch(setFilterTime(null));
+  };
+
   return (
     <Dialog open={timeFilter} onClose={handleClose}>
       <DialogTitle>Select Time</DialogTitle>
@@ -101,6 +105,9 @@ export default function TimePickerModal({
         </LocalizationProvider>
       </DialogContent>
       <DialogActions>
+        <Button onClick={handleReset} color="primary">
+          Reset
+        </Button>
         <Button onClick={handleClose} color="primary">
           Cancel
         </Button>
