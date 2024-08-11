@@ -3,7 +3,7 @@ import { DatePicker, LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from "@mui/x-date-pickers/AdapterDayjs";
 import React from 'react';
 
-const DatePickerModal = ({ open, handleClose, selectedDate, handleDateChange, title, minDate } : any) => {
+const DatePickerModal = ({ open, handleClose, selectedDate, handleDateChange, title, minDate, maxDate } : any) => {
   return (
     <Dialog open={open} onClose={handleClose}>
       <DialogTitle>{title}</DialogTitle>
@@ -15,6 +15,7 @@ const DatePickerModal = ({ open, handleClose, selectedDate, handleDateChange, ti
             onChange={handleDateChange}
             minDate={minDate}
             format="DD MMMM YYYY"
+            maxDate={maxDate}
           />
         </LocalizationProvider>
       </DialogContent>

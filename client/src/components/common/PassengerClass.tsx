@@ -53,7 +53,7 @@ const PassengerClass: React.FC<PassengerClassProps> = ({
                 key={i + 1}
                 onClick={() => setSelectedPassenger(i + 1)}
               >
-                {i == 9 ? '>9' : i + 1}
+                {i === 9 ? '>9' : i + 1}
               </div>
             ))}
           </div>

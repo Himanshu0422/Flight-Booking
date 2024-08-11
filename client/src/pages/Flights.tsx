@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React from 'react';
 import Filter from '../components/FlightsPage/Filter';
 import FlightSection from '../components/FlightsPage/FlightSection';
 import FlightsCount from '../components/FlightsPage/FlightsCount';

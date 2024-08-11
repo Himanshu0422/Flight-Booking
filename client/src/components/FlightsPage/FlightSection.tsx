@@ -1,7 +1,8 @@
-import React, { useState } from "react";
+import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAirportId } from "../../redux/airports/airportAction";
 import {
+  Flight,
   increaseDeparturePage,
   increaseReturnPage,
   setisDeparture,
@@ -10,7 +11,6 @@ import { getFlightsData } from "../../redux/flights/flightsAction";
 import { AppDispatch, RootState } from "../../redux/store";
 import { getCurrentTime, getDate } from "../../utils/Date";
 import FlightCard from "./components/FlightCard";
-import { ClipLoader } from "react-spinners";
 
 const FlightSection = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -24,13 +24,10 @@ const FlightSection = () => {
     isDeparture
   } = useSelector((state: RootState) => state.flight);
 
-  const [loading, setLoading] = useState(false);
-
-  const { departureCity, arrivalCity, departureDate, returnDate, passenger } =
+  const { departureCity, arrivalCity, departureDate, returnDate } =
     useSelector((state: RootState) => state.search);
 
   const fetchMoreFlights = async (type: "Departure" | "Return") => {
-    setLoading(true);
     try {
       const departureCityDetails = await dispatch(
         getAirportId({ city: departureCity })
@@ -69,7 +66,6 @@ const FlightSection = () => {
       } else {
         dispatch(increaseReturnPage());
       }
-      setLoading(false);
     } catch (error) {
       console.error("Error fetching more flights:", error);
     }
@@ -78,6 +74,9 @@ const FlightSection = () => {
   const handleViewMore = () => {
     fetchMoreFlights(isDeparture ? "Departure" : "Return");
   };
+
+  const flightsArray = isDeparture ? departureFlight : returnFlight;
+  const isFlightsEmpty = flightsArray.length === 0;
 
   return (
     <>
@@ -104,9 +103,13 @@ const FlightSection = () => {
         </div>
       )}
       <div className="flex flex-col items-center gap-10 mx-10">
-        {(isDeparture ? departureFlight : returnFlight)?.map((item, index) => (
-          <FlightCard key={index} flight={item} isDeparture={isDeparture} />
-        ))}
+        {isFlightsEmpty ? (
+          <div className="text-gray-500 text-lg">No flights available</div>
+        ) : (
+          flightsArray.map((item: Flight, index: number) => (
+            <FlightCard key={index} flight={item} isDeparture={isDeparture} />
+          ))
+        )}
         <div className="h-6" />
       </div>
       {(isDeparture
@@ -119,11 +122,6 @@ const FlightSection = () => {
           <div className="bg-white w-max py-2 px-4 rounded-full shadow-lg text-blue-500">
             View more
           </div>
-        </div>
-      )}
-      {loading && (
-        <div className="flex justify-center mb-8">
-          <ClipLoader color="#24efbf" />
         </div>
       )}
     </>

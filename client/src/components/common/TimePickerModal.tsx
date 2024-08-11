@@ -12,12 +12,11 @@ import { TimePicker } from "@mui/x-date-pickers/TimePicker";
 import { renderTimeViewClock } from "@mui/x-date-pickers/timeViewRenderers";
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { setFilterTime } from "../../redux/flights/flightSlice";
-import { AppDispatch, RootState } from "../../redux/store";
-import { setLoading } from "../../redux/loadingSlice";
-import { getCurrentTime, getDate, getTime } from "../../utils/Date";
 import { getAirportId } from "../../redux/airports/airportAction";
 import { getFlightsData } from "../../redux/flights/flightsAction";
+import { setFilterTime } from "../../redux/flights/flightSlice";
+import { AppDispatch, RootState } from "../../redux/store";
+import { getTime } from "../../utils/Date";
 
 export default function TimePickerModal({
   timeFilter,
@@ -30,7 +29,7 @@ export default function TimePickerModal({
   const { filterTime, isDeparture, minPrice, maxPrice } = useSelector(
     (state: RootState) => state.flight
   );
-  const { departureCity, arrivalCity, departureDate, returnDate, passenger } =
+  const { departureCity, arrivalCity, departureDate, returnDate } =
     useSelector((state: RootState) => state.search);
 
   const handleClose = () => {
@@ -42,7 +41,6 @@ export default function TimePickerModal({
   };
 
   const fetchMoreFlights = async (type: "Departure" | "Return") => {
-    dispatch(setLoading(true));
     try {
       const departureCityDetails = await dispatch(
         getAirportId({ city: departureCity })
@@ -69,9 +67,7 @@ export default function TimePickerModal({
 
       await dispatch(getFlightsData(flightParams));
 
-      dispatch(setLoading(false));
     } catch (error) {
-      dispatch(setLoading(false));
       console.error("Error fetching more flights:", error);
     }
   };

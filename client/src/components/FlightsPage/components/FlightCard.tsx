@@ -1,6 +1,7 @@
-import React, { useEffect, useState } from "react";
+import React from "react";
 import { GiAirplaneDeparture } from "react-icons/gi";
 import { useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import { Flight } from "../../../redux/flights/flightSlice";
 import { RootState } from "../../../redux/store";
 import { convertTo12HourFormat, getDay } from "../../../utils/Date";
@@ -18,6 +19,7 @@ const FlightCard: React.FC<FlightCardProps> = ({ flight, isDeparture }) => {
     flight.arrivalTime
   );
 
+  const navigate = useNavigate();
   const { departureDate, returnDate } = useSelector((state: RootState) => state.search);
   const flightDate = isDeparture ? departureDate : returnDate;
 
@@ -42,7 +44,7 @@ const FlightCard: React.FC<FlightCardProps> = ({ flight, isDeparture }) => {
       <div className="md:space-y-4 max-md:flex gap-4 justify-end items-center w-full">
         <PriceInfo price={flight.price} currency="Rs" />
         <div>
-          <Button onClick={() => console.log(1)}>Choose Flight</Button>
+          <Button onClick={() => navigate(`/passenger-details/${flight.flightNumber}`)}>Choose Flight</Button>
         </div>
       </div>
     </div>
@@ -77,7 +79,7 @@ const ConnectionDot = ({ time }: { time: string }) => (
       <div className="w-[10px] h-[10px] rounded-full border border-blue-500 max-xs:hidden" />
       <div className="border max-lg:w-[50px] w-[100px] border-dashed h-[0] max-xs:hidden" />
       <div>
-        <div className="bg-whitem text-blue-500 border border-blue-500 rounded-full text-lg p-2 flex justify-center items-center">
+        <div className="text-blue-500 border border-blue-500 rounded-full text-lg p-2 flex justify-center items-center">
           <GiAirplaneDeparture />
         </div>
       </div>

@@ -6,12 +6,11 @@ import DialogContent from "@mui/material/DialogContent";
 import DialogTitle from "@mui/material/DialogTitle";
 import Slider from "@mui/material/Slider";
 import Typography from "@mui/material/Typography";
-import React, { useEffect } from "react";
+import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { getAirportId } from "../../redux/airports/airportAction";
 import { getFlightsData } from "../../redux/flights/flightsAction";
 import { setMaxPrice, setMinPrice } from "../../redux/flights/flightSlice";
-import { setLoading } from "../../redux/loadingSlice";
 import { AppDispatch, RootState } from "../../redux/store";
 import { getCurrentTime, getDate, getTime } from "../../utils/Date";
 
@@ -27,7 +26,7 @@ export default function PriceFilterModal({
   setPriceFilter: React.Dispatch<React.SetStateAction<boolean>>;
 }) {
   const dispatch = useDispatch<AppDispatch>();
-  const { departureCity, arrivalCity, departureDate, returnDate, passenger } =
+  const { departureCity, arrivalCity, departureDate, returnDate } =
     useSelector((state: RootState) => state.search);
   const { isDeparture, filterTime, minPrice, maxPrice } = useSelector(
     (state: RootState) => state.flight
@@ -46,7 +45,6 @@ export default function PriceFilterModal({
   };
 
   const fetchMoreFlights = async (type: "Departure" | "Return") => {
-    dispatch(setLoading(true));
     try {
       const departureCityDetails = await dispatch(
         getAirportId({ city: departureCity })
@@ -86,9 +84,7 @@ export default function PriceFilterModal({
 
       await dispatch(getFlightsData(flightParams));
 
-      dispatch(setLoading(false));
     } catch (error) {
-      dispatch(setLoading(false));
       console.error("Error fetching more flights:", error);
     }
   };
