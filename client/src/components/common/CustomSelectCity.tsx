@@ -1,10 +1,11 @@
 import React, { useState, useRef, useEffect, ChangeEvent } from "react";
 import { GiAirplaneDeparture } from "react-icons/gi";
+import { Airplane } from "../../redux/airports/airportSlice";
 
 interface CustomSelectCityProps {
   value: string | null;
   onChange: any; // Adjusted to accept only HTMLSelectElement events
-  options: string[];
+  options: Airplane[];
 }
 
 const CustomSelectCity: React.FC<CustomSelectCityProps> = ({
@@ -25,7 +26,7 @@ const CustomSelectCity: React.FC<CustomSelectCityProps> = ({
   };
 
   const filteredOptions = options.filter((option) =>
-    option.toLowerCase().includes(searchTerm.toLowerCase())
+    option.city.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
   const handleCityClick = (city: string) => {
@@ -77,13 +78,13 @@ const CustomSelectCity: React.FC<CustomSelectCityProps> = ({
               <div
                 key={index}
                 className="px-4 py-2 hover:bg-gray-100 cursor-pointer border flex items-center"
-                onClick={() => handleCityClick(option)}
+                onClick={() => handleCityClick(option.city)}
               >
                 <div className="mr-2">
                   <GiAirplaneDeparture />
                 </div>
                 <div>
-                  <div className="text-sm">{option}</div>
+                  <div className="text-sm">{option.city}</div>
                 </div>
               </div>
             ))}

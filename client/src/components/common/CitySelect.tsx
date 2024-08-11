@@ -1,6 +1,8 @@
 import React from "react";
 import { GiAirplaneArrival, GiAirplaneDeparture } from "react-icons/gi";
 import { GoArrowSwitch } from "react-icons/go";
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/store";
 import CustomSelectCity from "./CustomSelectCity";
 
 interface CitySelectProps {
@@ -9,8 +11,6 @@ interface CitySelectProps {
   arrivalCity: string | null;
   setArrivalCity: (city: string) => void;
 }
-
-const cities = ["Chandigarh,India", "Delhi,India", "Bengaluru,India"];
 
 const CitySelect: React.FC<CitySelectProps> = ({
   departureCity,
@@ -28,6 +28,8 @@ const CitySelect: React.FC<CitySelectProps> = ({
     setArrivalCity(event.target.value);
   };
 
+  const {airports} = useSelector((state:RootState) => state.airport)
+
   return (
     <div className="flex flex-1 h-full max-sm:flex-col justify-around items-center gap-5 border p-3 rounded-xl">
       <div className="flex gap-3 items-center">
@@ -39,7 +41,7 @@ const CitySelect: React.FC<CitySelectProps> = ({
           <CustomSelectCity
             value={departureCity}
             onChange={handleDepartureChange}
-            options={cities}
+            options={airports}
           />
         </div>
       </div>
@@ -55,7 +57,7 @@ const CitySelect: React.FC<CitySelectProps> = ({
           <CustomSelectCity
             value={arrivalCity}
             onChange={handleArrivalChange}
-            options={cities}
+            options={airports}
           />
         </div>
       </div>
