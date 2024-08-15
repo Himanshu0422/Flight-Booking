@@ -19,12 +19,12 @@ const CitySelect: React.FC<CitySelectProps> = ({
   setArrivalCity,
 }) => {
   const handleDepartureChange = (
-    event: React.ChangeEvent<HTMLSelectElement>
+    event: React.ChangeEvent<HTMLInputElement>
   ) => {
     setDepartureCity(event.target.value);
   };
 
-  const handleArrivalChange = (event: React.ChangeEvent<HTMLSelectElement>) => {
+  const handleArrivalChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setArrivalCity(event.target.value);
   };
 
