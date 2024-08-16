@@ -4,6 +4,7 @@ import searchReducer from './searchSlice';
 import singleFlightReducer from './flights/singleFlightSlice';
 import passengerReducer from './passengers/passengerReducer';
 import airportReducer from './airports/airportSlice';
+import userReducer from './user/userSlice';
 import loadingReducer from './loadingSlice';
 
 // Define the root reducer and its type
@@ -13,7 +14,8 @@ const rootReducer = combineReducers({
   singleFlight: singleFlightReducer,
   passengers: passengerReducer,
   airport: airportReducer,
-  loading: loadingReducer
+  user: userReducer,
+  loading: loadingReducer,
 });
 
 export type RootState = ReturnType<typeof rootReducer>;

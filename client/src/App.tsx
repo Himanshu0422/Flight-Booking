@@ -13,6 +13,10 @@ import Flights from "./pages/Flights";
 import Home from "./pages/Home";
 import PassengerDetails from "./pages/PassengerDetails";
 import Signup from "./pages/Signup";
+import VerifyOTP from "./pages/VerifyOtp";
+import GoogleAuthCallback from "./pages/GoogleAuthCallback";
+import ProtectedRoute from "./components/common/ProtectedRoute";
+import OpenRoute from "./components/common/OpenRoute";
 
 const theme = createTheme({});
 
@@ -22,7 +26,30 @@ const App: React.FC = () => {
       <Toaster position="top-center" reverseOrder={false} />
       <Router>
         <Routes>
-          <Route path="/" element={<Signup />} />
+          <Route
+            path="/"
+            element={
+              <OpenRoute>
+                <Signup />
+              </OpenRoute>
+            }
+          />
+          <Route
+            path="/verify-otp"
+            element={
+              <OpenRoute>
+                <VerifyOTP />
+              </OpenRoute>
+            }
+          />
+          <Route
+            path="/auth/google/callback"
+            element={
+              <OpenRoute>
+                <GoogleAuthCallback />
+              </OpenRoute>
+            }
+          />
           <Route
             element={
               <Layout>
@@ -34,7 +61,11 @@ const App: React.FC = () => {
             <Route path="/search-flights" element={<Flights />} />
             <Route
               path="/passenger-details/:flightId"
-              element={<PassengerDetails />}
+              element={
+                <ProtectedRoute>
+                  <PassengerDetails />
+                </ProtectedRoute>
+              }
             />
           </Route>
         </Routes>

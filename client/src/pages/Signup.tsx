@@ -1,11 +1,17 @@
-import React, { useState } from "react";
 import { TextInput } from "@mantine/core";
-import { z } from "zod";
+import React, { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
+import { z } from "zod";
+import { login, signUp } from "../redux/user/userAction";
+import { AppDispatch, RootState } from "../redux/store";
+import { setEmail } from "../redux/user/userSlice";
+import Cookies from "js-cookie";
+import toast from "react-hot-toast";
 
 const Signup = () => {
-
   const navigate = useNavigate();
+  const dispatch = useDispatch<AppDispatch>();
 
   const [isLogin, setIsLogin] = useState(true);
   const [emailError, setEmailError] = useState<string | null>(null);
@@ -20,6 +26,8 @@ const Signup = () => {
     setIsLogin((prevMode) => !prevMode);
   };
 
+  const emailSchema = z.string().email('Please enter a valid email address.');
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     if (name === 'email') {
@@ -33,7 +41,62 @@ const Signup = () => {
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
-  const emailSchema = z.string().email('Please enter a valid email address.');
+  const handleLogin = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const payload = {
+      email: formData.email,
+      password: formData.password
+    }
+    try {
+      dispatch(setEmail(formData.email))
+      await dispatch(login(payload)).unwrap();
+      toast.success('Login successfull')
+      navigate('/home')
+    } catch (error:any) {
+      if (error.otpVerified === false) {
+        navigate('/verify-otp');
+      } else {
+        toast.error(error.response.data.message);
+      }
+    }
+  };
+  
+  const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const payload = {
+      name: formData.name,
+      email: formData.email,
+      password: formData.password
+    }
+    try {
+      const res = await dispatch(signUp(payload)).unwrap();
+      toast.success('User created')
+      navigate('/verify-otp');
+    } catch (error:any) {
+      toast.error(error.response.data.message)
+    }
+  };
+
+  async function handleGoogleAuth() {
+    try {
+      const response = await fetch('http://localhost:5000/auth/google/callback', {
+        method: 'POST',
+        credentials: 'include'
+      });
+  
+      const data = await response.json();
+  
+      if (data.success) {
+        Cookies.set('token', data.token, {expires: 7});
+        window.location.href = 'http://localhost:3000/home';
+      } else {
+        console.error(data.message);
+      }
+    } catch (error) {
+      console.error('An error occurred:', error);
+    }
+  }
+  
 
   return (
     <div className="flex h-screen">
@@ -62,7 +125,10 @@ const Signup = () => {
           <h2 className="text-3xl font-semibold mb-6 text-gray-900 text-center w-[90%] sm:w-[65%] mmd:w-[50%] md:w-[80%] lg:w-[60%] llg:w-[50%]">
             {isLogin ? "Welcome Back 👋" : "Create Account 🚀"}
           </h2>
-          <form className="w-[90%] sm:w-[65%] mmd:w-[50%] md:w-[80%] lg:w-[60%] llg:w-[50%]">
+          <form
+            className="w-[90%] sm:w-[65%] mmd:w-[50%] md:w-[80%] lg:w-[70%] llg:w-[55%]"
+            onSubmit={isLogin ? handleLogin : handleSignUp}
+          >
             {!isLogin && (
               <TextInput
                 key="name"
@@ -130,8 +196,7 @@ const Signup = () => {
             <div className="flex items-center justify-center mt-6">
               <button
                 className="bg-[#162D3A] text-white font-medium py-2 px-4 rounded-md w-full focus:outline-none focus:shadow-outline"
-                type="button"
-                onClick={() => navigate('/home')}
+                type="submit"
               >
                 {isLogin ? "Sign in" : "Sign up"}
               </button>
@@ -146,6 +211,10 @@ const Signup = () => {
             <button
               className="text-gray-700 font-medium py-2 px-4 rounded-md flex items-center justify-center bg-[#F7FBFF]"
               type="button"
+              onClick={() => {
+                window.location.href = 'http://localhost:4002/api/v1/google';
+                handleGoogleAuth()
+              }}
             >
               <img
                 src={require('../assets/google.png')}

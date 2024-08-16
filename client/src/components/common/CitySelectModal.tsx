@@ -50,7 +50,7 @@ const CitySelectModal: React.FC<CitySelectModalProps> = ({
           onChange={handleSearchChange}
         />
         <div>
-          {filteredOptions.map((option) => (
+          {filteredOptions.length > 0 ? filteredOptions.map((option) => (
             <div
               key={option.city}
               className="px-4 py-2 hover:bg-gray-100 cursor-pointer border flex items-center"
@@ -63,7 +63,7 @@ const CitySelectModal: React.FC<CitySelectModalProps> = ({
                 <div className="text-sm">{option.city}</div>
               </div>
             </div>
-          ))}
+          )) : <div className="text-sm flex justify-center mt-2">No airport found</div>}
         </div>
       </div>
     </div>

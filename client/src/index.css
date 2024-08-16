@@ -64,3 +64,18 @@
         flex-direction: column;
     }
 }
+
+.otp-container {
+    display: flex;
+    gap: 10px; /* Adjust gap between OTP inputs */
+    justify-content: center;
+  }
+  
+  .otp-input {
+    border-radius: 8px;
+    background-color: #F7FBFF;
+    height: 40px;
+    width: 40px; /* Adjust width if necessary */
+    text-align: center;
+  }
+  
