@@ -23,7 +23,7 @@ const singleFlightSlice = createSlice({
     setSingleFlight: (state: Flight, action: PayloadAction<Flight>) => {
       return action.payload;
     },
-    resetSingleFlight: (state: Flight) => {
+    resetSingleFlight: () => {
       return initialState;
     }
   },

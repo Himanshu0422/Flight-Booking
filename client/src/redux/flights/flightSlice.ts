@@ -94,6 +94,9 @@ const flightSlice = createSlice({
     },
     setMinPrice: (state: FlightState, action: PayloadAction<number>) => {
       state.minPrice = action.payload
+    },
+    resetState: () => {
+      return initialState
     }
   },
   extraReducers: (builder) => {
@@ -136,7 +139,8 @@ export const {
   setFilterTime,
   setisDeparture,
   setMaxPrice,
-  setMinPrice
+  setMinPrice,
+  resetState
 } = flightSlice.actions;
 
 export default flightSlice.reducer;

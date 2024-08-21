@@ -103,7 +103,7 @@ const PassengerCard = ({
           className="w-[45%]"
           readOnly
         />
-        <div className="w-[45%] text-sm">
+        <div className="w-[45%]">
           {requiredLabel("Country Code")}
           <PhoneInput
             defaultCountry="in"

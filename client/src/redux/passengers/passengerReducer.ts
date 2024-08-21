@@ -1,4 +1,4 @@
-import { ADD_PASSENGER, UPDATE_PASSENGER_DETAILS } from './passengerActionTypes';
+import { ADD_PASSENGER, EMPTY_PASSENGERS, UPDATE_PASSENGER_DETAILS } from './passengerActionTypes';
 
 export interface Passenger {
   name?: string;
@@ -7,9 +7,9 @@ export interface Passenger {
   dob?: string;
   gender?: string;
   countryCode?: string;
-  passportNo?:string;
-  passportCountry?:string;
-  passportExpiry?:string
+  passportNo?: string;
+  passportCountry?: string;
+  passportExpiry?: string
 }
 
 interface PassengerState {
@@ -35,6 +35,11 @@ const passengerReducer = (state = initialState, action: any): PassengerState => 
         passengers: state.passengers.map((passenger, i) =>
           i === index ? details : passenger
         ),
+      };
+    case EMPTY_PASSENGERS:
+      return {
+        ...state,
+        passengers: [],
       };
 
     default:

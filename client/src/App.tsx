@@ -8,15 +8,15 @@ import {
   BrowserRouter as Router,
   Routes,
 } from "react-router-dom";
+import OpenRoute from "./components/common/OpenRoute";
+import ProtectedRoute from "./components/common/ProtectedRoute";
 import Layout from "./layout/Layout";
 import Flights from "./pages/Flights";
+import GoogleAuthCallback from "./pages/GoogleAuthCallback";
 import Home from "./pages/Home";
 import PassengerDetails from "./pages/PassengerDetails";
 import Signup from "./pages/Signup";
 import VerifyOTP from "./pages/VerifyOtp";
-import GoogleAuthCallback from "./pages/GoogleAuthCallback";
-import ProtectedRoute from "./components/common/ProtectedRoute";
-import OpenRoute from "./components/common/OpenRoute";
 
 const theme = createTheme({});
 

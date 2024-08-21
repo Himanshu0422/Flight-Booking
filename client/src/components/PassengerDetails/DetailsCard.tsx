@@ -1,5 +1,7 @@
 import { TextInput } from "@mantine/core";
 import React from "react";
+import { useSelector } from "react-redux";
+import { RootState } from "../../redux/store";
 
 const DetailsCard = () => {
 
@@ -9,6 +11,8 @@ const DetailsCard = () => {
     </>
   );
 
+  const user = useSelector((state:RootState) => state.user);
+
   return (
     <div className="bg-white w-[50%] max-lg:w-[70%] max-md:w-[90%] rounded-md">
       <div className="border-b justify-center py-6 flex items-center text-lg font-semibold">
@@ -16,29 +20,23 @@ const DetailsCard = () => {
       </div>
       <div className="flex-wrap flex justify-evenly items-center py-6 gap-y-6 shadow-inner">
         <TextInput
-          label={requiredLabel("Firstname")}
-          value={"Himanshu"}
-          className="w-[45%]"
-          disabled
-        />
-        <TextInput
-          label={requiredLabel("Lastname")}
-          value={"Mittal"}
+          label={requiredLabel("Name")}
+          value={user.name}
           className="w-[45%]"
           disabled
         />
         <TextInput
           label={requiredLabel("Email")}
-          value={"himanshu@gmail.com"}
+          value={user.email}
           className="w-[45%]"
-          disabled
+          disabled={user.email ? true : false}
         />
-        <TextInput
+        {user.phone && <TextInput
           label={requiredLabel("Phone")}
-          value={"273309218"}
+          value={user.phone}
           className="w-[45%]"
-          disabled
-        />
+          disabled={user.phone ? true : false}
+        />}
       </div>
     </div>
   );
