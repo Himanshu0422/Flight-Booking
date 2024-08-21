@@ -67,6 +67,7 @@ const PassengerDetails = () => {
             {
               ...response,
               booking_id: booking_id,
+              email: user.email
             }
           );
           toast.success("Payment successful and booking confirmed");
@@ -105,6 +106,7 @@ const PassengerDetails = () => {
       const payload = {
         bookingData,
         passengersData: passengers,
+        email: user.email
       };
       const res = await dispatch(bookFlight(payload));
       payment(bookingData, res.payload.data.booking.id);

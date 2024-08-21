@@ -1,4 +1,5 @@
 
+const transporter = require("../config/transporter");
 const BookingService = require("../services/booking-service");
 const PaymentService = require("../services/payment-service");
 
@@ -32,11 +33,16 @@ class PaymentController {
 
     async verifyPayment(req, res) {
         try {
-            const { razorpay_order_id, razorpay_payment_id, razorpay_signature, booking_id } = req.body;
+            const { razorpay_order_id, razorpay_payment_id, razorpay_signature, booking_id, email } = req.body;
             const isValidSignature = await PaymentService.verifyPaymentSignature({ razorpay_order_id, razorpay_payment_id, razorpay_signature });
 
             if (isValidSignature) {
                 await PaymentService.updatePaymentStatus(razorpay_order_id, 'successful', req.body);
+                await transporter.sendMail({
+                    to: email,
+                    subject: 'Payment Succesfull',
+                    text: `Your payment is successfull.`
+                });
                 await bookingService.updateBooking(booking_id, 'Booked');
                 res.json({ status: 'Payment verified and booking successful' });
             } else {

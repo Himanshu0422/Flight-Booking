@@ -3,6 +3,7 @@ const BookingService = require('../services/booking-service');
 const BookedFlightController = require('./bookedFlight-controller');
 const { scheduleBookingStatusUpdate } = require('../services/scheduler');
 const {Booking} = require('../models/index');
+const transporter = require('../config/transporter');
 
 const bookingService = new BookingService();
 const bookedFlightController = new BookedFlightController();
@@ -18,6 +19,7 @@ class BookingController {
                 flightId: req.body.bookingData.flightId,
                 noOfSeats: req.body.bookingData.bookedSeats
             };
+            const email = req.body.email;
             const bookedFlight = await bookedFlightController.create(bookingData);
 
             bookingData = {
@@ -28,7 +30,11 @@ class BookingController {
 
             const response = await bookingService.createBooking(bookingData, passengersData);
             scheduleBookingStatusUpdate(response.booking.id, response.booking.createdAt)
-
+            await transporter.sendMail({
+                to: email,
+                subject: 'Booking Succesfull',
+                text: `Your Booking is successfull. Pls complete the payment process within 30 mins do avoid rejection`
+            });
             return res.status(StatusCodes.OK).json({
                 message: 'Successfully completed booking',
                 success: true,

@@ -1,5 +1,6 @@
 const { Booking, Passenger } = require('../models/index');
-const stripe = require('stripe')('sk_test_51OiFmRSEW8Sc5tetbErSxIclWp2XAL9i8CSiFBPNsFGc1vNiJPW8kPyCYsggaY05ENitFyU3mDwJBVDVqDw20TTR00dalMlNOb');
+const { STRIPE_KEY } = require('../config/serverConfig');
+const stripe = require('stripe')(STRIPE_KEY);
 
 class BookingRepository {
     async create(bookingPayload, passengersData) {
@@ -13,7 +14,7 @@ class BookingRepository {
             return { booking, passengers };
         } catch (error) {
             console.log('Failed in repository layer', error);
-            throw {error}
+            throw { error }
         }
     }
 
@@ -27,7 +28,7 @@ class BookingRepository {
             return booking;
         } catch (error) {
             console.log('Failed in repository layer', error);
-            throw {error}
+            throw { error }
         }
     }
 
@@ -43,7 +44,7 @@ class BookingRepository {
             };
         } catch (error) {
             console.log('Failed in repository layer', error);
-            throw {error}
+            throw { error }
         }
     }
 }
