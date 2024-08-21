@@ -95,7 +95,7 @@ class UserRepository {
       await user.save();
       await otpRecord.save();
   
-      const token = jwt.sign({ id: user.id }, JWT_SECRET_KEY, { expiresIn: '1h' });
+      const token = jwt.sign({ id: user.id }, JWT_SECRET_KEY, { expiresIn: '7d' });
   
       return {
         success: true,
@@ -126,7 +126,7 @@ class UserRepository {
         return {success: false, message: 'Otp not verified', otpVerified:false};
       }
 
-      const token = jwt.sign({ id: user.id }, JWT_SECRET_KEY, { expiresIn: '1h' });
+      const token = jwt.sign({ id: user.id }, JWT_SECRET_KEY, { expiresIn: '7d' });
       return {
         user: {
           id: user.id,
@@ -144,7 +144,6 @@ class UserRepository {
 
   async getUser(id){
     try {
-      console.log(id);
       const user = await User.findByPk(id);
       if (!user) return {success: false, message: 'No user found'}
       return {
@@ -163,7 +162,7 @@ class UserRepository {
   }
 
   async googleCallback(req, res){
-    const token = jwt.sign({ id: req.user.id }, JWT_SECRET_KEY, { expiresIn: '1h' });
+    const token = jwt.sign({ id: req.user.id }, JWT_SECRET_KEY, { expiresIn: '7d' });
     res.redirect(`http://localhost:3000/auth/google/callback?token=${token}`);
   }; 
 }

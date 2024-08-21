@@ -45,6 +45,18 @@ class BookingController {
             });
         }
     }
+
+    async createPaymentIntent(req, res) {
+        try {
+            const {amount} = req.body;
+            const response = await bookingService.createPaymentIntent(amount);
+            return res.status(200).json({
+                clientSecret: response.clientSecret
+            })
+        } catch (error) {
+            res.status(500).json({ error: error });
+        }
+    }
 }
 
 module.exports = BookingController;

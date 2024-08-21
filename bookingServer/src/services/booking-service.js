@@ -23,10 +23,31 @@ class BookingService {
             const booking = await this.bookingRepository.create(bookingPayload, passengersData);
             return booking
         } catch (error) { 
-            console.log(error);
+            console.log('Failed in service layer', error);
             if(error.name == 'RepositoryError' || error.name == 'ValidationError') {
                 throw error;
             }
+        }
+    }
+
+    async updateBooking(bookingId, status){
+        try {
+            const updateFlight = await this.bookingRepository.update(bookingId, status);
+        } catch (error) {
+            console.log('Failed in service layer', error);
+            if(error.name == 'RepositoryError' || error.name == 'ValidationError') {
+                throw error;
+            }
+        }
+    }
+
+    async createPaymentIntent(amount) {
+        try {
+            const res = this.bookingRepository.createPaymentIntent(amount);
+            return res;
+        } catch (error) {
+            console.log('Failed in service layer', error);
+            throw error
         }
     }
 }
