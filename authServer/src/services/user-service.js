@@ -16,6 +16,16 @@ class UserService{
     }
   }
 
+  async updateUser(data) {
+    try {
+      const user = await this.userRepository.updateUser(data);
+      return user;
+    } catch (error) {
+      console.log('Something went wrong at service layer');
+      throw { error };
+    }
+  }
+
   async sendOtp(data) {
     try {
       const otp = await this.userRepository.sendOtp(data);

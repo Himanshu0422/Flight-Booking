@@ -37,6 +37,26 @@ class UserRepository {
     }
   }
 
+  async updateUser(data) {
+    const { id, phone } = data;
+    try {
+      const user = await User.findByPk(id);
+      user.phone = phone;
+      await user.save();
+      const token = jwt.sign({ id: user.id }, JWT_SECRET_KEY, { expiresIn: '7d' });
+      return {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+        token
+      };
+    } catch (error) {
+      console.log('Something went wrong in repository layer');
+      throw {error}
+    }
+  }
+
   async sendOtp(data) {
     const { email } = data;
     try {

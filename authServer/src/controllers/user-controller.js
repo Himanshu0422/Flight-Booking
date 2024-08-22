@@ -30,6 +30,26 @@ const createUser = async (req, res) => {
   }
 }
 
+const updateUser = async (req, res) => {
+  try {
+    const user = await userService.updateUser(req.body);
+    return res.status(200).json({
+      data: user,
+      success: true,
+      err: {},
+      message: 'Successfully updated the user'
+    })
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      data: {},
+      success: false,
+      message: 'Not able to update user',
+      err: error
+    });
+  }
+}
+
 const sendOtp = async (req, res) => {
   try {
     const response = await userService.sendOtp(req.body);
@@ -156,6 +176,7 @@ const googleCallback = async (req, res) => {
 
 module.exports = {
   createUser,
+  updateUser,
   sendOtp,
   verifyOtp,
   login,
