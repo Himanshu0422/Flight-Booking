@@ -25,12 +25,17 @@ class BookingController {
             };
             const email = req.body.email;
             const bookedFlight = await bookedFlightController.create(bookingData);
-            const returnBookedFlight = await bookedFlightController.create(returnBookingData);
+            let returnBookedFlight
+            if(returnBookingData.flightId) {
+                returnBookedFlight = await bookedFlightController.create(returnBookingData);
+            }
 
             bookingData = {
                 ...req.body.bookingData,
                 bookedFlightId: bookedFlight.id,
-                returnBookedFlightId : returnBookedFlight.id
+                ...(returnBookingData.flightId && {
+                    returnBookedFlightId : returnBookedFlight.id
+                })
             };
             const passengersData = req.body.passengersData;
 
@@ -51,6 +56,26 @@ class BookingController {
             console.log('Error:', error);
             return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
                 message: 'Failed to complete booking',
+                success: false,
+                err: error.message,
+                data: {}
+            });
+        }
+    }
+
+    async getBookings(req, res){
+        try {
+            const {userId} = req.body;
+            const bookings = await bookingService.getBookings(userId);
+            return res.status(StatusCodes.OK).json({
+                message: 'Successfully fetched bookings',
+                success: true,
+                err: {},
+                data: bookings
+            });
+        } catch (error) {
+            return res.status(StatusCodes.INTERNAL_SERVER_ERROR).json({
+                message: 'Failed to fetch bookings',
                 success: false,
                 err: error.message,
                 data: {}
