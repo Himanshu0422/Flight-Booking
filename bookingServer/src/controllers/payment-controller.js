@@ -14,7 +14,7 @@ class PaymentController {
             const options = {
                 amount: amount * 100,
                 currency: 'INR',
-                receipt: booking_id,
+                receipt: booking_id.toString(),
             };
             const order = await PaymentService.createOrder(options);
             await PaymentService.createPayment({

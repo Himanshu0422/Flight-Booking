@@ -19,12 +19,18 @@ class BookingController {
                 flightId: req.body.bookingData.flightId,
                 noOfSeats: req.body.bookingData.bookedSeats
             };
+            let returnBookingData = {
+                flightId: req.body.bookingData.returnFlightId,
+                noOfSeats: req.body.bookingData.bookedSeats
+            };
             const email = req.body.email;
             const bookedFlight = await bookedFlightController.create(bookingData);
+            const returnBookedFlight = await bookedFlightController.create(returnBookingData);
 
             bookingData = {
                 ...req.body.bookingData,
-                bookedFlightId: bookedFlight.id
+                bookedFlightId: bookedFlight.id,
+                returnBookedFlightId : returnBookedFlight.id
             };
             const passengersData = req.body.passengersData;
 

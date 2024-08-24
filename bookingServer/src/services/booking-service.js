@@ -11,13 +11,18 @@ class BookingService {
     async createBooking(bookingData, passengersData) {
         try {
             const flightId = bookingData.flightId;
+            const returnFlightId = bookingData.returnFlightId
             
             const getFlightRequestURL = `${FLIGHT_SERVICE_PATH}/api/v1/flights/${flightId}`;
+            const getReturnFlightRequestURL = `${FLIGHT_SERVICE_PATH}/api/v1/flights/${returnFlightId}`;
             const response = await axios.get(getFlightRequestURL);
+            const response2 = await axios.get(getReturnFlightRequestURL);
             const flightData = response.data.data;
+            const returnFlightData = response2.data.data;
             
-            let priceOfTheFlight = flightData.price;
-            const totalCost = priceOfTheFlight * bookingData.bookedSeats;
+            let priceOfTheFlight = flightData.price + returnFlightData.price;
+            let totalCost = priceOfTheFlight * bookingData.bookedSeats;
+            totalCost = totalCost + totalCost*0.10;
 
             const bookingPayload = {...bookingData, totalCost};
             const booking = await this.bookingRepository.create(bookingPayload, passengersData);

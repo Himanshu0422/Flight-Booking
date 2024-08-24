@@ -9,9 +9,18 @@ module.exports = (sequelize) => {
         foreignKey: 'bookedFlightId',
         targetKey: 'id'
       });
+      this.belongsTo(models.BookedFlights, {
+        as: 'returnBookedFlight',
+        foreignKey: 'returnBookedFlightId',
+        targetKey: 'id'
+      });
       this.hasMany(models.Passenger, {
         as: 'passengers',
         foreignKey: 'bookingId',
+      });
+      this.hasOne(models.Payments, {
+        as: 'payments',
+        foreignKey: 'booking_id',
       });
     }
   }
@@ -32,6 +41,15 @@ module.exports = (sequelize) => {
     bookingDate: {
       type: DataTypes.STRING,
       allowNull: false,
+    },
+    returnBookedFlightId: {
+      type: DataTypes.INTEGER
+    },
+    returnFlightId: {
+      type: DataTypes.INTEGER
+    },
+    returnBookingDate: {
+      type: DataTypes.STRING
     },
     status: {
       type: DataTypes.ENUM,
