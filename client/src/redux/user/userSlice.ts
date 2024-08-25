@@ -1,5 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { getUser, login, signUp, verifyOtp } from "./userAction";
+import { getUser, login, signUp, updateUser, verifyOtp } from "./userAction";
 
 interface User {
   id: number;
@@ -57,9 +57,20 @@ const userSlice = createSlice({
       state.email = action.payload.email;
       state.name = action.payload.name;
       state.id = action.payload.id;
+      state.phone = action.payload.phone;
       state.token = action.payload.token
     });
     builder.addCase(getUser.rejected, (state, action) => {
+      console.log("rejected");
+    });
+    builder.addCase(updateUser.fulfilled, (state: User, action: PayloadAction<User>) => {
+      state.email = action.payload.email;
+      state.name = action.payload.name;
+      state.id = action.payload.id;
+      state.phone = action.payload.phone;
+      state.token = action.payload.token
+    });
+    builder.addCase(updateUser.rejected, (state, action) => {
       console.log("rejected");
     });
   }

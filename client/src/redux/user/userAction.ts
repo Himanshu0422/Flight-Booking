@@ -7,7 +7,7 @@ export const signUp = createAsyncThunk(
   async (payload: object, thunkApi: any) => {
     try {
       const response = await user.signUp(payload);
-      return { 
+      return {
         id: response.data.data.id,
         name: response.data.data.name,
         email: response.data.data.email,
@@ -25,15 +25,15 @@ export const login = createAsyncThunk(
     try {
       const response = await user.login(payload);
       const { token } = response.data.data;
-      Cookies.set('token', token, {expires: 7});
-      return { 
+      Cookies.set('token', token, { expires: 7 });
+      return {
         id: response.data.data.user.id,
         name: response.data.data.user.name,
         email: response.data.data.user.email,
         phone: response.data.data.user.phone,
         token
       };
-    } catch (error : any) {
+    } catch (error: any) {
       if (error.response && error.response.data && error.response.data.otpVerified === false) {
         return thunkApi.rejectWithValue({ ...error, otpVerified: false });
       }
@@ -60,7 +60,7 @@ export const verifyOtp = createAsyncThunk(
     try {
       const response = await user.verifyOtp(payload);
       const { token } = response.data.data;
-      return { 
+      return {
         id: response.data.data.user.id,
         name: response.data.data.user.name,
         email: response.data.data.user.email,
@@ -84,6 +84,25 @@ export const getUser = createAsyncThunk(
         email: response.data.data.user.email,
         phone: response.data.data.user.phone,
         token
+      };
+    } catch (error) {
+      return thunkApi.rejectWithValue(error as SerializedError);
+    }
+  }
+)
+
+export const updateUser = createAsyncThunk(
+  '/update-user',
+  async (payload: object, thunkApi: any) => {
+    try {
+      const response = await user.updateUser(payload);
+      console.log(response,'res')
+      return {
+        id: response.data.data.id,
+        name: response.data.data.name,
+        email: response.data.data.email,
+        phone: response.data.data.phone,
+        token: response.data.data.token
       };
     } catch (error) {
       return thunkApi.rejectWithValue(error as SerializedError);

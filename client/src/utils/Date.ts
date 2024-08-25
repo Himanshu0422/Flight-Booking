@@ -41,6 +41,9 @@ export function getCurrentTime(): string {
 
 
 export const convertTo12HourFormat = (time24: string): { time: string; period: string } => {
+	if(!time24){
+		return {time: '', period: ''}
+	}
 	const [hours, minutes] = time24.split(':').map(Number);
 	const period = hours >= 12 ? 'PM' : 'AM';
 	const hours12 = hours % 12 || 12;

@@ -29,7 +29,7 @@ export const getFlightsData = createAsyncThunk(
         minPrice,
         maxPrice
       });
-      
+
       return {
         data: response.data.data.flights,
         type,
@@ -45,7 +45,21 @@ export const getFlightsData = createAsyncThunk(
 );
 
 export const getFlight = createAsyncThunk(
-  'flights:id',
+  'flight:id',
+  async (id: string, thunkApi: any) => {
+    try {
+      const response = await flights.getFlight(id);
+      return {
+        data: response.data.data
+      }
+    } catch (error) {
+      return thunkApi.rejectWithValue(error as SerializedError);
+    }
+  }
+)
+
+export const getReturnFlight = createAsyncThunk(
+  'returnflight:id',
   async (id: string, thunkApi: any) => {
     try {
       const response = await flights.getFlight(id);

@@ -6,10 +6,13 @@ export const GET_AIRPORT = '/airport';
 export const GET_FLIGHTS = '/flights';
 export const GET_ALL_AIRPORTS = '/getAllAirport';
 
-export const BOOK_FLIGHT = '/bookings'
+export const BOOK_FLIGHT = '/bookings';
+export const BOOKINGS = '/get-bookings';
+export const GET_BOOKING_BYID = '/getBookingById'
 
-export const SIGN_UP = '/signup'
-export const LOGIN = '/login'
-export const SEND_OTP = '/send-otp'
-export const VERIFY_OTP = '/verify-otp'
-export const USER = 'user'
+export const SIGN_UP = '/signup';
+export const LOGIN = '/login';
+export const SEND_OTP = '/send-otp';
+export const VERIFY_OTP = '/verify-otp';
+export const USER = '/user';
+export const UPDATE_USER = '/update-user';

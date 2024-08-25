@@ -1,4 +1,4 @@
-import { LOGIN, SEND_OTP, SIGN_UP, USER, VERIFY_OTP } from "../api";
+import { LOGIN, SEND_OTP, SIGN_UP, UPDATE_USER, USER, VERIFY_OTP } from "../api";
 import { authHttp } from "../authHttp";
 
 
@@ -17,6 +17,9 @@ class user {
   }
   getUser(token:string){
     return authHttp.get(USER, undefined, 'application/json', token)
+  }
+  updateUser(payload: object){
+    return authHttp.post(UPDATE_USER, payload)
   }
 }
 

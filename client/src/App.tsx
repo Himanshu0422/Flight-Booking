@@ -11,8 +11,10 @@ import {
 import OpenRoute from "./components/common/OpenRoute";
 import ProtectedRoute from "./components/common/ProtectedRoute";
 import Layout from "./layout/Layout";
+import BookingDetails from "./pages/BookingDetails";
 import Flights from "./pages/Flights";
 import GoogleAuthCallback from "./pages/GoogleAuthCallback";
+import History from "./pages/History";
 import Home from "./pages/Home";
 import PassengerDetails from "./pages/PassengerDetails";
 import Signup from "./pages/Signup";
@@ -60,10 +62,26 @@ const App: React.FC = () => {
             <Route path="/home" element={<Home />} />
             <Route path="/search-flights" element={<Flights />} />
             <Route
-              path="/passenger-details/:flightId"
+              path="/passenger-details/:flightId/:returnFlightId?"
               element={
                 <ProtectedRoute>
                   <PassengerDetails />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/history"
+              element={
+                <ProtectedRoute>
+                  <History />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/booking-details/:bookingId"
+              element={
+                <ProtectedRoute>
+                  <BookingDetails />
                 </ProtectedRoute>
               }
             />

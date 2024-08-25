@@ -39,6 +39,8 @@ interface FlightState {
   isDeparture: boolean
   maxPrice: number,
   minPrice: number,
+  departureAirportId: string,
+  returnAirportId: string
 }
 
 const initialState: FlightState = {
@@ -52,7 +54,9 @@ const initialState: FlightState = {
   filterTime: null,
   maxPrice: 50000,
   minPrice: 2000,
-  isDeparture: true
+  isDeparture: true,
+  departureAirportId: '',
+  returnAirportId: ''
 }
 
 const flightSlice = createSlice({
@@ -94,6 +98,12 @@ const flightSlice = createSlice({
     },
     setMinPrice: (state: FlightState, action: PayloadAction<number>) => {
       state.minPrice = action.payload
+    },
+    setDepartureAirportId: (state: FlightState, action: PayloadAction<string>) => {
+      state.departureAirportId = action.payload
+    },
+    setReturnAirportId: (state: FlightState, action: PayloadAction<string>) => {
+      state.returnAirportId = action.payload
     },
     resetState: () => {
       return initialState
@@ -140,6 +150,8 @@ export const {
   setisDeparture,
   setMaxPrice,
   setMinPrice,
+  setDepartureAirportId,
+  setReturnAirportId,
   resetState
 } = flightSlice.actions;
 
