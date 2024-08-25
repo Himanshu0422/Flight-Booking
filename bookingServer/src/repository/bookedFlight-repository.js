@@ -10,9 +10,9 @@ class BookedFlightRepository {
         }
     }
 
-    async findByFlightId(flightId) {
+    async findByFlightId(flightId, bookingDate) {
         try {
-            const bookedFlight = await BookedFlights.findOne({ where: { flightId } });
+            const bookedFlight = await BookedFlights.findOne({ where: { flightId, bookingDate } });
             return bookedFlight;
         } catch (error) {
             console.log('Failed to find booking in repository layer', error);

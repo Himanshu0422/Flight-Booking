@@ -13,8 +13,8 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
-      userId: {
-        type: Sequelize.INTEGER,
+      bookingDate: {
+        type: Sequelize.STRING,
         allowNull: false,
       },
       noOfSeats: {

@@ -16,10 +16,15 @@ class BookedFlightService {
       const flightData = response.data.data;
       if (data.noOfSeats > flightData.totalSeats) {
         console.log('Something went wrong in the booking process', 'Insufficient seats in the flight');
+        throw new Error('Insufficient seats in the flight');
       }
-      let bookedFlight = await this.bookedFlightRepository.findByFlightId(flightId);
+      let bookedFlight = await this.bookedFlightRepository.findByFlightId(flightId, data.bookingDate);
       if (bookedFlight) {
         const noOfSeats = data.noOfSeats;
+        if(flightData.totalSeats - bookedFlight.noOfSeats < noOfSeats){
+          console.log('Something went wrong in the booking process', 'Insufficient seats in the flight');
+          throw new Error('Insufficient seats in the flight');
+        }
         bookedFlight.noOfSeats += noOfSeats;
         bookedFlight = await bookedFlight.save();
       } else {

@@ -64,6 +64,30 @@ class BookingRepository {
         }
     }
 
+    async getBookingById(bookingId) {
+        try {
+            const booking = await Booking.findOne({
+                where: { id: bookingId },
+                include: [
+                    { model: Passenger, as: 'passengers' },
+                    { model: Payments, as: 'payments' },
+                ]
+            });
+            const flightDetails = await axios.get(`${FLIGHT_SERVICE_PATH}/api/v1/flights/${booking.flightId}`);
+            const returnFlightDetails = booking.returnFlightId
+                    ? await axios.get(`${FLIGHT_SERVICE_PATH}/api/v1/flights/${booking.returnFlightId}`)
+                    : null;
+            return {
+                ...booking.toJSON(),
+                flightDetails: flightDetails.data.data,
+                returnFlightDetails: returnFlightDetails ? returnFlightDetails.data.data : null,
+            }
+        } catch (error) {
+            console.log('Failed in repository layer', error);
+            throw { error };
+        }
+    }
+
     async createPaymentIntent(amount) {
         try {
             const paymentIntent = await stripe.paymentIntents.create({

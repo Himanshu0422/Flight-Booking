@@ -64,6 +64,16 @@ class BookingService {
         }
     }
 
+    async getBookingById(bookingId){
+        try {
+            const booking = await this.bookingRepository.getBookingById(bookingId);
+            return booking;
+        } catch (error) {
+            console.log('Failed in service layer', error);
+            throw error;
+        }
+    }
+
     async createPaymentIntent(amount) {
         try {
             const res = this.bookingRepository.createPaymentIntent(amount);

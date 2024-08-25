@@ -21,11 +21,14 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
+      returnBookedFlightId: {
+        type: Sequelize.INTEGER
+      },
       returnFlightId: {
-        type: DataTypes.INTEGER
+        type: Sequelize.INTEGER
       },
       returnBookingDate: {
-        type: DataTypes.STRING
+        type: Sequelize.STRING
       },
       status: {
         type: Sequelize.ENUM,
