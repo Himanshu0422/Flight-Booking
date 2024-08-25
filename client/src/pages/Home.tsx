@@ -8,12 +8,6 @@ import { AppDispatch } from '../redux/store';
 
 const Home: React.FC = () => {
 
-	const dispatch = useDispatch<AppDispatch>();
-
-	useEffect(() => {
-		dispatch(getAllAirports())
-	}, [])
-
 	return (
 		<div className='flex flex-col items-center gap-20'>
 			<Main />

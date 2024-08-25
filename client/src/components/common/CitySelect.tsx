@@ -1,8 +1,9 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { GiAirplaneArrival, GiAirplaneDeparture } from "react-icons/gi";
 import { GoArrowSwitch } from "react-icons/go";
-import { useSelector } from "react-redux";
-import { RootState } from "../../redux/store";
+import { useDispatch, useSelector } from "react-redux";
+import { getAllAirports } from "../../redux/airports/airportAction";
+import { AppDispatch, RootState } from "../../redux/store";
 import CustomSelectCity from "./CustomSelectCity";
 
 interface CitySelectProps {
@@ -27,6 +28,12 @@ const CitySelect: React.FC<CitySelectProps> = ({
   const handleArrivalChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setArrivalCity(event.target.value);
   };
+
+  const dispatch = useDispatch<AppDispatch>();
+
+	useEffect(() => {
+		dispatch(getAllAirports())
+	}, [])
 
   const {airports} = useSelector((state:RootState) => state.airport)
 

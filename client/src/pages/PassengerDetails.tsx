@@ -1,29 +1,28 @@
-import axios from "axios";
 import React, { useEffect } from "react";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate, useParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 import DetailsCard from "../components/PassengerDetails/DetailsCard";
-import FlightCard from "../components/PassengerDetails/FlightCard";
+import FlightCard from "../components/common/FlightCard";
 import OrderDetailsCard from "../components/PassengerDetails/OrderDetailsCard";
-import PassengerCard from "../components/PassengerDetails/PassengerCard";
+import PassengerCard from "../components/common/PassengerCard";
+import usePayment from "../hooks/usePayment";
 import { bookFlight } from "../redux/flights/bookingAction";
-import { getFlight } from "../redux/flights/flightsAction";
-import { addPassenger, emptyPassengers } from "../redux/passengers/passengerActions";
+import { getFlight, getReturnFlight } from "../redux/flights/flightsAction";
+import { addPassenger } from "../redux/passengers/passengerActions";
 import { Passenger } from "../redux/passengers/passengerReducer";
 import { AppDispatch, RootState } from "../redux/store";
-import { resetState } from "../redux/flights/flightSlice";
-import { resetSingleFlight } from "../redux/flights/singleFlightSlice";
-declare var Razorpay: any;
+import { getDate } from "../utils/Date";
 
 const PassengerDetails = () => {
-  const { flightId } = useParams();
+  const { flightId, returnFlightId } = useParams();
   const dispatch = useDispatch<AppDispatch>();
-  const navigate = useNavigate();
+  const {processPayment} = usePayment();
 
   const singleFlight = useSelector((state: RootState) => state.singleFlight);
+  const singleReturnFlight = useSelector((state: RootState) => state.singleReturnFlight);
   const user = useSelector((state: RootState) => state.user);
-  const { passenger } = useSelector((state: RootState) => state.search);
+  const { passenger, departureDate, returnDate } = useSelector((state: RootState) => state.search);
   const { passengers } = useSelector((state: RootState) => state.passengers);
 
   const allDetailsFilled = () => {
@@ -33,9 +32,19 @@ const PassengerDetails = () => {
     );
   };
 
+  const userDetailsFilled = () => {
+    if(!user.name || !user.email || !user.phone){
+      return false;
+    }
+    return true
+  }
+
   useEffect(() => {
     dispatch(getFlight(flightId!));
-  }, [dispatch, flightId]);
+    if(returnFlightId) {
+      dispatch(getReturnFlight(returnFlightId));
+    }
+  }, [dispatch, flightId, returnFlightId]);
 
   const handleAddPassenger = () => {
     if (passengers.length === passenger) {
@@ -45,52 +54,11 @@ const PassengerDetails = () => {
     dispatch(addPassenger());
   };
 
-  const payment = async (bookingData: any, booking_id: number) => {
-    try {
-      const paymentResponse = await axios.post(
-        `${process.env.REACT_APP_BACKEND_BOOKING_API}/payment/razorpay`,
-        {
-          booking_id: booking_id.toString(),
-          amount: singleFlight.price * bookingData.bookedSeats + (singleFlight.price * bookingData.bookedSeats) * 0.10,
-          user_id: user.id,
-        }
-      );
-
-      const options = {
-        key: process.env.RAZORPAY_KEY,
-        amount: paymentResponse.data.amount,
-        currency: paymentResponse.data.currency,
-        order_id: paymentResponse.data.id,
-        handler: async (response: any) => {
-          await axios.post(
-            `${process.env.REACT_APP_BACKEND_BOOKING_API}/payment/verify`,
-            {
-              ...response,
-              booking_id: booking_id,
-              email: user.email
-            }
-          );
-          toast.success("Payment successful and booking confirmed");
-          dispatch(emptyPassengers());
-          dispatch(resetState());
-          dispatch(resetSingleFlight());
-          navigate("/home");
-        },
-        prefill: {
-          name: user.name,
-          email: user.email,
-          contact: "9999999999",
-        },
-      };
-
-      const rzp = new Razorpay(options);
-      rzp.open();
-    } catch (error) {
-      console.error("Error processing payment", error);
-    }
-  };
-
   const handleSubmit = async () => {
+    if(!userDetailsFilled()){
+      toast.error("Please fill all the details of user.");
+      return;
+    }
     if (passengers.length !== passenger) {
       toast.error("Please add all passenger details before submitting.");
     } else {
@@ -100,8 +68,13 @@ const PassengerDetails = () => {
       }
       const bookingData = {
         flightId: singleFlight.flightNumber,
-        userId: 1,
+        userId: user.id,
         bookedSeats: passenger,
+        bookingDate: getDate(departureDate),
+        ...(singleReturnFlight?.flightNumber && {
+          returnFlightId: singleReturnFlight.flightNumber,
+          returnBookingDate: getDate(returnDate)
+        })
       };
       const payload = {
         bookingData,
@@ -109,7 +82,11 @@ const PassengerDetails = () => {
         email: user.email
       };
       const res = await dispatch(bookFlight(payload));
-      payment(bookingData, res.payload.data.booking.id);
+      let price = singleFlight.price;
+      if(singleReturnFlight.id){
+        price+=singleReturnFlight.price
+      }
+      processPayment(bookingData.bookedSeats, price, res.payload.data.booking.id);
     }
   };
 
@@ -121,8 +98,9 @@ const PassengerDetails = () => {
           Fill in your personal data and review your order
         </div>
       </div>
-      {singleFlight.departureTime && <FlightCard flight={singleFlight} />}
-      <OrderDetailsCard passenger={passenger} baseFare={singleFlight.price} />
+      {singleFlight.departureTime && <FlightCard flight={singleFlight} isDeparture={true} departureDate={departureDate} returnDate={returnDate} />}
+      {returnFlightId && <FlightCard flight={singleReturnFlight} isDeparture={false} departureDate={departureDate} returnDate={returnDate} />}
+      <OrderDetailsCard passenger={passenger} baseFare={singleFlight.price + singleReturnFlight.price} />
       <DetailsCard />
       {passengers.map((passenger: Passenger, index: number) => (
         <PassengerCard
@@ -130,6 +108,7 @@ const PassengerDetails = () => {
           passenger={passenger}
           index={index}
           isInternational={singleFlight.isInternational}
+          fromHistory={false}
         />
       ))}
       <button

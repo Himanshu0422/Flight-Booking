@@ -46,8 +46,10 @@ const SearchFlight: React.FC = () => {
   const handleSearchFlight = async (e: React.MouseEvent<HTMLButtonElement>) => {
     e.preventDefault();
     try {
-      searchFlights(searchParams);
-      navigate("/search-flights");
+      const res = await searchFlights(searchParams);
+      if(res){
+        navigate("/search-flights");
+      }
     } catch (error) {
       toast.error("An error occurred while searching for flights");
       console.error(error);

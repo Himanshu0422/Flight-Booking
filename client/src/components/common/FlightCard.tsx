@@ -4,30 +4,26 @@ import { Flight } from "../../redux/flights/flightSlice";
 import { convertTo12HourFormat, getDay } from "../../utils/Date";
 import { useSelector } from "react-redux";
 import { RootState } from "../../redux/store";
+import dayjs, { Dayjs } from "dayjs";
 
-const FlightCard = ({ flight }: { flight: Flight }) => {
+const FlightCard = ({ flight, isDeparture, departureDate, returnDate }: { flight: Flight, isDeparture:boolean, departureDate:Dayjs, returnDate:Dayjs | null }) => {
   const { time: departureTime, period: departurePeriod } =
     convertTo12HourFormat(flight.departureTime);
   const { time: arrivalTime, period: arrivalPeriod } = convertTo12HourFormat(
     flight.arrivalTime
   );
 
-
-  const { departureDate } = useSelector(
-    (state: RootState) => state.search
-  );
-
   return (
     <div className="flex gap-10 xs:gap-5 bg-blue-500 w-[50%] max-lg:w-[70%] max-md:w-[90%] rounded-md justify-center h-[100px] items-center">
       <TimeInfo
-        day={getDay(departureDate)}
+        day={isDeparture ? getDay(departureDate) : getDay(returnDate)}
         time={departureTime}
         period={departurePeriod}
         location={flight.departureAirport.city}
       />
       <ConnectionDot time={flight.flightTime} />
       <TimeInfo
-        day={getDay(departureDate!.add(flight.nextDay, "day"))}
+        day={isDeparture ? getDay(dayjs(departureDate)!.add(flight?.nextDay, "day")) : getDay(dayjs(returnDate)!.add(flight?.nextDay, "day"))}
         time={arrivalTime}
         period={arrivalPeriod}
         location={flight.arrivalAirport.city}

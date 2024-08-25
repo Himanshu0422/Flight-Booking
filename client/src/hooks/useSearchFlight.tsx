@@ -27,15 +27,18 @@ const useSearchFlights = () => {
       const { departureCity, arrivalCity, departureDate, returnDate, passenger, filterTime, maxPrice, minPrice } = searchParams;
       
       if (!departureCity || !arrivalCity) {
-        return toast.error("Select the cities to search for flights");
+        toast.error("Select the cities to search for flights");
+        return false
       }
 
       if (departureCity === arrivalCity) {
-        return toast.error("Departure and Arrival City can't be the same");
+        toast.error("Departure and Arrival City can't be the same");
+        return false
       }
 
       if (returnDate && departureDate.isAfter(returnDate, "day")) {
-        return toast.error("Return date should be equal to or greater than departure date");
+        toast.error("Return date should be equal to or greater than departure date");
+        return false
       }
 
       if (
@@ -92,6 +95,8 @@ const useSearchFlights = () => {
           })
         );
       }
+
+      return true
     } catch (error) {
       toast.error("An error occurred while searching for flights");
       console.error(error);

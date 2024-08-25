@@ -1,24 +1,30 @@
-import React from 'react';
-import { BellIcon, UserCircleIcon } from '@heroicons/react/24/solid';
+import Cookies from 'js-cookie';
+import React, { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 const Navbar: React.FC = () => {
+
+    const navigate = useNavigate();
+    const [token, setToken] = useState('');
+
+    const handleNavigation = () => {
+        if(token) {
+            navigate('/history');
+        }else {
+            navigate('/');
+        }
+    }
+
+    useEffect(() => {
+        const getToken = Cookies.get('token');
+        setToken(getToken!);
+      }, [])
+
     return (
         <nav className="flex justify-between items-center bg-white px-4 md:px-8 h-[75px] border-b">
-            <div className="text-black font-bold text-xl md:text-2xl ml-4">Flights</div>
-            <div className="hidden md:flex space-x-4 text-black gap-4 md:gap-20">
-                <div className="hover:text-gray-400 cursor-pointer">
-                    All Flights
-                </div>
-                <div className="hover:text-gray-400 cursor-pointer">
-                    Your Orders
-                </div>
-                <div className="hover:text-gray-400 cursor-pointer">
-                    Flights & Hotels
-                </div>
-            </div>
-            <div className="flex items-center space-x-4 text-blue mr-4">
-                <BellIcon className="bg-blue h-6 w-6 hover:text-blue-600 cursor-pointer" />
-                <UserCircleIcon className="h-6 w-6 hover:text-gray-400 cursor-pointer" />
+            <div className="text-black font-bold text-xl md:text-2xl ml-4 cursor-pointer" onClick={() => navigate('/home')}>Flights</div>
+            <div className="flex items-center space-x-4 text-blue mr-4 cursor-pointer" onClick={handleNavigation}>
+                {token ? 'History' : 'Login/SignUp'}
             </div>
         </nav>
     );

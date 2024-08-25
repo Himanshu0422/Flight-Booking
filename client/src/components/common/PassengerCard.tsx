@@ -5,7 +5,7 @@ import { PhoneInput } from "react-international-phone";
 import "react-international-phone/style.css";
 import { useDispatch } from "react-redux";
 import { updatePassengerDetails } from "../../redux/passengers/passengerActions";
-import DatePickerModal from "../common/DatePickerModal";
+import DatePickerModal from "./DatePickerModal";
 import countryList from "react-select-country-list";
 import { z } from "zod";
 
@@ -13,20 +13,24 @@ const PassengerCard = ({
   passenger,
   index,
   isInternational,
+  fromHistory,
 }: {
   passenger: any;
   index: number;
   isInternational: boolean;
+  fromHistory: boolean;
 }) => {
   const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
   const [emailError, setEmailError] = useState<string | null>(null);
 
   const options = useMemo(() => {
-    return countryList().getData().map((country) => ({
-      label: country.label,
-      value: country.label,
-    }));
+    return countryList()
+      .getData()
+      .map((country) => ({
+        label: country.label,
+        value: country.label,
+      }));
   }, []);
 
   // Zod schema for email validation
@@ -73,6 +77,7 @@ const PassengerCard = ({
           value={passenger.name || ""}
           onChange={(e) => handleInputChange("name", e.target.value)}
           className="w-[45%]"
+          disabled={fromHistory}
         />
         <TextInput
           label={requiredLabel("Email")}
@@ -82,6 +87,7 @@ const PassengerCard = ({
           className="w-[45%]"
           type="email"
           error={emailError}
+          disabled={fromHistory}
         />
         <Select
           label={requiredLabel("Gender")}
@@ -94,6 +100,7 @@ const PassengerCard = ({
             { value: "other", label: "Other" },
           ]}
           className="w-[45%]"
+          disabled={fromHistory}
         />
         <TextInput
           label={requiredLabel("Date of Birth")}
@@ -102,6 +109,7 @@ const PassengerCard = ({
           onClick={() => setOpen(true)}
           className="w-[45%]"
           readOnly
+          disabled={fromHistory}
         />
         <div className="w-[45%]">
           {requiredLabel("Country Code")}
@@ -116,16 +124,18 @@ const PassengerCard = ({
             inputProps={{
               readOnly: true,
             }}
+            disabled={fromHistory}
           />
         </div>
         <TextInput
-              label={requiredLabel("Phone Number")}
-              placeholder="Enter phone"
-              value={passenger.phoneNumber || ""}
-              onChange={(e) => handleInputChange("phoneNumber", e.target.value)}
-              className="w-[45%]"
-              type="number"
-            />
+          label={requiredLabel("Phone Number")}
+          placeholder="Enter phone"
+          value={passenger.phoneNumber || ""}
+          onChange={(e) => handleInputChange("phoneNumber", e.target.value)}
+          className="w-[45%]"
+          type="number"
+          disabled={fromHistory}
+        />
         {isInternational && (
           <>
             <TextInput
@@ -134,21 +144,26 @@ const PassengerCard = ({
               value={passenger.passportNo || ""}
               onChange={(e) => handleInputChange("passportNo", e.target.value)}
               className="w-[45%]"
+              disabled={fromHistory}
             />
             <Select
               label={requiredLabel("Passport Country")}
-              placeholder="Enter passport countrygender"
+              placeholder="Enter passport country"
               value={passenger.passportCountry || ""}
               onChange={(value) => handleInputChange("passportCountry", value!)}
               data={options}
               className="w-[45%]"
+              disabled={fromHistory}
             />
             <TextInput
               label={requiredLabel("Passport Expiry")}
               placeholder="Enter passport expiry"
               value={passenger.passportExpiry || ""}
-              onChange={(e) => handleInputChange("passportExpiry", e.target.value)}
+              onChange={(e) =>
+                handleInputChange("passportExpiry", e.target.value)
+              }
               className="w-[45%]"
+              disabled={fromHistory}
             />
           </>
         )}

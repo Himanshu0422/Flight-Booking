@@ -1,6 +1,7 @@
-import { Dayjs } from "dayjs";
-import React from "react";
+import React, { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import useSearchFlights from "../../hooks/useSearchFlight";
 import { getAirportId } from "../../redux/airports/airportAction";
 import {
@@ -13,9 +14,11 @@ import { getFlightsData } from "../../redux/flights/flightsAction";
 import { AppDispatch, RootState } from "../../redux/store";
 import { getCurrentTime, getDate } from "../../utils/Date";
 import FlightCard from "./components/FlightCard";
+import FlightSummary from "./components/FlightSummary";
 
 const FlightSection = () => {
   const dispatch = useDispatch<AppDispatch>();
+  const navigate = useNavigate();
   const {
     departureFlight,
     returnFlight,
@@ -26,13 +29,24 @@ const FlightSection = () => {
     isDeparture,
     filterTime,
     maxPrice,
-    minPrice
+    minPrice,
+    departureAirportId,
+    returnAirportId,
   } = useSelector((state: RootState) => state.flight);
+  const { departureCity, arrivalCity, departureDate, returnDate, passenger } =
+    useSelector((state: RootState) => state.search);
+  const singleFlight = useSelector((state: RootState) => state.singleFlight);
+  const singleReturnFlight = useSelector(
+    (state: RootState) => state.singleReturnFlight
+  );
 
   const searchFlights = useSearchFlights();
 
-  const { departureCity, arrivalCity, departureDate, returnDate, passenger } =
-    useSelector((state: RootState) => state.search);
+  const [flightsArray, setFlightsArray] = useState<Flight[]>(departureFlight);
+
+  useEffect(() => {
+    setFlightsArray(isDeparture ? departureFlight : returnFlight);
+  }, [departureFlight, returnFlight, dispatch, isDeparture]);
 
   const fetchMoreFlights = async (type: "Departure" | "Return") => {
     try {
@@ -92,14 +106,48 @@ const FlightSection = () => {
       passenger: passenger,
       filterTime: filterTime,
       maxPrice: maxPrice,
-      minPrice: minPrice
-    }
+      minPrice: minPrice,
+    };
 
     searchFlights(searchParams);
-  }
+  };
 
-  const flightsArray = isDeparture ? departureFlight : returnFlight;
-  const isFlightsEmpty = flightsArray.length === 0;
+  const flightsCompatible = (): boolean => {
+    const [departureHour, departureMinute] = singleFlight.arrivalTime.split(":").map(Number);
+    const [returnHour, returnMinute] = singleReturnFlight.departureTime.split(":").map(Number);
+  
+    const departureDateTime = departureDate
+      .add(singleFlight.nextDay, "day")
+      .set("hour", departureHour)
+      .set("minute", departureMinute);
+    const returnDateTime = returnDate!
+      .set("hour", returnHour)
+      .set("minute", returnMinute);
+
+    if (departureDateTime.isAfter(returnDateTime)) {
+      return false;
+    }
+  
+    if (
+      departureDateTime.isSame(returnDateTime, "day") &&
+      departureDateTime.add(59, "minutes").isAfter(returnDateTime)
+    ) {
+      return false;
+    }
+  
+    return true;
+  };
+  const handleProceed = () => {
+    if (!departureAirportId || !returnAirportId) {
+      toast.error("Please select both flights to proceed.");
+      return;
+    }
+    if(!flightsCompatible()){
+      toast.error("There should atleas 1 hour gap between both flights");
+      return;
+    }
+    navigate(`/passenger-details/${departureAirportId}/${returnAirportId}`);
+  };
 
   return (
     <>
@@ -125,28 +173,29 @@ const FlightSection = () => {
           </div>
         </div>
       )}
-      <div className="flex flex-col items-center gap-10 mx-10">
-        {isFlightsEmpty ? (
+      <div className={`flex flex-col items-center gap-10 mx-10 mb-32`}>
+        {flightsArray?.length === 0 ? (
           <div className="text-gray-500 text-lg">No flights available</div>
         ) : (
           flightsArray.map((item: Flight, index: number) => (
             <FlightCard key={index} flight={item} isDeparture={isDeparture} />
           ))
         )}
-        <div className="h-6" />
-      </div>
-      {(isDeparture
-        ? departurePage < totalDeparturePages
-        : returnPage < totalReturnPages) && (
-        <div
-          className="flex justify-center items-center h-full mb-8 cursor-pointer"
-          onClick={handleViewMore}
-        >
-          <div className="bg-white w-max py-2 px-4 rounded-full shadow-lg text-blue-500">
-            View more
+        {(isDeparture
+          ? departurePage < totalDeparturePages
+          : returnPage < totalReturnPages) && (
+          <div
+            className="flex justify-center items-center h-full mb-8 cursor-pointer"
+            onClick={handleViewMore}
+          >
+            <div className="bg-white w-max py-2 px-4 rounded-full shadow-lg text-blue-500">
+              View more
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
+
+      {returnDate && <FlightSummary handleProceed={handleProceed} />}
     </>
   );
 };
