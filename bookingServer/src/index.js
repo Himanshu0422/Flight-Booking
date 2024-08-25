@@ -11,10 +11,10 @@ const apiRoutes = require('./routes/index');
 const setupAndStartServer = () => {
   app.use(
     cors({
-      origin: "http://localhost:3000",
-      credentials: true,
+        origin: true,
+        credentials: true,
     })
-  );
+);
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({ extended: true }));
 
