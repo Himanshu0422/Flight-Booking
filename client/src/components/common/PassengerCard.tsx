@@ -89,28 +89,6 @@ const PassengerCard = ({
           error={emailError}
           disabled={fromHistory}
         />
-        <Select
-          label={requiredLabel("Gender")}
-          placeholder="Select gender"
-          value={passenger.gender || ""}
-          onChange={(value) => handleInputChange("gender", value!)}
-          data={[
-            { value: "male", label: "Male" },
-            { value: "female", label: "Female" },
-            { value: "other", label: "Other" },
-          ]}
-          className="w-[45%]"
-          disabled={fromHistory}
-        />
-        <TextInput
-          label={requiredLabel("Date of Birth")}
-          placeholder="Select date of birth"
-          value={passenger.dob || ""}
-          onClick={() => setOpen(true)}
-          className="w-[45%]"
-          readOnly
-          disabled={fromHistory}
-        />
         <div className="w-[45%]">
           {requiredLabel("Country Code")}
           <PhoneInput
@@ -134,6 +112,28 @@ const PassengerCard = ({
           onChange={(e) => handleInputChange("phoneNumber", e.target.value)}
           className="w-[45%]"
           type="number"
+          disabled={fromHistory}
+        />
+        <Select
+          label={requiredLabel("Gender")}
+          placeholder="Select gender"
+          value={passenger.gender || ""}
+          onChange={(value) => handleInputChange("gender", value!)}
+          data={[
+            { value: "male", label: "Male" },
+            { value: "female", label: "Female" },
+            { value: "other", label: "Other" },
+          ]}
+          className="w-[45%]"
+          disabled={fromHistory}
+        />
+        <TextInput
+          label={requiredLabel("Date of Birth")}
+          placeholder="Select date of birth"
+          value={passenger.dob || ""}
+          onClick={() => setOpen(true)}
+          className="w-[45%]"
+          readOnly
           disabled={fromHistory}
         />
         {isInternational && (
