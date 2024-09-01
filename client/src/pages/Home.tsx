@@ -11,8 +11,8 @@ const Home: React.FC = () => {
 	return (
 		<div className='flex flex-col items-center gap-20'>
 			<Main />
-			{/* <Trips />
-			<Travel /> */}
+			<Trips />
+			<Travel />
 		</div>
 	);
 }
