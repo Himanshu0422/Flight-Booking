@@ -25,7 +25,8 @@ module.exports = {
     port: DB_PORT,
     dialectOptions: {
       ssl: {
-        ca: DB_SSL_CA
+        ca: DB_SSL_CA,
+        rejectUnauthorized: true
       }
     }
   }
