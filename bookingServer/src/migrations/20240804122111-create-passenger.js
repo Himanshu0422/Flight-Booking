@@ -46,7 +46,7 @@ module.exports = {
         allowNull: true,
       },
       bookingId: {
-        type: Sequelize.STRING,
+        type: Sequelize.INTEGER,
         allowNull: false
       },
       createdAt: {

@@ -5,7 +5,7 @@ module.exports = {
   development: {
     username: "root",
     password: "Himanshu@0422",
-    database: "AUTH_DB",
+    database: "Flights_Search_DB",
     host: "127.0.0.1",
     dialect: "mysql",
   },
