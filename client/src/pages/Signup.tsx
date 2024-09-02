@@ -1,13 +1,12 @@
 import { TextInput } from "@mantine/core";
 import React, { useState } from "react";
-import { useDispatch, useSelector } from "react-redux";
+import toast from "react-hot-toast";
+import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import { z } from "zod";
+import { AppDispatch } from "../redux/store";
 import { login, signUp } from "../redux/user/userAction";
-import { AppDispatch, RootState } from "../redux/store";
 import { setEmail } from "../redux/user/userSlice";
-import Cookies from "js-cookie";
-import toast from "react-hot-toast";
 
 const Signup = () => {
   const navigate = useNavigate();
@@ -26,11 +25,11 @@ const Signup = () => {
     setIsLogin((prevMode) => !prevMode);
   };
 
-  const emailSchema = z.string().email('Please enter a valid email address.');
+  const emailSchema = z.string().email("Please enter a valid email address.");
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
-    if (name === 'email') {
+    if (name === "email") {
       const result = emailSchema.safeParse(value);
       if (!result.success) {
         setEmailError(result.error.errors[0].message);
@@ -45,58 +44,37 @@ const Signup = () => {
     e.preventDefault();
     const payload = {
       email: formData.email,
-      password: formData.password
-    }
+      password: formData.password,
+    };
     try {
-      dispatch(setEmail(formData.email))
+      dispatch(setEmail(formData.email));
       await dispatch(login(payload)).unwrap();
-      toast.success('Login successfull')
-      navigate('/home')
-    } catch (error:any) {
+      toast.success("Login successfull");
+      navigate("/home");
+    } catch (error: any) {
       if (error.otpVerified === false) {
-        navigate('/verify-otp');
+        navigate("/verify-otp");
       } else {
         toast.error(error.response.data.message);
       }
     }
   };
-  
+
   const handleSignUp = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const payload = {
       name: formData.name,
       email: formData.email,
-      password: formData.password
-    }
+      password: formData.password,
+    };
     try {
       const res = await dispatch(signUp(payload)).unwrap();
-      toast.success('User created')
-      navigate('/verify-otp');
-    } catch (error:any) {
-      toast.error(error.response.data.message)
+      toast.success("User created");
+      navigate("/verify-otp");
+    } catch (error: any) {
+      toast.error(error.response.data.message);
     }
   };
-
-  async function handleGoogleAuth() {
-    try {
-      const response = await fetch('http://localhost:5000/auth/google/callback', {
-        method: 'POST',
-        credentials: 'include'
-      });
-  
-      const data = await response.json();
-  
-      if (data.success) {
-        Cookies.set('token', data.token, {expires: 7});
-        window.location.href = 'http://localhost:3000/home';
-      } else {
-        console.error(data.message);
-      }
-    } catch (error) {
-      console.error('An error occurred:', error);
-    }
-  }
-  
 
   return (
     <div className="flex h-screen">
@@ -143,7 +121,7 @@ const Signup = () => {
                   input: {
                     borderRadius: "8px",
                     backgroundColor: "#F7FBFF",
-                    height: '40px'
+                    height: "40px",
                   },
                 }}
               />
@@ -162,7 +140,7 @@ const Signup = () => {
                 input: {
                   borderRadius: "8px",
                   backgroundColor: "#F7FBFF",
-                  height: '40px'
+                  height: "40px",
                 },
               }}
             />
@@ -179,7 +157,7 @@ const Signup = () => {
                 input: {
                   borderRadius: "8px",
                   backgroundColor: "#F7FBFF",
-                  height: '40px'
+                  height: "40px",
                 },
               }}
             />
@@ -212,12 +190,11 @@ const Signup = () => {
               className="text-gray-700 font-medium py-2 px-4 rounded-md flex items-center justify-center bg-[#F7FBFF]"
               type="button"
               onClick={() => {
-                window.location.href = 'http://localhost:4002/api/v1/google';
-                handleGoogleAuth()
+                window.location.href = `${process.env.REACT_APP_BACKEND_AUTH_API}/google`;
               }}
             >
               <img
-                src={require('../assets/google.png')}
+                src={require("../assets/google.png")}
                 alt="Google"
                 className="mr-2 h-6"
               />
@@ -226,9 +203,10 @@ const Signup = () => {
             <button
               className="text-gray-700 font-medium py-2 px-4 rounded-md flex items-center justify-center bg-[#F7FBFF]"
               type="button"
+              onClick={() => toast('Coming soon')}
             >
               <img
-                src={require('../assets/facebook.png')}
+                src={require("../assets/facebook.png")}
                 alt="Facebook"
                 className="mr-2 h-6"
               />

@@ -1,10 +1,11 @@
 const express = require('express');
 const bodyParser = require('body-parser');
-const { PORT } = require('./config/serverConfig');
+const { PORT, SERVER_LINK } = require('./config/serverConfig');
 const ApiRoutes = require('./routes/index');
 const cors = require('cors');
 const colors = require('colors');
 const cron = require('node-cron');
+const axios = require('axios');
 
 const db = require('./models/index');
 
@@ -30,7 +31,7 @@ const startUpServer = () => {
         try {
           console.log('Running cron job');
           // Call the /ping API to keep the server awake
-          const response = await axios.get(`https://flight-booking-search.onrender.com/ping`);
+          const response = await axios.get(`${SERVER_LINK}/ping`);
           console.log('API response:', response.data);
         } catch (error) {
           console.error('Error in cron job:', error);

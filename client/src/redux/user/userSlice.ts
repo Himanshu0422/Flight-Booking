@@ -21,7 +21,7 @@ const userSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
-    logout: (state, action) => {
+    logout: () => {
       return initialState;
     },
     setEmail: (state, action) => {
