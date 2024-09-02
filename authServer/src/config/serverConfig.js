@@ -15,4 +15,6 @@ module.exports = {
     DB_PORT: process.env.DB_PORT,
     DB_DIALECT: process.env.DB_DIALECT,
     DB_SSL_CA: process.env.DB_SSL_CA,
+    CLIENT_LINK: process.env.CLIENT_LINK,
+    SERVER_LINK: process.env.SERVER_LINK,
 }

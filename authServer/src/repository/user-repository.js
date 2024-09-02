@@ -3,7 +3,7 @@ const { User, Otp } = require("../models/index");
 const nodemailer = require('nodemailer');
 const { Op } = require('sequelize');
 const jwt = require('jsonwebtoken');
-const { EMAIL_USER, EMAIL_PASS, JWT_SECRET } = require("../config/serverConfig");
+const { EMAIL_USER, EMAIL_PASS, JWT_SECRET, CLIENT_LINK } = require("../config/serverConfig");
 
 const transporter = nodemailer.createTransport({
   service: 'Gmail',
@@ -183,7 +183,7 @@ class UserRepository {
 
   async googleCallback(req, res){
     const token = jwt.sign({ id: req.user.id }, JWT_SECRET_KEY, { expiresIn: '7d' });
-    res.redirect(`http://localhost:3000/auth/google/callback?token=${token}`);
+    res.redirect(`${CLIENT_LINK}auth/google/callback?token=${token}`);
   }; 
 }
 

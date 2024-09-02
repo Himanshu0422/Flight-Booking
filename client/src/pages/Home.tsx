@@ -1,10 +1,7 @@
-import React, { useEffect } from 'react';
-import { useDispatch } from 'react-redux';
+import React from 'react';
 import Main from '../components/HomePage/Main';
 import Travel from '../components/HomePage/Travel';
 import Trips from '../components/HomePage/Trips';
-import { getAllAirports } from '../redux/airports/airportAction';
-import { AppDispatch } from '../redux/store';
 
 const Home: React.FC = () => {
 
