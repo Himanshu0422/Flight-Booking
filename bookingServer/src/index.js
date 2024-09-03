@@ -26,7 +26,7 @@ const setupAndStartServer = () => {
     res.json({ message: "Server is awake" });
   });
   
-  cron.schedule('*/14 * * * *', async () => {
+  cron.schedule('0 */2 * * *', async () => {
     try {
       console.log('Running cron job');
       // Call the /ping API to keep the server awake
