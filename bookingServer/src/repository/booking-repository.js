@@ -33,15 +33,20 @@ class BookingRepository {
         }
     }
 
-    async getBookings(userId) {
+    async getBookings(userId, page) {
         try {
-            const bookings = await Booking.findAll({
+            const pageSize = 3;
+            const offset = (page - 1) * pageSize;
+
+            const {count, rows:bookings} = await Booking.findAndCountAll({
                 where: { userId },
                 order: [['bookingDate', 'DESC']],
-                include: [
-                    { model: Passenger, as: 'passengers' },
-                    { model: Payments, as: 'payments' },
-                ]
+                // include: [
+                    // { model: Passenger, as: 'passengers' },
+                    // { model: Payments, as: 'payments' },
+                // ],
+                offset,
+                limit: pageSize,
             });
 
             const bookingDetails = await Promise.all(bookings.map(async (booking) => {
@@ -57,12 +62,22 @@ class BookingRepository {
                 };
             }));
 
-            return bookingDetails;
+            const totalPages = Math.ceil(count / pageSize);
+
+            return {
+                bookingDetails,
+                pagination: {
+					currentPage: page,
+					totalPages,
+					totalBookings: count
+				}
+            };
         } catch (error) {
             console.log('Failed in repository layer', error);
             throw { error };
         }
     }
+
 
     async getBookingById(bookingId) {
         try {
@@ -75,8 +90,8 @@ class BookingRepository {
             });
             const flightDetails = await axios.get(`${FLIGHT_SERVICE_PATH}/api/v1/flights/${booking.flightId}`);
             const returnFlightDetails = booking.returnFlightId
-                    ? await axios.get(`${FLIGHT_SERVICE_PATH}/api/v1/flights/${booking.returnFlightId}`)
-                    : null;
+                ? await axios.get(`${FLIGHT_SERVICE_PATH}/api/v1/flights/${booking.returnFlightId}`)
+                : null;
             return {
                 ...booking.toJSON(),
                 flightDetails: flightDetails.data.data,

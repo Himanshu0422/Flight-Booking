@@ -54,9 +54,9 @@ class BookingService {
         }
     }
 
-    async getBookings(userId) {
+    async getBookings(userId, page) {
         try {
-            const bookings = await this.bookingRepository.getBookings(userId);
+            const bookings = await this.bookingRepository.getBookings(userId, page);
             return bookings;
         } catch (error) {
             console.log('Failed in service layer', error);

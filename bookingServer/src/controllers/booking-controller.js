@@ -67,8 +67,8 @@ class BookingController {
 
     async getBookings(req, res){
         try {
-            const {userId} = req.body;
-            const bookings = await bookingService.getBookings(userId);
+            const {userId, page} = req.body;
+            const bookings = await bookingService.getBookings(userId, page);
             return res.status(StatusCodes.OK).json({
                 message: 'Successfully fetched bookings',
                 success: true,
