@@ -26,6 +26,9 @@ module.exports = {
       phone: {
         type: Sequelize.STRING
       },
+      countryCode: {
+        type: Sequelize.STRING
+      },
       otpVerified: {
         type: Sequelize.BOOLEAN,
         allowNull: false,

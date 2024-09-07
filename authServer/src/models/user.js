@@ -31,6 +31,9 @@ module.exports = (sequelize, DataTypes) => {
     phone: {
       type: DataTypes.STRING,
     },
+    countryCode: {
+      type: DataTypes.STRING,
+    },
     otpVerified: {
       type: DataTypes.BOOLEAN,
       allowNull: false,

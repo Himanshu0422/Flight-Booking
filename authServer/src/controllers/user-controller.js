@@ -132,10 +132,10 @@ const login = async (req, res) => {
   }
 }
 
-const getUser = async (req,res) => {
+const getUser = async (req, res) => {
   try {
     const user = await userService.getUser(req.user.id);
-    if(user.success === false){
+    if (user.success === false) {
       return res.status(400).json({
         data: {},
         success: true,
@@ -155,6 +155,28 @@ const getUser = async (req,res) => {
       data: {},
       success: false,
       message: 'User fetching failed',
+      err: error
+    });
+  }
+}
+
+const verifyToken = async (req, res) => {
+  try {
+    const authHeader = req.headers['authorization'];
+    const token = authHeader && authHeader.split(' ')[1];
+    const response = await userService.verifyToken(token);
+    return res.status(200).json({
+      success: true,
+      err: {},
+      data: response,
+      message: 'user is authenticated and token is valid'
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      message: 'Something went wrong',
+      data: {},
+      success: false,
       err: error
     });
   }
@@ -181,5 +203,6 @@ module.exports = {
   verifyOtp,
   login,
   googleCallback,
-  getUser
+  getUser,
+  verifyToken
 }
