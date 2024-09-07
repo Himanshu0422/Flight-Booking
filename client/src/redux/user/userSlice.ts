@@ -1,5 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { getUser, login, signUp, updateUser, verifyOtp } from "./userAction";
+import toast from "react-hot-toast";
 
 interface User {
   id: number;
@@ -72,6 +73,9 @@ const userSlice = createSlice({
       state.countryCode = action.payload.countryCode;
       state.token = action.payload.token;
     });
+    builder.addCase(updateUser.rejected, (state, action: any) => {
+      toast.error(action.payload.response.data.message)
+    })
   }
 });
 

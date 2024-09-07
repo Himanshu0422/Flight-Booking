@@ -17,7 +17,7 @@ const JWT_SECRET_KEY = JWT_SECRET;
 
 class UserRepository {
   async createUser(data) {
-    const { name, email, password, phone } = data;
+    const { name, email, password, phone, countryCode } = data;
     try {
       const hashedPassword = await bcrypt.hash(password, 10);
       let user = await User.findOne({ where: { email } });
@@ -29,6 +29,7 @@ class UserRepository {
         email,
         password: hashedPassword,
         phone,
+        countryCode
       });
 
       return user;
@@ -39,17 +40,31 @@ class UserRepository {
 
   async updateUser(userId, data) {
     try {
+      if (data.email) {
+        const existingUser = await User.findOne({
+          where: {
+            email: data.email,
+            id: { [Op.ne] : userId }
+          }
+        });
+        if (existingUser) {
+          throw { message: 'Email already taken' };
+        }
+      }
+  
       const user = await User.update(data, {
         where: {
           id: userId
         }
       });
-      return true
+  
+      return true;
     } catch (error) {
       console.log('Something went wrong in repository layer');
-      throw {error}
+      throw { error };
     }
   }
+  
 
   async sendOtp(data) {
     const { email } = data;
@@ -117,7 +132,8 @@ class UserRepository {
           id: user.id,
           name: user.name,
           email: user.email,
-          phone: user.phone
+          phone: user.phone,
+          countryCode: user.countryCode
         },
         token: token
       };
@@ -146,7 +162,8 @@ class UserRepository {
           id: user.id,
           name: user.name,
           email: user.email,
-          phone: user.phone
+          phone: user.phone,
+          countryCode: user.countryCode
         },
         token: token
       }

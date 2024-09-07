@@ -40,11 +40,10 @@ const updateUser = async (req, res) => {
       message: 'Successfully updated the user'
     })
   } catch (error) {
-    console.log(error);
     return res.status(500).json({
       data: {},
       success: false,
-      message: 'Not able to update user',
+      message: error.error.error.message || 'Not able to update user',
       err: error
     });
   }
@@ -79,6 +78,7 @@ const sendOtp = async (req, res) => {
 
 const verifyOtp = async (req, res) => {
   try {
+    console.log(req.body);
     const response = await userService.verifyOtp(req.body);
     if (response.success === false) {
       return res.status(401).json({

@@ -20,6 +20,7 @@ import Home from "./pages/Home";
 import PassengerDetails from "./pages/PassengerDetails";
 import Signup from "./pages/Signup";
 import VerifyOTP from "./pages/VerifyOtp";
+import Profile from "./pages/Profile";
 
 const theme = createTheme({});
 
@@ -84,6 +85,14 @@ const App: React.FC = () => {
               element={
                 <ProtectedRoute>
                   <BookingDetails />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/profile"
+              element={
+                <ProtectedRoute>
+                  <Profile />
                 </ProtectedRoute>
               }
             />

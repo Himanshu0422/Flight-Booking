@@ -32,7 +32,7 @@ export const login = createAsyncThunk(
         name: response.data.data.user.name,
         email: response.data.data.user.email,
         phone: response.data.data.user.phone,
-        countryCode: response.data.data.countryCode,
+        countryCode: response.data.data.user.countryCode,
         token
       };
     } catch (error: any) {
@@ -62,12 +62,13 @@ export const verifyOtp = createAsyncThunk(
     try {
       const response = await user.verifyOtp(payload);
       const { token } = response.data.data;
+      Cookies.set('token', token, { expires: 7 });
       return {
         id: response.data.data.user.id,
         name: response.data.data.user.name,
         email: response.data.data.user.email,
         phone: response.data.data.user.phone,
-        countryCode: response.data.user.countryCode,
+        countryCode: response.data.data.user.countryCode,
         token
       };
     } catch (error) {
@@ -109,6 +110,7 @@ export const updateUser = createAsyncThunk(
         token: response.data.data.token
       };
     } catch (error) {
+      console.log(error);
       return thunkApi.rejectWithValue(error as SerializedError);
     }
   }
