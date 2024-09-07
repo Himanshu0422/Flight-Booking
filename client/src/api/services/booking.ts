@@ -3,14 +3,14 @@ import { bookingHttp } from "../bookingHttp";
 
 
 class booking{
-  bookFlight(payload: object){
-    return bookingHttp.post(BOOK_FLIGHT, payload)
+  bookFlight(payload: object, token: string){
+    return bookingHttp.post(BOOK_FLIGHT, payload, 'application/json', token)
   }
-  bookings(payload: object){
-    return bookingHttp.post(BOOKINGS, payload);
+  bookings(payload: object, token: string){
+    return bookingHttp.post(BOOKINGS, payload, 'application/json', token);
   }
-  getBookingById(payload: object){
-    return bookingHttp.post(GET_BOOKING_BYID, payload);
+  getBookingById(payload: object, token: string){
+    return bookingHttp.post(GET_BOOKING_BYID, payload, 'application/json', token);
   }
 }
 

@@ -12,16 +12,19 @@ export const bookingHttp = {
       },
       transformResponse: [data => JSON.parse(data)],
     }),
-  post: (url: string, payload: any = {}, headers?: string) =>
-    bookingInstance({
+  post: (url: string, payload: any = {}, headers?: string, authToken? :string) => {
+    const finalHeaders = {
+      'Content-Type': headers || 'application/json',
+      ...(authToken ? { 'Authorization': `Bearer ${authToken}` } : {}),
+    };
+    return bookingInstance({
       method: 'POST',
       url,
       data: payload,
-      headers: {
-        'Content-Type': headers || 'application/json',
-      },
+      headers: finalHeaders,
       transformResponse: [data => JSON.parse(data)],
-    }),
+    })
+  },
   put: (url: string, params: any = {}, headers?: string) => {
     console.log('PUT', url, ' :: ', headers, ' :: ', params);
     return bookingInstance({

@@ -19,7 +19,7 @@ const ProtectedRoute: React.FC<MyComponentProps>  = ({children}) => {
     if(token){
       dispatch(getUser(token));
     }else {
-      navigate('/')
+      navigate('/auth')
     }
   }, [])
 

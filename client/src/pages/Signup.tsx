@@ -68,7 +68,7 @@ const Signup = () => {
       password: formData.password,
     };
     try {
-      const res = await dispatch(signUp(payload)).unwrap();
+      await dispatch(signUp(payload)).unwrap();
       toast.success("User created");
       navigate("/verify-otp");
     } catch (error: any) {
@@ -180,12 +180,12 @@ const Signup = () => {
               </button>
             </div>
           </form>
-          <div className="my-4 flex items-center justify-center w-[90%] sm:w-[65%] mmd:w-[50%] md:w-[80%] lg:w-[60%] llg:w-[50%]">
+          <div className="my-4 flex items-center justify-center w-[90%] sm:w-[65%] mmd:w-[50%] md:w-[80%] lg:w-[70%] llg:w-[55%]">
             <div className="border-b w-full"></div>
             <span className="mx-4 text-sm text-gray-500">Or</span>
             <div className="border-b w-full"></div>
           </div>
-          <div className="flex flex-col space-y-4 w-[90%] sm:w-[65%] mmd:w-[50%] md:w-[80%] lg:w-[60%] llg:w-[50%]">
+          <div className="flex flex-col space-y-4 w-[90%] sm:w-[65%] mmd:w-[50%] md:w-[80%] lg:w-[70%] llg:w-[55%]">
             <button
               className="text-gray-700 font-medium py-2 px-4 rounded-md flex items-center justify-center bg-[#F7FBFF]"
               type="button"

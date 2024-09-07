@@ -17,7 +17,11 @@ const initialState: LoadingState = {
 const loadingSlice = createSlice({
   name: "loading",
   initialState,
-  reducers: {},
+  reducers: {
+    setLoading: (state, action) => {
+      state.loading = action.payload
+    }
+  },
   extraReducers: (builder) => {
     builder
       .addMatcher(isPending(getAirportId, getAllAirports, getFlight, getReturnFlight, getFlightsData, login, signUp, updateUser, verifyOtp, sendOtp, getUser, bookFlight, bookings, getBookingById), (state) => {
@@ -31,6 +35,10 @@ const loadingSlice = createSlice({
       });
   },
 });
+
+export const {
+  setLoading
+} = loadingSlice.actions
 
 const loadingReducer = loadingSlice.reducer
 

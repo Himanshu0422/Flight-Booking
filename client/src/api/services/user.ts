@@ -19,7 +19,7 @@ class user {
     return authHttp.get(USER, undefined, 'application/json', token)
   }
   updateUser(payload: object){
-    return authHttp.post(UPDATE_USER, payload)
+    return authHttp.patch(UPDATE_USER, payload)
   }
 }
 

@@ -2,6 +2,7 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import BookingCard from "../components/HistoryPage/BookingCard";
 import { bookings } from "../redux/bookings/bookingAction";
+import { addPage } from "../redux/bookings/bookingSlice";
 import { AppDispatch, RootState } from "../redux/store";
 
 const History = () => {
@@ -10,8 +11,13 @@ const History = () => {
   const booking = useSelector((state: RootState) => state.booking);
 
   useEffect(() => {
-    dispatch(bookings({ userId: user.id }));
-  }, [dispatch, user.id]);
+    dispatch(bookings({ userId: user.id, page:booking.page, token: user.token }));
+  }, [dispatch, user.id, booking.page, user.token]);
+
+  const handleViewMore = () => {
+    // dispatch(bookings({ userId: user.id, page:booking.page+1, token: user.token }));
+    dispatch(addPage())
+  }
 
   return (
     <div className="bg-gray-100 min-h-[calc(100vh-75px)] flex flex-col items-center py-10 gap-10">
@@ -19,11 +25,21 @@ const History = () => {
       {booking.bookings.length === 0 ? (
         <div>No booking history</div>
       ) : (
-        booking.bookings.map((item, index) => (
-          <>
-            <BookingCard key={item} booking={item} />
-          </>
-        ))
+        <>
+          {booking.bookings.map((item, index) => (
+            <>
+              <BookingCard key={index} booking={item} />
+            </>
+          ))}
+          {booking.page < booking.totalPages && <div
+            className="flex justify-center items-center h-full mb-8 cursor-pointer"
+            onClick={handleViewMore}
+          >
+            <div className="bg-white w-max py-2 px-4 rounded-full shadow-lg text-blue-500">
+              View more
+            </div>
+          </div>}
+        </>
       )}
     </div>
   );

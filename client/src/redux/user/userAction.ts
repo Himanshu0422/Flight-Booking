@@ -11,6 +11,7 @@ export const signUp = createAsyncThunk(
         id: response.data.data.id,
         name: response.data.data.name,
         email: response.data.data.email,
+        countryCode: response.data.data.countryCode,
         phone: response.data.data.phone,
       };
     } catch (error) {
@@ -31,6 +32,7 @@ export const login = createAsyncThunk(
         name: response.data.data.user.name,
         email: response.data.data.user.email,
         phone: response.data.data.user.phone,
+        countryCode: response.data.data.countryCode,
         token
       };
     } catch (error: any) {
@@ -65,6 +67,7 @@ export const verifyOtp = createAsyncThunk(
         name: response.data.data.user.name,
         email: response.data.data.user.email,
         phone: response.data.data.user.phone,
+        countryCode: response.data.user.countryCode,
         token
       };
     } catch (error) {
@@ -83,6 +86,7 @@ export const getUser = createAsyncThunk(
         name: response.data.data.user.name,
         email: response.data.data.user.email,
         phone: response.data.data.user.phone,
+        countryCode: response.data.data.user.countryCode,
         token
       };
     } catch (error) {
@@ -96,12 +100,12 @@ export const updateUser = createAsyncThunk(
   async (payload: object, thunkApi: any) => {
     try {
       const response = await user.updateUser(payload);
-      console.log(response,'res')
       return {
         id: response.data.data.id,
         name: response.data.data.name,
         email: response.data.data.email,
         phone: response.data.data.phone,
+        countryCode: response.data.data.countryCode,
         token: response.data.data.token
       };
     } catch (error) {

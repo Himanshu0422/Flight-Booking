@@ -4,9 +4,11 @@ import booking from "../../api/services/booking";
 
 export const bookFlight = createAsyncThunk(
   '/bookings',
-  async (payload: object, thunkApi: any) => {
+  async (payload: any, thunkApi: any) => {
     try {
-      const response = await booking.bookFlight(payload);
+      const token = payload.token;
+      const { token: _, ...restPayload } = payload;
+      const response = await booking.bookFlight(restPayload, token);
       return {
         data: response.data.data
       }

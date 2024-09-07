@@ -3,6 +3,7 @@ import "@mantine/core/styles.css";
 import React from "react";
 import { Toaster } from "react-hot-toast";
 import {
+  Navigate,
   Outlet,
   Route,
   BrowserRouter as Router,
@@ -28,8 +29,9 @@ const App: React.FC = () => {
       <Toaster position="top-center" reverseOrder={false} />
       <Router>
         <Routes>
+          <Route path="/" element={<Navigate to="/home" replace />} />
           <Route
-            path="/"
+            path="/auth"
             element={
               <OpenRoute>
                 <Signup />

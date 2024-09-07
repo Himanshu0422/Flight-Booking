@@ -1,22 +1,23 @@
 import React, { useEffect, useState } from "react";
-import { useDispatch } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import FlightCard from "../components/common/FlightCard";
 import PassengerCard from "../components/common/PassengerCard";
 import OrderDetailsCard from "../components/PassengerDetails/OrderDetailsCard";
 import { getBookingById } from "../redux/bookings/bookingAction";
 import { Passenger } from "../redux/passengers/passengerReducer";
-import { AppDispatch } from "../redux/store";
+import { AppDispatch, RootState } from "../redux/store";
 import usePayment from "../hooks/usePayment";
 
 const BookingDetails = () => {
   const [booking, setBooking] = useState<any>(null);
   const { bookingId } = useParams();
   const dispatch = useDispatch<AppDispatch>();
+  const user = useSelector((state: RootState) => state.user);
   const { processPayment } = usePayment();
 
   const getBooking = async () => {
-    const res = await dispatch(getBookingById({ bookingId }));
+    const res = await dispatch(getBookingById({ bookingId, token:user.token }));
     setBooking(res.payload);
   };
 

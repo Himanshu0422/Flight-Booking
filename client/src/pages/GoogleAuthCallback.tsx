@@ -16,7 +16,7 @@ const GoogleAuthCallback = () => {
           navigate('/home');
         } else {
           console.error('Token is missing or invalid');
-          navigate('/');
+          navigate('/auth');
         }
       } catch (error) {
         console.error('An error occurred:', error);

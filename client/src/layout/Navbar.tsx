@@ -14,7 +14,7 @@ const Navbar: React.FC = () => {
     if (token) {
       navigate("/history");
     } else {
-      navigate("/");
+      navigate("/auth");
     }
   };
 

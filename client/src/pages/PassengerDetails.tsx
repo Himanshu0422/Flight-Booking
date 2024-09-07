@@ -81,7 +81,7 @@ const PassengerDetails = () => {
         passengersData: passengers,
         email: user.email
       };
-      const res = await dispatch(bookFlight(payload));
+      const res = await dispatch(bookFlight({...payload, token:user.token}));
       let price = singleFlight.price;
       if(singleReturnFlight.id){
         price+=singleReturnFlight.price

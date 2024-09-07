@@ -3,11 +3,17 @@ import { bookings } from "./bookingAction";
 
 
 interface Booking {
-  bookings: []
+  bookings: [],
+  page: number,
+  totalPages: number,
+  totalBookings: number
 }
 
 const initialState: Booking = {
-  bookings: []
+  bookings: [],
+  page: 1,
+  totalPages: 1,
+  totalBookings: 1
 }
 
 const bookingSlice = createSlice({
@@ -16,11 +22,21 @@ const bookingSlice = createSlice({
   reducers: {
     retsetBookings: (state, action) => {
       return initialState;
+    },
+    addPage: (state) => {
+      state.page += 1;
     }
   },
   extraReducers: (builder) => {
-    builder.addCase(bookings.fulfilled, (state, action) => {
-      state.bookings = action.payload
+    builder.addCase(bookings.fulfilled, (state:any, action:any) => {
+      if(action.payload.page === 1){
+        state.bookings = action.payload.data
+      }else {
+        state.bookings = [...state.bookings, ...action.payload.data]
+      }
+      state.page = action.payload.page
+      state.totalPages = action.payload.totalPages
+      state.totalBookings = action.payload.totalBookings
     });
     builder.addCase(bookings.rejected, (state, action) => {
       console.log("rejected");
@@ -29,7 +45,8 @@ const bookingSlice = createSlice({
 })
 
 export const {
-  retsetBookings
+  retsetBookings,
+  addPage
 } = bookingSlice.actions;
 
 export default bookingSlice.reducer;

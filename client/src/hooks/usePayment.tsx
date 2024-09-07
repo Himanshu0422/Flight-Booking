@@ -7,60 +7,92 @@ import { resetState } from "../redux/flights/flightSlice";
 import { resetSingleFlight } from "../redux/flights/singleFlightSlice";
 import { emptyPassengers } from "../redux/passengers/passengerActions";
 import { RootState } from "../redux/store";
+import { setLoading } from "../redux/loadingSlice";
+
 declare var Razorpay: any;
 
 const usePayment = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const user = useSelector((state: RootState) => state.user);
-  const singleFlight = useSelector((state: RootState) => state.singleFlight); 
-  const singleReturnFlight = useSelector((state: RootState) => state.singleReturnFlight);
+  const singleFlight = useSelector((state: RootState) => state.singleFlight);
+  const singleReturnFlight = useSelector(
+    (state: RootState) => state.singleReturnFlight
+  );
 
-  const processPayment = useCallback(async (bookedSeats: any, price:number,  booking_id: number) => {
-    try {
-      const totalAmount = price * bookedSeats;
-      const paymentResponse = await axios.post(
-        `${process.env.REACT_APP_BACKEND_BOOKING_API}/payment/razorpay`,
-        {
-          booking_id: booking_id,
-          amount: totalAmount + totalAmount * 0.10,
-          user_id: user.id,
-        }
-      );
+  const processPayment = useCallback(
+    async (bookedSeats: any, price: number, booking_id: number) => {
+      dispatch(setLoading(true));
 
-      const options = {
-        key: process.env.RAZORPAY_KEY,
-        amount: paymentResponse.data.amount,
-        currency: paymentResponse.data.currency,
-        order_id: paymentResponse.data.id,
-        handler: async (response: any) => {
-          await axios.post(
-            `${process.env.REACT_APP_BACKEND_BOOKING_API}/payment/verify`,
-            {
-              ...response,
-              booking_id: booking_id,
-              email: user.email,
-            }
-          );
-          toast.success("Payment successful and booking confirmed");
-          dispatch(emptyPassengers());
-          dispatch(resetState());
-          dispatch(resetSingleFlight());
-          navigate("/home");
-        },
-        prefill: {
-          name: user.name,
-          email: user.email,
-          contact: "9999999999",
-        },
-      };
+      try {
+        const totalAmount = price * bookedSeats;
+        const paymentResponse = await axios.post(
+          `${process.env.REACT_APP_BACKEND_BOOKING_API}/payment/razorpay`,
+          {
+            booking_id: booking_id,
+            amount: totalAmount + totalAmount * 0.1,
+            user_id: user.id,
+          },
+          {
+            headers: {
+              Authorization: `Bearer ${user.token}`,
+              Accept: "application/json",
+            },
+          }
+        );
 
-      const rzp = new Razorpay(options);
-      rzp.open();
-    } catch (error) {
-      console.error("Error processing payment", error);
-    }
-  }, [dispatch, navigate, singleFlight.price, singleReturnFlight.price, user.email, user.id, user.name]);
+        const options = {
+          key: process.env.RAZORPAY_KEY,
+          amount: paymentResponse.data.amount,
+          currency: paymentResponse.data.currency,
+          order_id: paymentResponse.data.id,
+          handler: async (response: any) => {
+            await axios.post(
+              `${process.env.REACT_APP_BACKEND_BOOKING_API}/payment/verify`,
+              {
+                ...response,
+                booking_id: booking_id,
+                email: user.email,
+              },
+              {
+                headers: {
+                  Authorization: `Bearer ${user.token}`,
+                  Accept: "application/json",
+                },
+              }
+            );
+            toast.success("Payment successful and booking confirmed");
+            dispatch(emptyPassengers());
+            dispatch(resetState());
+            dispatch(resetSingleFlight());
+            navigate("/home");
+          },
+          prefill: {
+            name: user.name,
+            email: user.email,
+            contact: "9999999999",
+          },
+        };
+
+        const rzp = new Razorpay(options);
+        rzp.open();
+      } catch (error) {
+        console.error("Error processing payment", error);
+        toast.error("Payment failed. Please try again.");
+      } finally {
+        dispatch(setLoading(false));
+      }
+    },
+    [
+      dispatch,
+      navigate,
+      singleFlight.price,
+      singleReturnFlight.price,
+      user.email,
+      user.id,
+      user.name,
+    ]
+  );
 
   return { processPayment };
 };

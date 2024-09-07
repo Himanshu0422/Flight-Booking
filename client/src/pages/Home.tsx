@@ -1,7 +1,5 @@
 import React from 'react';
 import Main from '../components/HomePage/Main';
-import Travel from '../components/HomePage/Travel';
-import Trips from '../components/HomePage/Trips';
 
 const Home: React.FC = () => {
 
