@@ -23,7 +23,6 @@ export const http = {
       transformResponse: [data => JSON.parse(data)],
     }),
   put: (url: string, params: any = {}, headers?: string) => {
-    console.log('PUT', url, ' :: ', headers, ' :: ', params);
     return instance({
       method: 'PUT',
       url,

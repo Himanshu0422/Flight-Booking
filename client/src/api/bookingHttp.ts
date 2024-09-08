@@ -26,7 +26,6 @@ export const bookingHttp = {
     })
   },
   put: (url: string, params: any = {}, headers?: string) => {
-    console.log('PUT', url, ' :: ', headers, ' :: ', params);
     return bookingInstance({
       method: 'PUT',
       url,

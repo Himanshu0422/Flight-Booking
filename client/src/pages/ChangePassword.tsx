@@ -24,7 +24,6 @@ const ChangePassword = () => {
         email,
         password: newPassword
       })).unwrap();
-      console.log(res);
       if(res){
         toast.success("Password successfully changed.");
         navigate("/home");

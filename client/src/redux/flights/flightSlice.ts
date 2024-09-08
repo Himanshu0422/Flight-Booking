@@ -132,7 +132,7 @@ const flightSlice = createSlice({
       }
     });
     builder.addCase(getFlightsData.rejected, (state, action) => {
-      console.log("rejected");
+      // console.log("rejected");
     });
   },
 });

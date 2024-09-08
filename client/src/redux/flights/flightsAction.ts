@@ -38,7 +38,6 @@ export const getFlightsData = createAsyncThunk(
         totalFlights: response.data.data.pagination.totalFlights
       };
     } catch (error) {
-      console.log(error);
       return thunkApi.rejectWithValue(error as SerializedError);
     }
   }

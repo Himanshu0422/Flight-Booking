@@ -32,7 +32,6 @@ const airportSlice = createSlice({
       })
       .addCase(getAllAirports.rejected, (state, action) => {
         state.loading = false
-        console.log(action.error);
       });
   },
 });

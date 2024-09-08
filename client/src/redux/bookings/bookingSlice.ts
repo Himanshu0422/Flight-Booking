@@ -39,7 +39,7 @@ const bookingSlice = createSlice({
       state.totalBookings = action.payload.totalBookings
     });
     builder.addCase(bookings.rejected, (state, action) => {
-      console.log("rejected");
+      // console.log("rejected");
     });
   }
 })

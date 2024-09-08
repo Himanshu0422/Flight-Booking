@@ -32,7 +32,7 @@ const singleReturnFlight = createSlice({
       return action.payload.data
     })
     builder.addCase(getReturnFlight.rejected, (state, action) => {
-      console.log("rejected");
+      // console.log("rejected");
     })
   }
 })

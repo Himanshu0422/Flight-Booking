@@ -12,7 +12,6 @@ export const getAirportId = createAsyncThunk(
       const response = await flights.getAirportData(data);
       return response.data.data;
     } catch (error) {
-      console.log(error);
       return thunkApi.rejectWithValue(error as SerializedError);
     }
   }
@@ -27,7 +26,6 @@ export const getAllAirports = createAsyncThunk(
       const response = await airport.getAllAirports();
       return response.data.data
     } catch (error) {
-      console.log(error);
       return thunkApi.rejectWithValue(error as SerializedError);
     }
   }

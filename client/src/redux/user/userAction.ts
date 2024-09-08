@@ -115,7 +115,6 @@ export const updateUser = createAsyncThunk(
         token: response.data.data.token
       };
     } catch (error) {
-      console.log(error);
       return thunkApi.rejectWithValue(error as SerializedError);
     }
   }
@@ -128,7 +127,6 @@ export const validateEmail = createAsyncThunk (
       const res = await user.validateEmail(payload);
       return res.data.data;
     } catch (error) {
-      console.log(error);
       return thunkApi.rejectWithValue(error as SerializedError);
     }
   }
@@ -141,7 +139,6 @@ export const changePassword = createAsyncThunk (
       const res = await user.changePassword(payload);
       return res.data.data;
     } catch (error) {
-      console.log(error);
       return thunkApi.rejectWithValue(error as SerializedError);
     }
   }

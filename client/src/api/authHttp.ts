@@ -26,7 +26,6 @@ export const authHttp = {
       transformResponse: [data => JSON.parse(data)],
     }),
   put: (url: string, params: any = {}, headers?: string) => {
-    console.log('PUT', url, ' :: ', headers, ' :: ', params);
     return authInstance({
       method: 'PUT',
       url,
