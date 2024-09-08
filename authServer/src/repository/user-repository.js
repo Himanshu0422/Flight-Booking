@@ -29,7 +29,8 @@ class UserRepository {
         email,
         password: hashedPassword,
         phone,
-        countryCode
+        countryCode,
+        type: 0
       });
 
       return user;
@@ -49,22 +50,73 @@ class UserRepository {
         });
         if (existingUser) {
           throw { message: 'Email already taken' };
+        }else {
+          data = {
+            ...data,
+            otpVerified: 0
+          }
         }
       }
   
-      const user = await User.update(data, {
+      const res = await User.update(data, {
         where: {
           id: userId
         }
       });
-  
-      return true;
+
+      const user = await User.findByPk(userId);
+
+      return user;
     } catch (error) {
       console.log('Something went wrong in repository layer');
       throw { error };
     }
   }
-  
+
+  async validEmail(data) {
+    try {
+      const user = await User.findOne({
+        where: {
+          email: data,
+          type: 0
+        }
+      });
+      if(!user) {
+        return false;
+      }
+      await this.sendChangePassMail(data);
+      return true
+    } catch (error) {
+      ole.log('Something went wrong in repository layer');
+      throw { error };
+    }
+  }
+
+  async sendChangePassMail(email) {
+    try {
+      await transporter.sendMail({
+        to: email,
+        subject: 'Change Password Mail',
+        text: `Your Change Password link is ${CLIENT_LINK}change-password?email=${email}`
+      });
+    } catch (error) {
+      
+    }
+  }
+
+  async changePassword(email, password) {
+    try {
+      const hashedPassword = await bcrypt.hash(password, 10);
+      let user = await User.findOne({ where: { email } });
+      user.password = hashedPassword;
+      await user.save();
+
+      return true;
+    } catch (error) {
+      console.log('Something went wrong in repository layer');
+      throw {error}
+    }
+  }
 
   async sendOtp(data) {
     const { email } = data;
@@ -133,7 +185,8 @@ class UserRepository {
           name: user.name,
           email: user.email,
           phone: user.phone,
-          countryCode: user.countryCode
+          countryCode: user.countryCode,
+          type: user.type
         },
         token: token
       };
@@ -149,6 +202,9 @@ class UserRepository {
 
     try {
       const user = await User.findOne({ where: { email } });
+      if(user.type !== 0) {
+        return { success: false, message: 'This email is used by other login method.' }
+      }
       if (!user || !(await bcrypt.compare(password, user.password))) {
         return { success: false, message: 'Invalid credentials' }
       }
@@ -163,7 +219,8 @@ class UserRepository {
           name: user.name,
           email: user.email,
           phone: user.phone,
-          countryCode: user.countryCode
+          countryCode: user.countryCode,
+          type: user.type
         },
         token: token
       }
@@ -183,7 +240,8 @@ class UserRepository {
           name: user.name,
           email: user.email,
           phone: user.phone,
-          countryCode: user.countryCode
+          countryCode: user.countryCode,
+          type: user.type
         },
       }
     } catch (error) {

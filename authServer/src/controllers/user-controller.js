@@ -49,6 +49,45 @@ const updateUser = async (req, res) => {
   }
 }
 
+const validEmail = async (req, res) => {
+  try {
+    const response = await userService.validEmail(req.body.email);
+    return res.status(200).json({
+      data: response,
+      success: true,
+      err: {},
+      message: 'Email exists'
+    })
+  } catch (error) {
+    return res.status(500).json({
+      data: {},
+      success: false,
+      message: 'Email doesn\'t exist',
+      err: error
+    });
+  }
+}
+
+const changePassword = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+    const response = await userService.changePassword(email, password);
+    return res.status(200).json({
+      data: response,
+      success: true,
+      err: {},
+      message: 'Password changed successfully'
+    })
+  } catch (error) {
+    return res.status(500).json({
+      data: {},
+      success: false,
+      message: 'Not able to change password',
+      err: error
+    });
+  }
+}
+
 const sendOtp = async (req, res) => {
   try {
     const response = await userService.sendOtp(req.body);
@@ -204,5 +243,7 @@ module.exports = {
   login,
   googleCallback,
   getUser,
-  verifyToken
+  verifyToken,
+  validEmail,
+  changePassword
 }

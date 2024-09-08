@@ -1,20 +1,43 @@
-const express = require('express');
-const passport = require('../../config/passport');
-const { createUser, login, sendOtp, verifyOtp, googleCallback, getUser, updateUser, verifyToken } = require('../../controllers/user-controller');
-const { authenticateToken } = require('../../middleware/authMiddleware');
+const express = require("express");
+const passport = require("../../config/passport");
+const {
+  createUser,
+  login,
+  sendOtp,
+  verifyOtp,
+  googleCallback,
+  getUser,
+  updateUser,
+  verifyToken,
+  validEmail,
+  changePassword
+} = require("../../controllers/user-controller");
+const { authenticateToken } = require("../../middleware/authMiddleware");
+const { CLIENT_LINK } = require("../../config/serverConfig");
 
 const router = express.Router();
 
-router.post('/signup', createUser);
-router.post('/login', login);
-router.patch('/update-user', updateUser);
-router.post('/send-otp', sendOtp);
-router.post('/verify-otp', verifyOtp);
-router.get('/user', authenticateToken, getUser);
-router.get('/isAuthenticated', verifyToken)
+router.post("/signup", createUser);
+router.post("/login", login);
+router.post("/validateEmail", validEmail);
+router.post("/change-password", changePassword)
+router.patch("/update-user", updateUser);
+router.post("/send-otp", sendOtp);
+router.post("/verify-otp", verifyOtp);
+router.get("/user", authenticateToken, getUser);
+router.get("/isAuthenticated", verifyToken);
 
-// Google Authentication Routes
-router.get('/google', passport.authenticate('google', { scope: ['profile', 'email'] }));
-router.get('/google/callback', passport.authenticate('google', { session: false }), googleCallback);
+router.get(
+  "/google",
+  passport.authenticate("google", { scope: ["profile", "email"] })
+);
+router.get(
+  "/google/callback",
+  passport.authenticate("google", {
+    session: false,
+    failureRedirect: `${CLIENT_LINK}auth?error=Email used by another login method`,
+  }),
+  googleCallback
+);
 
 module.exports = router;

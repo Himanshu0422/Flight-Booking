@@ -29,6 +29,26 @@ class UserService {
     }
   }
 
+  async validEmail(data) {
+    try {
+      const res = await this.userRepository.validEmail(data);
+      return res;
+    } catch (error) {
+      console.log('Something went wrong at service layer');
+      throw { error };
+    }
+  }
+
+  async changePassword(email, password) {
+    try {
+      const res = await this.userRepository.changePassword(email, password);
+      return res;
+    } catch (error) {
+      console.log('Something went wrong at service layer');
+      throw { error };
+    }
+  }
+
   async sendOtp(data) {
     try {
       const otp = await this.userRepository.sendOtp(data);
