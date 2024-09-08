@@ -23,6 +23,7 @@ import VerifyOTP from "./pages/VerifyOtp";
 import Profile from "./pages/Profile";
 import ChangePassword from "./pages/ChangePassword";
 import ValidateEmail from "./pages/ValidateEmail";
+import NotFound from "./pages/NotFound";
 
 const theme = createTheme({});
 
@@ -32,6 +33,7 @@ const App: React.FC = () => {
       <Toaster position="top-center" reverseOrder={false} />
       <Router>
         <Routes>
+          <Route path="*" element={<NotFound />} />
           <Route
             element={
               <Layout showNavbar={false}>
