@@ -1,8 +1,8 @@
 import { TextInput } from "@mantine/core";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
 import { z } from "zod";
 import { AppDispatch } from "../redux/store";
 import { login, signUp } from "../redux/user/userAction";
@@ -75,6 +75,18 @@ const Signup = () => {
       toast.error(error.response.data.message);
     }
   };
+
+  const location = useLocation();
+
+  useEffect(() => {
+    const params = new URLSearchParams(location.search);
+    const error = params.get('error');
+    
+    if (error) {
+      toast.error(error);
+      navigate('/auth')
+    }
+  }, [location.search]);
 
   return (
     <div className="flex h-screen">
@@ -165,7 +177,7 @@ const Signup = () => {
               <div className="flex items-center justify-end mt-2">
                 <a
                   className="inline-block align-baseline text-sm text-blue-500 hover:text-blue-700"
-                  href="/"
+                  href="/validate-email"
                 >
                   Forgot Password?
                 </a>

@@ -21,6 +21,8 @@ import PassengerDetails from "./pages/PassengerDetails";
 import Signup from "./pages/Signup";
 import VerifyOTP from "./pages/VerifyOtp";
 import Profile from "./pages/Profile";
+import ChangePassword from "./pages/ChangePassword";
+import ValidateEmail from "./pages/ValidateEmail";
 
 const theme = createTheme({});
 
@@ -30,34 +32,51 @@ const App: React.FC = () => {
       <Toaster position="top-center" reverseOrder={false} />
       <Router>
         <Routes>
-          <Route path="/" element={<Navigate to="/home" replace />} />
           <Route
-            path="/auth"
             element={
-              <OpenRoute>
-                <Signup />
-              </OpenRoute>
+              <Layout showNavbar={false}>
+                <Outlet />
+              </Layout>
             }
-          />
+          >
+            <Route path="/" element={<Navigate to="/home" replace />} />
+            <Route
+              path="/auth"
+              element={
+                <OpenRoute>
+                  <Signup />
+                </OpenRoute>
+              }
+            />
+            <Route
+              path="/verify-otp"
+              element={
+                <OpenRoute>
+                  <VerifyOTP />
+                </OpenRoute>
+              }
+            />
+            <Route
+              path="/validate-email"
+              element={
+                <OpenRoute>
+                  <ValidateEmail />
+                </OpenRoute>
+              }
+            />
+            <Route path="/change-password" element={<ChangePassword />} />
+            <Route
+              path="/auth/google/callback"
+              element={
+                <OpenRoute>
+                  <GoogleAuthCallback />
+                </OpenRoute>
+              }
+            />
+          </Route>
           <Route
-            path="/verify-otp"
             element={
-              <OpenRoute>
-                <VerifyOTP />
-              </OpenRoute>
-            }
-          />
-          <Route
-            path="/auth/google/callback"
-            element={
-              <OpenRoute>
-                <GoogleAuthCallback />
-              </OpenRoute>
-            }
-          />
-          <Route
-            element={
-              <Layout>
+              <Layout showNavbar={true}>
                 <Outlet />
               </Layout>
             }

@@ -16,3 +16,5 @@ export const SEND_OTP = '/send-otp';
 export const VERIFY_OTP = '/verify-otp';
 export const USER = '/user';
 export const UPDATE_USER = '/update-user';
+export const VALIDATE_EMAIL = '/validateEmail';
+export const CHANGE_PASSWORD = '/change-password';

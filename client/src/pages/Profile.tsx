@@ -1,4 +1,5 @@
 import { TextInput } from "@mantine/core";
+import Cookies from "js-cookie";
 import React, { useEffect, useMemo, useState } from "react";
 import { PhoneInput } from "react-international-phone";
 import "react-international-phone/style.css";
@@ -7,7 +8,8 @@ import { useNavigate } from "react-router-dom";
 import countryList from "react-select-country-list";
 import { z } from "zod";
 import { AppDispatch, RootState } from "../redux/store";
-import { updateUser } from "../redux/user/userAction";
+import { updateUser, validateEmail } from "../redux/user/userAction";
+import toast from "react-hot-toast";
 
 const Profile = () => {
   const dispatch = useDispatch<AppDispatch>();
@@ -19,6 +21,7 @@ const Profile = () => {
     phone: user.phone,
     countryCode: user.countryCode,
   });
+  const [initialData, setInitialData] = useState(profileData);
 
   useEffect(() => {
     setProfileData({
@@ -27,13 +30,14 @@ const Profile = () => {
       phone: user.phone,
       countryCode: user.countryCode,
     });
+    setInitialData({
+      name: user.name,
+      email: user.email,
+      phone: user.phone,
+      countryCode: user.countryCode,
+    });
   }, [user.email]);
 
-  useEffect(() => {
-    setInitialData(profileData);
-  }, [profileData])
-
-  const [initialData, setInitialData] = useState(profileData);
   const [emailError, setEmailError] = useState<string | null>(null);
 
   const emailSchema = z.string().email("Please enter a valid email address.");
@@ -59,9 +63,20 @@ const Profile = () => {
     }
   };
 
-  const handleSave = () => {
+  const handleSave = async () => {
     if (profileData.email !== initialData.email) {
-      navigate("/verify-otp", { state: { email: profileData.email } });
+      await dispatch(
+        updateUser({
+          id: user.id,
+          name: profileData.name,
+          email: profileData.email,
+          phone: profileData.phone,
+          countryCode: profileData.countryCode,
+        })
+      ).unwrap();
+      setInitialData(profileData);
+      Cookies.remove("token");
+      navigate("/verify-otp");
     } else {
       dispatch(
         updateUser({
@@ -73,6 +88,16 @@ const Profile = () => {
         })
       );
       setInitialData(profileData);
+    }
+  };
+
+  const changePassword = async () => {
+    const res = await dispatch(validateEmail({ email:user.email }));
+    if (res.payload) {
+      toast.success("Change password link sent to email");
+      navigate("/home");
+    } else {
+      toast.error("Email doesn't exist");
     }
   };
 
@@ -107,6 +132,7 @@ const Profile = () => {
           className="w-full"
           type="email"
           error={emailError}
+          disabled={user.type === 1}
         />
         <div className="w-full">
           <label className="block mb-2">Country Code</label>
@@ -130,15 +156,24 @@ const Profile = () => {
         />
       </div>
 
-        <div className="flex justify-center mt-6 w-full max-w-md">
-          <button
-            onClick={handleSave}
-            className="mt-4 bg-orange-400 transition text-white py-2 px-4 rounded w-full"
-            disabled={!!emailError}
-          >
-            Save
-          </button>
-        </div>
+      <div className="flex justify-center mt-6 w-full max-w-md">
+        <button
+          onClick={changePassword}
+          className="mt-4 border border-blue-500 text-blue-500 transition py-2 px-4 rounded w-full"
+          disabled={!!emailError}
+        >
+          Change Password
+        </button>
+      </div>
+      <div className="flex justify-center w-full max-w-md">
+        <button
+          onClick={handleSave}
+          className="mt-4 bg-orange-400 transition text-white py-2 px-4 rounded w-full"
+          disabled={!!emailError}
+        >
+          Save
+        </button>
+      </div>
     </div>
   );
 };

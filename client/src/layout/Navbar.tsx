@@ -23,6 +23,7 @@ const Navbar: React.FC = () => {
 
   const handleLogout = () => {
     Cookies.remove("token");
+    setIsProfileOpen(false);
     dispatch(logout());
     window.location.reload();
   };

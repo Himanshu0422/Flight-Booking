@@ -8,6 +8,7 @@ interface User {
   email: string;
   phone?: string;
   countryCode?: string;
+  type: number;
   token?: string;
 }
 
@@ -17,6 +18,7 @@ const initialState: User = {
   email: '',
   phone: '',
   countryCode: '',
+  type: 0,
   token: ''
 };
 
@@ -44,6 +46,7 @@ const userSlice = createSlice({
       state.name = action.payload.name;
       state.phone = action.payload.phone;
       state.countryCode = action.payload.countryCode;
+      state.type = action.payload.type;
       state.id = action.payload.id;
     });
     builder.addCase(login.fulfilled, (state, action: PayloadAction<User>) => {
@@ -55,6 +58,7 @@ const userSlice = createSlice({
       state.id = action.payload.id;
       state.token = action.payload.token;
       state.countryCode = action.payload.countryCode;
+      state.type = action.payload.type;
       state.phone = action.payload.phone;
     });
     builder.addCase(getUser.fulfilled, (state, action: PayloadAction<User>) => {
@@ -64,6 +68,7 @@ const userSlice = createSlice({
       state.phone = action.payload.phone;
       state.token = action.payload.token;
       state.countryCode = action.payload.countryCode;
+      state.type = action.payload.type;
     });
     builder.addCase(updateUser.fulfilled, (state, action: PayloadAction<User>) => {
       state.email = action.payload.email;
@@ -71,6 +76,7 @@ const userSlice = createSlice({
       state.id = action.payload.id;
       state.phone = action.payload.phone;
       state.countryCode = action.payload.countryCode;
+      state.type = action.payload.type;
       state.token = action.payload.token;
     });
     builder.addCase(updateUser.rejected, (state, action: any) => {

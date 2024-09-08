@@ -13,6 +13,7 @@ export const signUp = createAsyncThunk(
         email: response.data.data.email,
         countryCode: response.data.data.countryCode,
         phone: response.data.data.phone,
+        type: response.data.data.type
       };
     } catch (error) {
       return thunkApi.rejectWithValue(error);
@@ -33,6 +34,7 @@ export const login = createAsyncThunk(
         email: response.data.data.user.email,
         phone: response.data.data.user.phone,
         countryCode: response.data.data.user.countryCode,
+        type: response.data.data.user.type,
         token
       };
     } catch (error: any) {
@@ -69,6 +71,7 @@ export const verifyOtp = createAsyncThunk(
         email: response.data.data.user.email,
         phone: response.data.data.user.phone,
         countryCode: response.data.data.user.countryCode,
+        type: response.data.data.user.type,
         token
       };
     } catch (error) {
@@ -88,6 +91,7 @@ export const getUser = createAsyncThunk(
         email: response.data.data.user.email,
         phone: response.data.data.user.phone,
         countryCode: response.data.data.user.countryCode,
+        type: response.data.data.user.type,
         token
       };
     } catch (error) {
@@ -107,8 +111,35 @@ export const updateUser = createAsyncThunk(
         email: response.data.data.email,
         phone: response.data.data.phone,
         countryCode: response.data.data.countryCode,
+        type: response.data.data.type,
         token: response.data.data.token
       };
+    } catch (error) {
+      console.log(error);
+      return thunkApi.rejectWithValue(error as SerializedError);
+    }
+  }
+)
+
+export const validateEmail = createAsyncThunk (
+  '/validateEmail',
+  async (payload: object, thunkApi: any) => {
+    try {
+      const res = await user.validateEmail(payload);
+      return res.data.data;
+    } catch (error) {
+      console.log(error);
+      return thunkApi.rejectWithValue(error as SerializedError);
+    }
+  }
+)
+
+export const changePassword = createAsyncThunk (
+  '/change-password',
+  async (payload: object, thunkApi: any) => {
+    try {
+      const res = await user.changePassword(payload);
+      return res.data.data;
     } catch (error) {
       console.log(error);
       return thunkApi.rejectWithValue(error as SerializedError);

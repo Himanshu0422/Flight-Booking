@@ -1,4 +1,4 @@
-import { LOGIN, SEND_OTP, SIGN_UP, UPDATE_USER, USER, VERIFY_OTP } from "../api";
+import { CHANGE_PASSWORD, LOGIN, SEND_OTP, SIGN_UP, UPDATE_USER, USER, VALIDATE_EMAIL, VERIFY_OTP } from "../api";
 import { authHttp } from "../authHttp";
 
 
@@ -20,6 +20,12 @@ class user {
   }
   updateUser(payload: object){
     return authHttp.patch(UPDATE_USER, payload)
+  }
+  validateEmail(payload: object) {
+    return authHttp.post(VALIDATE_EMAIL, payload)
+  }
+  changePassword(payload: object) {
+    return authHttp.post(CHANGE_PASSWORD, payload)
   }
 }
 

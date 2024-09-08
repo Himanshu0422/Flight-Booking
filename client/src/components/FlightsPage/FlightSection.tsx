@@ -173,7 +173,7 @@ const FlightSection = () => {
           </div>
         </div>
       )}
-      <div className={`flex flex-col items-center gap-10 mx-10 mb-32`}>
+      <div className={`flex flex-col items-center gap-10 mx-10 mb-14`}>
         {flightsArray?.length === 0 ? (
           <div className="text-gray-500 text-lg">No flights available</div>
         ) : (
@@ -185,7 +185,7 @@ const FlightSection = () => {
           ? departurePage < totalDeparturePages
           : returnPage < totalReturnPages) && (
           <div
-            className="flex justify-center items-center h-full mb-8 cursor-pointer"
+            className="flex justify-center items-center h-full cursor-pointer"
             onClick={handleViewMore}
           >
             <div className="bg-white w-max py-2 px-4 rounded-full shadow-lg text-blue-500">
