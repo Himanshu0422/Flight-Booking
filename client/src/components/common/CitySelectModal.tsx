@@ -41,7 +41,10 @@ const CitySelectModal: React.FC<CitySelectModalProps> = ({
 
   return (
     <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
-      <div className="w-[300px] h-[200px] bg-white border border-gray-300 rounded-md shadow-lg" ref={dropdownRef}>
+      <div
+        className="w-[300px] bg-white border border-gray-300 rounded-md shadow-lg"
+        ref={dropdownRef}
+      >
         <input
           className="block w-full border-b border-gray-300 px-4 py-2 focus:outline-none focus:border-blue-500"
           type="text"
@@ -49,21 +52,27 @@ const CitySelectModal: React.FC<CitySelectModalProps> = ({
           value={searchTerm}
           onChange={handleSearchChange}
         />
-        <div>
-          {filteredOptions.length > 0 ? filteredOptions.map((option) => (
-            <div
-              key={option.city}
-              className="px-4 py-2 hover:bg-gray-100 cursor-pointer border flex items-center"
-              onClick={() => handleCityClick(option.city)}
-            >
-              <div className="mr-2">
-                <GiAirplaneDeparture />
+        <div className="h-[150px] overflow-y-auto">
+          {filteredOptions.length > 0 ? (
+            filteredOptions.map((option) => (
+              <div
+                key={option.city}
+                className="px-4 py-2 hover:bg-gray-100 cursor-pointer border flex items-center"
+                onClick={() => handleCityClick(option.city)}
+              >
+                <div className="mr-2">
+                  <GiAirplaneDeparture />
+                </div>
+                <div>
+                  <div className="text-sm">{option.city}</div>
+                </div>
               </div>
-              <div>
-                <div className="text-sm">{option.city}</div>
-              </div>
+            ))
+          ) : (
+            <div className="text-sm flex justify-center mt-2">
+              No airport found
             </div>
-          )) : <div className="text-sm flex justify-center mt-2">No airport found</div>}
+          )}
         </div>
       </div>
     </div>
