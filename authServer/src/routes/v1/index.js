@@ -40,4 +40,9 @@ router.get(
   googleCallback
 );
 
+router.get('/ping', (req, res) => {
+  console.log(`Ping received at ${new Date().toISOString()}`);
+  res.json({ message: "Server is awake" });
+});
+
 module.exports = router;
