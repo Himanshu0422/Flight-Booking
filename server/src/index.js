@@ -25,25 +25,25 @@ const startUpServer = () => {
     app.get('/ping', (req, res) => {
         console.log(`Ping received at ${new Date().toISOString()}`);
         res.json({ message: "Server is awake" });
-      });
-      
-      cron.schedule('0 */2 * * *', async () => {
+    });
+
+    // Cron job to run every 14 minutes between 8:00 AM and 11:59 PM
+    cron.schedule('*/14 8-23 * * *', async () => {
         try {
-          console.log('Running cron job');
-          // Call the /ping API to keep the server awake
-          const response = await axios.get(`${SERVER_LINK}/ping`);
-          console.log('API response:', response.data);
+            console.log('Running cron job');
+            const response = await axios.get(`${SERVER_LINK}/ping`);
+            console.log('API response:', response.data);
         } catch (error) {
-          console.error('Error in cron job:', error);
+            console.error('Error in cron job:', error);
         }
-      });
+    });
 
     app.listen(PORT, () => {
         console.log(`Server started at ${PORT}`.bgCyan);
         if (process.env.SYNC_DB === 'true') {
             db.sequelize.sync({ alter: true });
         }
-    })
+    });
 }
 
 startUpServer();
