@@ -29,14 +29,16 @@ const startUpServer = () => {
 
     // Cron job to run every 14 minutes between 8:00 AM and 11:59 PM
     cron.schedule('*/14 8-23 * * *', async () => {
-        try {
-            console.log('Running cron job');
-            const response = await axios.get(`${SERVER_LINK}/ping`);
-            console.log('API response:', response.data);
-        } catch (error) {
-            console.error('Error in cron job:', error);
-        }
-    });
+    try {
+        console.log('Running cron job on IST schedule');
+        const response = await axios.get(`${SERVER_LINK}/ping`);
+        console.log('API response:', response.data);
+    } catch (error) {
+        console.error('Error in cron job:', error);
+    }
+}, {
+    timezone: "Asia/Kolkata"
+});
 
     app.listen(PORT, () => {
         console.log(`Server started at ${PORT}`.bgCyan);
