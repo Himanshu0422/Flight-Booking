@@ -119,7 +119,7 @@ class FlightRepository {
 
 	async getAllFlights(filter, page = 1) {
 		try {
-			const pageSize = 1;
+			const pageSize = 2;
 			const offset = (page - 1) * pageSize;
 			const filterObject = this.#createFilter(filter);
 

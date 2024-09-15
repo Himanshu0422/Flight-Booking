@@ -6,9 +6,7 @@ import useSearchFlights from "../../hooks/useSearchFlight";
 import { getAirportId } from "../../redux/airports/airportAction";
 import {
   Flight,
-  increaseDeparturePage,
-  increaseReturnPage,
-  setisDeparture,
+  setisDeparture
 } from "../../redux/flights/flightSlice";
 import { getFlightsData } from "../../redux/flights/flightsAction";
 import { AppDispatch, RootState } from "../../redux/store";
@@ -82,11 +80,6 @@ const FlightSection = () => {
 
       await dispatch(getFlightsData(flightParams));
 
-      if (type === "Departure") {
-        dispatch(increaseDeparturePage());
-      } else {
-        dispatch(increaseReturnPage());
-      }
     } catch (error) {
       console.error("Error fetching more flights:", error);
     }
@@ -173,7 +166,7 @@ const FlightSection = () => {
           </div>
         </div>
       )}
-      <div className={`flex flex-col items-center gap-10 mx-10 mb-14`}>
+      <div className={`flex flex-col items-center gap-10 mx-10 ${!returnDate ? 'mb-14' : 'mb-36'}`}>
         {flightsArray?.length === 0 ? (
           <div className="text-gray-500 text-lg">No flights available</div>
         ) : (
