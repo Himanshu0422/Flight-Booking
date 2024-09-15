@@ -41,15 +41,17 @@ const startUpServer = () => {
 		res.json({ message: "Server is awake" });
 	});
 
-	cron.schedule('0 */2 * * *', async () => {
+	// Cron job to run every 14 minutes between 8:00 AM and 11:59 PM
+	cron.schedule('*/14 8-23 * * *', async () => {
 		try {
-			console.log('Running cron job');
-			// Call the /ping API to keep the server awake
+			console.log('Running cron job on IST schedule');
 			const response = await axios.get(`${SERVER_LINK}/ping`);
 			console.log('API response:', response.data);
 		} catch (error) {
 			console.error('Error in cron job:', error);
 		}
+	}, {
+		timezone: "Asia/Kolkata"
 	});
 
 	app.listen(PORT, () => {
@@ -57,7 +59,7 @@ const startUpServer = () => {
 		if (process.env.SYNC_DB === 'true') {
 			db.sequelize.sync({ alter: true });
 		}
-	})
+	});
 }
 
 startUpServer();
