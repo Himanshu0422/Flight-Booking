@@ -15,6 +15,9 @@ module.exports = {
     DB_PORT: process.env.DB_PORT,
     DB_DIALECT: process.env.DB_DIALECT,
     DB_SSL_CA: process.env.DB_SSL_CA,
+    REDIS_PASS: process.env.REDIS_PASS,
+    REDIS_HOST: process.env.REDIS_HOST,
+    REDIS_PORT: process.env.REDIS_PORT,
     CLIENT_LINK: process.env.CLIENT_LINK,
     SERVER_LINK: process.env.SERVER_LINK,
 }
