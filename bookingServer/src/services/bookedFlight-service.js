@@ -38,6 +38,16 @@ class BookedFlightService {
       }
     }
   }
+
+  async findByFlightId(flightId, bookingDate) {
+    try {
+      const bookedFlight = await this.bookedFlightRepository.findByFlightId(flightId, bookingDate);
+      return bookedFlight;
+    } catch (error) {
+      console.log('Something went wrong in service layer.');
+      throw error
+    }
+  }
 }
 
 module.exports = BookedFlightService;
