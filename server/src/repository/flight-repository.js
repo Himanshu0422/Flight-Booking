@@ -1,5 +1,6 @@
 const { Flights, Airplane, Airport, sequelize } = require("../models/index");
 const { Op } = require("sequelize");
+const { redis } = require('../config/redis');
 
 class FlightRepository {
 	#createFilter(data) {
@@ -56,7 +57,6 @@ class FlightRepository {
 
 		}
 
-
 		if (priceFilter.length > 0 || timeFilter.length > 0 || dateFilter.length > 0) {
 			filter[Op.and] = [];
 
@@ -76,7 +76,6 @@ class FlightRepository {
 		return filter;
 	}
 
-
 	async createFlight(data) {
 		try {
 			const flight = await Flights.create(data);
@@ -89,6 +88,13 @@ class FlightRepository {
 
 	async getFlight(flightId) {
 		try {
+			const cachedFlight = await redis.get(`flight:${flightId}`);
+
+			if (cachedFlight) {
+				console.log('Serving flight from cache');
+				return JSON.parse(cachedFlight);
+			}
+
 			const flight = await Flights.findOne({
 				where: { flightNumber: flightId },
 				include: [
@@ -110,6 +116,11 @@ class FlightRepository {
 				],
 				attributes: ['id', 'flightNumber', 'departureTime', 'arrivalTime', 'price', 'flightTime', 'nextDay', 'isInternational']
 			});
+
+			if (flight) {
+				await redis.set(`flight:${flightId}`, JSON.stringify(flight), 'EX', 3600);
+			}
+
 			return flight;
 		} catch (error) {
 			console.log("Something went wrong in the repository layer");
@@ -122,6 +133,14 @@ class FlightRepository {
 			const pageSize = 2;
 			const offset = (page - 1) * pageSize;
 			const filterObject = this.#createFilter(filter);
+
+			const cacheKey = `flights:${JSON.stringify(filter)}:page:${page}`;
+			const cachedFlights = await redis.get(cacheKey);
+
+			if (cachedFlights) {
+				console.log('Serving flights from cache');
+				return JSON.parse(cachedFlights);
+			}
 
 			const { count, rows: flights } = await Flights.findAndCountAll({
 				where: filterObject,
@@ -149,8 +168,9 @@ class FlightRepository {
 			});
 
 			const totalPages = Math.ceil(count / pageSize);
+			console.log(flights);
 
-			return {
+			const result = {
 				flights,
 				pagination: {
 					currentPage: page,
@@ -158,13 +178,15 @@ class FlightRepository {
 					totalFlights: count
 				}
 			};
+
+			await redis.set(cacheKey, JSON.stringify(result), 'EX', 3600);
+
+			return result;
 		} catch (error) {
 			console.error("Something went wrong in the repository layer:", error);
 			throw new Error('Error fetching flights');
 		}
 	}
-
-
 
 	async updateFlights(flightId, data) {
 		try {
@@ -173,6 +195,7 @@ class FlightRepository {
 					id: flightId,
 				},
 			});
+			await redis.del(`flight:${flightId}`);
 			return true;
 		} catch (error) {
 			console.log("Something went wrong in the repository layer");
