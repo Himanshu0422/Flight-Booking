@@ -55,7 +55,7 @@ const Navbar: React.FC = () => {
         className="text-black font-bold text-xl md:text-2xl ml-4 cursor-pointer"
         onClick={() => navigate("/home")}
       >
-        Flight
+        Airwave
       </div>
       <div className="flex gap-4 items-center">
         <div
