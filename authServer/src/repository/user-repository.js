@@ -4,6 +4,7 @@ const nodemailer = require('nodemailer');
 const { Op } = require('sequelize');
 const jwt = require('jsonwebtoken');
 const { EMAIL_USER, EMAIL_PASS, JWT_SECRET, CLIENT_LINK } = require("../config/serverConfig");
+const { redis } = require('../config/redis');
 
 const transporter = nodemailer.createTransport({
   service: 'Gmail',
@@ -21,8 +22,8 @@ class UserRepository {
     try {
       const hashedPassword = await bcrypt.hash(password, 10);
       let user = await User.findOne({ where: { email } });
-      if(user){
-        return {success:false, message: 'User already present'}
+      if (user) {
+        return { success: false, message: 'User already present' };
       }
       user = await User.create({
         name,
@@ -35,7 +36,8 @@ class UserRepository {
 
       return user;
     } catch (error) {
-      res.status(500).json({ error: "Signup failed" });
+      console.log('Something went wrong in repository layer.');
+      throw error;
     }
   }
 
@@ -45,26 +47,23 @@ class UserRepository {
         const existingUser = await User.findOne({
           where: {
             email: data.email,
-            id: { [Op.ne] : userId }
+            id: { [Op.ne]: userId }
           }
         });
         if (existingUser) {
           throw { message: 'Email already taken' };
-        }else {
+        } else {
           data = {
             ...data,
             otpVerified: 0
-          }
+          };
         }
       }
-  
-      const res = await User.update(data, {
-        where: {
-          id: userId
-        }
-      });
 
+      await User.update(data, { where: { id: userId } });
       const user = await User.findByPk(userId);
+
+      await redis.set(`user_${userId}`, JSON.stringify(user), 'EX', 3600);
 
       return user;
     } catch (error) {
@@ -81,7 +80,7 @@ class UserRepository {
           type: 0
         }
       });
-      if(!user) {
+      if (!user) {
         return false;
       }
       await this.sendChangePassMail(data);
@@ -100,7 +99,7 @@ class UserRepository {
         text: `Your Change Password link is ${CLIENT_LINK}change-password?email=${email}`
       });
     } catch (error) {
-      
+
     }
   }
 
@@ -114,7 +113,7 @@ class UserRepository {
       return true;
     } catch (error) {
       console.log('Something went wrong in repository layer');
-      throw {error}
+      throw { error }
     }
   }
 
@@ -139,25 +138,33 @@ class UserRepository {
           text: `Your OTP code is ${otpCode}`
         });
 
+        await redis.set(`otp_${user.id}`, otpCode, 'EX', 900);
+
         return user;
       } else {
-        return {success: false, message: 'User not found'}
+        return { success: false, message: 'User not found' };
       }
     } catch (error) {
       console.log('Something went wrong in repository layer');
-      throw {error}
+      throw { error };
     }
   }
 
   async verifyOtp(data) {
     const { email, otp } = data;
-  
+
     try {
       const user = await User.findOne({ where: { email } });
       if (!user) {
         return { success: false, message: 'User not found' };
       }
-  
+
+      const cachedOtp = await redis.get(`otp_${user.id}`);
+      if (cachedOtp && cachedOtp === otp) {
+        await this._markOtpUsed(user.id);
+        return this._generateTokenForUser(user);
+      }
+
       const otpRecord = await Otp.findOne({
         where: {
           user_id: user.id,
@@ -166,50 +173,74 @@ class UserRepository {
           is_used: false
         }
       });
-  
+
       if (!otpRecord) {
         return { success: false, message: 'Invalid or expired OTP' };
       }
-  
+
       otpRecord.is_used = true;
       user.otpVerified = true;
       await user.save();
       await otpRecord.save();
-  
-      const token = jwt.sign({ id: user.id }, JWT_SECRET_KEY, { expiresIn: '7d' });
-  
-      return {
-        success: true,
-        user: {
-          id: user.id,
-          name: user.name,
-          email: user.email,
-          phone: user.phone,
-          countryCode: user.countryCode,
-          type: user.type
-        },
-        token: token
-      };
+
+      return this._generateTokenForUser(user);
     } catch (error) {
       console.log('Something went wrong in repository layer');
       throw { error };
     }
   }
-  
+
+  async _markOtpUsed(userId) {
+    await redis.del(`otp_${userId}`);
+  }
+
+  _generateTokenForUser(user) {
+    const token = jwt.sign({ id: user.id }, JWT_SECRET_KEY, { expiresIn: '7d' });
+    return {
+      success: true,
+      user: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        phone: user.phone,
+        countryCode: user.countryCode,
+        type: user.type
+      },
+      token
+    };
+  }
+
+  async getUser(id) {
+    try {
+      const cachedUser = await redis.get(`user_${id}`);
+      if (cachedUser) {
+        return { user: JSON.parse(cachedUser) };
+      }
+
+      const user = await User.findByPk(id);
+      if (!user) return { success: false, message: 'No user found' };
+      await redis.set(`user_${id}`, JSON.stringify(user), 'EX', 3600);
+
+      return { user };
+    } catch (error) {
+      console.log('Something went wrong in repository layer');
+      throw { error }
+    }
+  }
 
   async login(data) {
     const { email, password } = data;
 
     try {
       const user = await User.findOne({ where: { email } });
-      if(user.type !== 0) {
+      if (user.type !== 0) {
         return { success: false, message: 'This email is used by other login method.' }
       }
       if (!user || !(await bcrypt.compare(password, user.password))) {
         return { success: false, message: 'Invalid credentials' }
       }
-      if(!user.otpVerified){
-        return {success: false, message: 'Otp not verified', otpVerified:false};
+      if (!user.otpVerified) {
+        return { success: false, message: 'Otp not verified', otpVerified: false };
       }
 
       const token = jwt.sign({ id: user.id }, JWT_SECRET_KEY, { expiresIn: '7d' });
@@ -226,35 +257,14 @@ class UserRepository {
       }
     } catch (error) {
       console.log('Something went wrong in repository layer');
-      throw {error}
+      throw { error }
     }
   }
 
-  async getUser(id){
-    try {
-      const user = await User.findByPk(id);
-      if (!user) return {success: false, message: 'No user found'}
-      return {
-        user: {
-          id: user.id,
-          name: user.name,
-          email: user.email,
-          phone: user.phone,
-          countryCode: user.countryCode,
-          type: user.type
-        },
-      }
-    } catch (error) {
-      console.log('Something went wrong in repository layer');
-      throw {error}
-    }
-  
-  }
-
-  async googleCallback(req, res){
+  async googleCallback(req, res) {
     const token = jwt.sign({ id: req.user.id }, JWT_SECRET_KEY, { expiresIn: '7d' });
     res.redirect(`${CLIENT_LINK}auth/google/callback?token=${token}`);
-  }; 
+  };
 }
 
 
