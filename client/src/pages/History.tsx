@@ -2,7 +2,7 @@ import React, { useEffect } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import BookingCard from "../components/HistoryPage/BookingCard";
 import { bookings } from "../redux/bookings/bookingAction";
-import { addPage } from "../redux/bookings/bookingSlice";
+import { addPage, resetPage } from "../redux/bookings/bookingSlice";
 import { AppDispatch, RootState } from "../redux/store";
 
 const History = () => {
@@ -12,7 +12,17 @@ const History = () => {
 
   useEffect(() => {
     dispatch(bookings({ userId: user.id, page:booking.page, token: user.token }));
-  }, [dispatch, user.id, booking.page, user.token]);
+
+    return () => {
+      dispatch(resetPage());
+    }
+  }, [dispatch, user.id, user.token]);
+
+  useEffect(() => {
+    if (booking.page > 1) {
+      dispatch(bookings({ userId: user.id, page: booking.page, token: user.token }));
+    }
+  }, [dispatch, booking.page, user.id, user.token]);
 
   const handleViewMore = () => {
     // dispatch(bookings({ userId: user.id, page:booking.page+1, token: user.token }));

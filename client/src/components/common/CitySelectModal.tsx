@@ -40,7 +40,7 @@ const CitySelectModal: React.FC<CitySelectModalProps> = ({
   );
 
   return (
-    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50">
+    <div className="fixed inset-0 flex items-center justify-center bg-black bg-opacity-50 z-10">
       <div
         className="w-[300px] bg-white border border-gray-300 rounded-md shadow-lg"
         ref={dropdownRef}

@@ -10,7 +10,7 @@ import {
 } from "../../redux/flights/flightSlice";
 import { getFlightsData } from "../../redux/flights/flightsAction";
 import { AppDispatch, RootState } from "../../redux/store";
-import { getCurrentTime, getDate } from "../../utils/Date";
+import { getCurrentTime, getDate, getTime } from "../../utils/Date";
 import FlightCard from "./components/FlightCard";
 import FlightSummary from "./components/FlightSummary";
 
@@ -73,8 +73,10 @@ const FlightSection = () => {
         arrivalAirportId:
           type === "Departure" ? arrivalAirportId : departureAirportId,
         date: type === "Departure" ? departureDate : returnDate!,
-        time: type === "Departure" ? time : returnTime,
+        time: filterTime ? getTime(filterTime) : type === "Departure" ? time : returnTime,
         type,
+        maxPrice,
+        minPrice,
         page: type === "Departure" ? departurePage + 1 : returnPage + 1,
       };
 

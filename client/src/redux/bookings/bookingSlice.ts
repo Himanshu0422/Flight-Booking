@@ -25,6 +25,9 @@ const bookingSlice = createSlice({
     },
     addPage: (state) => {
       state.page += 1;
+    },
+    resetPage: state => {
+      state.page = 1
     }
   },
   extraReducers: (builder) => {
@@ -46,7 +49,8 @@ const bookingSlice = createSlice({
 
 export const {
   retsetBookings,
-  addPage
+  addPage,
+  resetPage
 } = bookingSlice.actions;
 
 export default bookingSlice.reducer;
