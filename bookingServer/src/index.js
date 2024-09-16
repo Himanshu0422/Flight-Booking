@@ -6,6 +6,7 @@ const app = express();
 const { PORT } = require('./config/serverConfig');
 const db = require('./models/index');
 const apiRoutes = require('./routes/index');
+const { startRedis } = require('./config/redis');
 
 const setupAndStartServer = () => {
   app.use(
@@ -16,6 +17,7 @@ const setupAndStartServer = () => {
 );
   app.use(bodyParser.json());
   app.use(bodyParser.urlencoded({ extended: true }));
+  startRedis();
 
   app.use('/api', apiRoutes);
 

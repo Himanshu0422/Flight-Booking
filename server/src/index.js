@@ -6,9 +6,9 @@ const cors = require('cors');
 const colors = require('colors');
 const cron = require('node-cron');
 const axios = require('axios');
-const Redis = require('ioredis');
 
 const db = require('./models/index');
+const { startRedis } = require('./config/redis');
 
 const startUpServer = () => {
 	const app = express();
@@ -20,19 +20,7 @@ const startUpServer = () => {
 	);
 	app.use(bodyParser.json());
 	app.use(bodyParser.urlencoded({ extended: true }));
-
-	const redis = new Redis({
-		host: '127.0.0.1',
-		port: 6379,
-	});
-
-	redis.on('connect', () => {
-		console.log('Connected to Redis!');
-	});
-
-	redis.on('error', (err) => {
-		console.error('Redis error:', err);
-	});
+	startRedis();
 
 	app.use('/api', ApiRoutes);
 

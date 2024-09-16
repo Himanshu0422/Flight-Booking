@@ -8,6 +8,7 @@ const passport = require('./config/passport');
 const session = require('express-session'); 
 
 const db = require('./models/index');
+const { startRedis } = require('./config/redis');
 
 const startUpServer = () => {
     const app = express();
@@ -27,6 +28,7 @@ const startUpServer = () => {
     app.use(bodyParser.urlencoded({extended: true}));
     app.use(passport.initialize());
     app.use(passport.session());
+    startRedis();
 
     app.use('/api', ApiRoutes);
 
