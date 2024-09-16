@@ -9,5 +9,8 @@ module.exports = {
     DB_HOST: process.env.DB_HOST,
     DB_PORT: process.env.DB_PORT,
     DB_DIALECT: process.env.DB_DIALECT,
+    REDIS_PASS: process.env.REDIS_PASS,
+    REDIS_HOST: process.env.REDIS_HOST,
+    REDIS_PORT: process.env.REDIS_PORT,
     SERVER_LINK: process.env.SERVER_LINK
 }
