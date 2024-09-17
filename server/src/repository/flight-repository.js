@@ -168,7 +168,6 @@ class FlightRepository {
 			});
 
 			const totalPages = Math.ceil(count / pageSize);
-			console.log(flights);
 
 			const result = {
 				flights,
