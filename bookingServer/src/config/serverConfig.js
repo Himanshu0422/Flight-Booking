@@ -8,6 +8,7 @@ module.exports = {
   AUTH_PATH: process.env.AUTH_PATH,
   RAZORPAY_KEY: process.env.RAZORPAY_KEY,
   RAZORPAY_SECRET: process.env.RAZORPAY_SECRET,
+  RAZORPAY_WEBHOOK_SECRET: process.env.RAZORPAY_WEBHOOK_SECRET,
   EMAIL_USER: process.env.EMAIL_USER,
   EMAIL_PASS: process.env.EMAIL_PASS,
   STRIPE_KEY: process.env.STRIPE_KEY,

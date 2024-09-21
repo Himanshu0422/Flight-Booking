@@ -2,7 +2,7 @@ const Razorpay = require('razorpay');
 const axios = require('axios');
 const crypto = require('crypto');
 const PaymentRepository = require('../repository/payment-repository');
-const { RAZORPAY_KEY, RAZORPAY_SECRET, AUTH_PATH } = require('../config/serverConfig');
+const { RAZORPAY_KEY, RAZORPAY_SECRET, AUTH_PATH, RAZORPAY_WEBHOOK_SECRET } = require('../config/serverConfig');
 const transporter = require("../config/transporter");
 
 class PaymentService {
@@ -27,7 +27,7 @@ class PaymentService {
     }
 
     async verifyPaymentSignature(signature, body) {
-        const webhookSecret = '12345678';
+        const webhookSecret = RAZORPAY_WEBHOOK_SECRET;
         const hmac = crypto.createHmac('sha256', webhookSecret);
         hmac.update(JSON.stringify(body));
         const generatedSignature = hmac.digest('hex');
