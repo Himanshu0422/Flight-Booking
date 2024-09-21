@@ -199,6 +199,34 @@ const getUser = async (req, res) => {
   }
 }
 
+const getUserById = async (req, res) => {
+  try {
+    const user = await userService.getUser(req.query.id);
+    if (user.success === false) {
+      return res.status(400).json({
+        data: {},
+        success: true,
+        err: {},
+        message: user.message
+      })
+    }
+    return res.status(200).json({
+      data: user,
+      success: true,
+      err: {},
+      message: 'Fetched user successfuly'
+    });
+  } catch (error) {
+    console.log(error);
+    return res.status(500).json({
+      data: {},
+      success: false,
+      message: 'User fetching failed',
+      err: error
+    });
+  }
+}
+
 const verifyToken = async (req, res) => {
   try {
     const authHeader = req.headers['authorization'];
@@ -245,5 +273,6 @@ module.exports = {
   getUser,
   verifyToken,
   validEmail,
-  changePassword
+  changePassword,
+  getUserById
 }

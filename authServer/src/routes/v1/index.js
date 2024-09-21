@@ -10,7 +10,8 @@ const {
   updateUser,
   verifyToken,
   validEmail,
-  changePassword
+  changePassword,
+  getUserById
 } = require("../../controllers/user-controller");
 const { authenticateToken } = require("../../middleware/authMiddleware");
 const { CLIENT_LINK } = require("../../config/serverConfig");
@@ -20,10 +21,11 @@ const router = express.Router();
 router.post("/signup", createUser);
 router.post("/login", login);
 router.post("/validateEmail", validEmail);
-router.post("/change-password", changePassword)
+router.post("/change-password", changePassword);
 router.patch("/update-user", updateUser);
 router.post("/send-otp", sendOtp);
 router.post("/verify-otp", verifyOtp);
+router.get('/user-details', getUserById);
 router.get("/user", authenticateToken, getUser);
 router.get("/isAuthenticated", verifyToken);
 

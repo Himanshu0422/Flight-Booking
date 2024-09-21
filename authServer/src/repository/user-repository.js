@@ -86,7 +86,7 @@ class UserRepository {
       await this.sendChangePassMail(data);
       return true
     } catch (error) {
-      ole.log('Something went wrong in repository layer');
+      console.log('Something went wrong in repository layer');
       throw { error };
     }
   }
@@ -99,7 +99,8 @@ class UserRepository {
         text: `Your Change Password link is ${CLIENT_LINK}change-password?email=${email}`
       });
     } catch (error) {
-
+      console.log('Error sending message');
+      throw { error }
     }
   }
 

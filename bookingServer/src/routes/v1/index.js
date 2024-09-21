@@ -14,7 +14,7 @@ router.post('/getBookingById', authorizeUser, bookingController.getBookingById);
 router.post('/getBookedFlight', authorizeUser, bookedFlightController.findByFlightId);
 router.post('/create-payment-intent', authorizeUser, bookingController.createPaymentIntent);
 router.post('/payment/razorpay', authorizeUser, paymentController.createOrder);
-router.post('/payment/verify', authorizeUser, paymentController.verifyPayment);
+router.post('/payment/verify', paymentController.verifyPayment);
 router.get('/ping', (req, res) => {
   console.log(`Ping received at ${new Date().toISOString()}`);
   res.json({ message: "Server is awake" });

@@ -47,21 +47,7 @@ const usePayment = () => {
           currency: paymentResponse.data.currency,
           order_id: paymentResponse.data.id,
           handler: async (response: any) => {
-            await axios.post(
-              `${process.env.REACT_APP_BACKEND_BOOKING_API}/payment/verify`,
-              {
-                ...response,
-                booking_id: booking_id,
-                email: user.email,
-              },
-              {
-                headers: {
-                  Authorization: `Bearer ${user.token}`,
-                  Accept: "application/json",
-                },
-              }
-            );
-            toast.success("Payment successful and booking confirmed");
+            toast.success("Booking confirmed");
             dispatch(emptyPassengers());
             dispatch(resetState());
             dispatch(resetSingleFlight());
