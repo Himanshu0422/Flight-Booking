@@ -37,8 +37,11 @@ class PaymentController {
             if (!isValidSignature) {
                 return res.status(400).json({ error: 'Invalid signature' });
             }
-    
             const { order_id, id } = req.body.payload.payment.entity;
+            if(req.body.event == 'payment.failed'){
+                await PaymentService.updatePaymentStatus(order_id, 'failed', req.body.payload.payment.entity);
+                return res.status(402).json({error: 'Payment declined'});
+            }
     
             try {
                 await PaymentService.updatePaymentStatus(order_id, 'successful', req.body.payload.payment.entity);
