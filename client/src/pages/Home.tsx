@@ -4,14 +4,15 @@ import axios from 'axios';
 
 const Home: React.FC = () => {
 
-	const startServer = async () => {
-		try {
-			axios.get(`${process.env.REACT_APP_BACKEND_BOOKING_API}/ping`);
-			axios.get(`${process.env.REACT_APP_BACKEND_AUTH_API}/ping`);
-		} catch (error) {
-			console.log(error);	
-		}
-	}
+	const startServer = () => {
+		axios.get(`${process.env.REACT_APP_BACKEND_BOOKING_API}/ping`)
+			.catch(() => {
+			});
+	
+		axios.get(`${process.env.REACT_APP_BACKEND_AUTH_API}/ping`)
+			.catch(() => {
+			});
+	};
 
 	useEffect(() => {
 		startServer();
