@@ -6,7 +6,7 @@
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "npx nodemon src/index",
-    "build": "yarn install && npx sequelize db:migrate --config src/config/config.js --migrations-path src/migrations db:seed:all --seeders-path src/seeders --config src/config/config.js"
+    "build": "yarn install && npx sequelize db:migrate --config src/config/config.js --migrations-path src/migrations"
   },
   "author": "",
   "license": "ISC",
