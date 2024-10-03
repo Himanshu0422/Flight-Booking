@@ -38,8 +38,13 @@ For each backend (server, bookingserver, authserver):
 cd <backend-folder>
 yarn build
 ```
-
 This will install packages and run migrations to create tables in the databases.
+
+In server run below command to add flights.
+
+```bash
+npx sequelize-cli db:seed:all --seeders-path src/seeders --config src/config/config.js
+```
 
 ### 4. Frontend Setup
 
