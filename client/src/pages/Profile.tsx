@@ -28,13 +28,13 @@ const Profile = () => {
       name: user.name,
       email: user.email,
       phone: user.phone,
-      countryCode: user.countryCode,
+      countryCode: user.countryCode || '+91',
     });
     setInitialData({
       name: user.name,
       email: user.email,
       phone: user.phone,
-      countryCode: user.countryCode,
+      countryCode: user.countryCode || '+91',
     });
   }, [user.email]);
 

@@ -1,12 +1,12 @@
 const passport = require('passport');
 const GoogleStrategy = require('passport-google-oauth20').Strategy;
 const { User } = require('../models');
-const { clientID, clientSecret } = require('./serverConfig');
+const { clientID, clientSecret, SERVER_LINK } = require('./serverConfig');
 
 passport.use(new GoogleStrategy({
   clientID: clientID,
   clientSecret: clientSecret,
-  callbackURL: '/api/v1/google/callback'
+  callbackURL: `${SERVER_LINK}/api/v1/google/callback`
 }, async (accessToken, refreshToken, profile, done) => {
   try {
     let user = await User.findOne({ where: { email: profile.emails[0].value } });
