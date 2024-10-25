@@ -1,7 +1,8 @@
 import dayjs, { Dayjs } from "dayjs";
-import React, { useState } from "react";
+import React, { useEffect, useRef, useState } from "react";
 import { getDate } from "../../utils/Date";
 import DatePickerModal from "./DatePickerModal";
+import gsap from "gsap";
 
 interface ReturnDateProps {
   returnDate: Dayjs | null;
@@ -13,24 +14,58 @@ const ReturnDate: React.FC<ReturnDateProps> = ({
   setReturnDate,
 }) => {
   const minDate: Dayjs = dayjs(new Date());
-
   const [returnModalOpen, setReturnModalOpen] = useState(false);
+  const [isReturn, setIsReturn] = useState<boolean>(!!returnDate);
+  const containerRef = useRef<HTMLDivElement>(null);
+  const modalRef = useRef<HTMLDivElement>(null);
 
   const handleReturnDateChange = (date: Dayjs | null) => {
     setReturnDate(date);
   };
 
   const handleOneWay = () => {
-    setReturnDate(null);
+    // Animate the switch to "One Way"
+    if (containerRef.current) {
+      gsap.to(containerRef.current, {
+        opacity: 0,
+        duration: 0.3,
+        onComplete: () => {
+          setReturnDate(null);
+          setIsReturn(false);
+          gsap.to(containerRef.current, { opacity: 1, duration: 0.3 });
+        },
+      });
+    }
   };
 
   const handleReturnWay = () => {
-    setReturnDate(dayjs(new Date()));
+    // Animate the switch to "Return"
+    if (containerRef.current) {
+      gsap.to(containerRef.current, {
+        opacity: 0,
+        duration: 0.3,
+        onComplete: () => {
+          setReturnDate(dayjs(new Date()));
+          setIsReturn(true);
+          gsap.to(containerRef.current, { opacity: 1, duration: 0.3 });
+        },
+      });
+    }
   };
 
+  useEffect(() => {
+    if (returnModalOpen && modalRef.current) {
+      gsap.fromTo(
+        modalRef.current,
+        { y: -20, opacity: 0 },
+        { y: 0, opacity: 1, duration: 0.4, ease: "power2.out" }
+      );
+    }
+  }, [returnModalOpen]);
+
   return (
-    <div>
-      {!returnDate ? (
+    <div ref={containerRef}>
+      {!isReturn ? (
         <div
           className="border p-3 rounded-xl flex gap-2 cursor-pointer justify-center items-center h-full"
           onClick={handleReturnWay}
@@ -65,16 +100,18 @@ const ReturnDate: React.FC<ReturnDateProps> = ({
               {getDate(returnDate)}
             </div>
           </div>
-          <DatePickerModal
-            open={returnModalOpen}
-            handleClose={() => setReturnModalOpen(false)}
-            selectedDate={returnDate}
-            handleDateChange={handleReturnDateChange}
-            title="Select Return Date"
-            minDate={minDate}
-          />
         </div>
       )}
+
+      <DatePickerModal
+        ref={modalRef}
+        open={returnModalOpen}
+        handleClose={() => setReturnModalOpen(false)}
+        selectedDate={returnDate}
+        handleDateChange={handleReturnDateChange}
+        title="Select Return Date"
+        minDate={minDate}
+      />
     </div>
   );
 };
