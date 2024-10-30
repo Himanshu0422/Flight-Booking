@@ -11,7 +11,7 @@ module.exports = (sequelize) => {
       });
     }
   }
-  
+
   Payments.init({
     payment_id: {
       type: DataTypes.STRING,
@@ -21,10 +21,14 @@ module.exports = (sequelize) => {
     booking_id: {
       type: DataTypes.INTEGER,
       allowNull: false,
+      references: {
+        model: 'Bookings',
+        key: 'id'
+      }
     },
     user_id: {
       type: DataTypes.INTEGER,
-      allowNull: false
+      allowNull: false,
     },
     amount: {
       type: DataTypes.INTEGER,
@@ -43,6 +47,20 @@ module.exports = (sequelize) => {
   }, {
     sequelize,
     modelName: 'Payments',
+    indexes: [
+      {
+        unique: false,
+        fields: ['booking_id'],
+      },
+      {
+        unique: false,
+        fields: ['user_id'],
+      },
+      {
+        unique: false,
+        fields: ['status'],
+      },
+    ],
   });
 
   return Payments;

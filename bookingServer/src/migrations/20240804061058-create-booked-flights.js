@@ -13,12 +13,13 @@ module.exports = {
         type: Sequelize.INTEGER,
         allowNull: false,
       },
-      bookingDate: {
-        type: Sequelize.STRING,
-        allowNull: false,
-      },
       noOfSeats: {
         type: Sequelize.INTEGER,
+        allowNull: false,
+        defaultValue: 0
+      },
+      bookingDate: {
+        type: Sequelize.STRING,
         allowNull: false,
       },
       createdAt: {
@@ -29,6 +30,17 @@ module.exports = {
         allowNull: false,
         type: Sequelize.DATE
       }
+    });
+
+    // Adding indexes
+    await queryInterface.addIndex('BookedFlights', ['flightId'], {
+      unique: false,
+      name: 'idx_flightId'
+    });
+
+    await queryInterface.addIndex('BookedFlights', ['bookingDate'], {
+      unique: false,
+      name: 'idx_bookingDate'
     });
   },
   async down(queryInterface, Sequelize) {

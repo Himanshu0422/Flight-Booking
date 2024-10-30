@@ -1,7 +1,6 @@
 'use strict';
-const {
-  Model
-} = require('sequelize');
+const { Model } = require('sequelize');
+
 module.exports = (sequelize, DataTypes) => {
   class BookedFlights extends Model {
     /**
@@ -20,6 +19,7 @@ module.exports = (sequelize, DataTypes) => {
       });
     }
   }
+
   BookedFlights.init({
     flightId: {
       type: DataTypes.INTEGER,
@@ -37,6 +37,17 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'BookedFlights',
+    indexes: [
+      {
+        unique: false,
+        fields: ['flightId']
+      },
+      {
+        unique: false,
+        fields: ['bookingDate']
+      }
+    ]
   });
+
   return BookedFlights;
 };

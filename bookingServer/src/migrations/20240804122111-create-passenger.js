@@ -47,7 +47,13 @@ module.exports = {
       },
       bookingId: {
         type: Sequelize.INTEGER,
-        allowNull: false
+        allowNull: false,
+        references: {
+          model: 'Bookings',
+          key: 'id'
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE'
       },
       createdAt: {
         allowNull: false,
@@ -58,7 +64,22 @@ module.exports = {
         type: Sequelize.DATE
       }
     });
+
+    // Adding indexes
+    await queryInterface.addIndex('Passengers', ['bookingId'], {
+      unique: false,
+      name: 'idx_bookingId'
+    });
+    await queryInterface.addIndex('Passengers', ['email'], {
+      unique: false,
+      name: 'idx_email'
+    });
+    await queryInterface.addIndex('Passengers', ['passportNo'], {
+      unique: false,
+      name: 'idx_passportNo'
+    });
   },
+
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable('Passengers');
   }

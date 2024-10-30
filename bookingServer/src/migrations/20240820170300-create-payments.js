@@ -17,6 +17,12 @@ module.exports = {
       booking_id: {
         type: Sequelize.INTEGER,
         allowNull: false,
+        references: {
+          model: 'Bookings',
+          key: 'id'
+        },
+        onUpdate: 'CASCADE',
+        onDelete: 'CASCADE'
       },
       user_id: {
         type: Sequelize.INTEGER,
@@ -45,7 +51,22 @@ module.exports = {
         type: Sequelize.DATE
       }
     });
+
+    // Adding indexes
+    await queryInterface.addIndex('Payments', ['booking_id'], {
+      unique: false,
+      name: 'idx_booking_id'
+    });
+    await queryInterface.addIndex('Payments', ['user_id'], {
+      unique: false,
+      name: 'idx_user_id'
+    });
+    await queryInterface.addIndex('Payments', ['status'], {
+      unique: false,
+      name: 'idx_status'
+    });
   },
+
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable('Payments');
   }

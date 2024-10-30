@@ -50,16 +50,30 @@ module.exports = (sequelize) => {
       allowNull: true
     },
     bookingId: {
-      type: DataTypes.INTEGER,  // Match the type of Booking's primary key
+      type: DataTypes.INTEGER,  
       allowNull: false,
       references: {
-        model: 'Bookings',  // Ensure the model name matches exactly
+        model: 'Bookings',  
         key: 'id'
       }
     }
   }, {
     sequelize,
     modelName: 'Passenger',
+    indexes: [
+      {
+        unique: false,
+        fields: ['bookingId']
+      },
+      {
+        unique: false,
+        fields: ['email']
+      },
+      {
+        unique: false,
+        fields: ['passportNo']
+      }
+    ]
   });
 
   return Passenger;

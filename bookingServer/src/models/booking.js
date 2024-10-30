@@ -70,6 +70,28 @@ module.exports = (sequelize) => {
   }, {
     sequelize,
     modelName: 'Booking',
+    indexes: [
+      {
+        unique: false,
+        fields: ['userId']
+      },
+      {
+        unique: false,
+        fields: ['flightId']
+      },
+      {
+        unique: false,
+        fields: ['bookedFlightId']
+      },
+      {
+        unique: false,
+        fields: ['status']
+      },
+      {
+        unique: false,
+        fields: ['bookingDate']
+      }
+    ]
   });
 
   return Booking;
