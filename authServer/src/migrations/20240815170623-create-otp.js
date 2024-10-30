@@ -42,7 +42,12 @@ module.exports = {
         defaultValue: Sequelize.NOW
       }
     });
+
+    await queryInterface.addIndex('Otps', ['user_id']);
+    await queryInterface.addIndex('Otps', ['otp_code']);
+    await queryInterface.addIndex('Otps', ['expires_at']);
   },
+
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable('Otps');
   }

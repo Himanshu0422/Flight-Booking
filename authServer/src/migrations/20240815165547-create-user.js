@@ -16,18 +16,19 @@ module.exports = {
       email: {
         type: Sequelize.STRING,
         allowNull: false,
+        unique: true,
         validate: {
-          isEmail: false
+          isEmail: true
         }
       },
       password: {
         type: Sequelize.STRING,
       },
       phone: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       countryCode: {
-        type: Sequelize.STRING
+        type: Sequelize.STRING,
       },
       otpVerified: {
         type: Sequelize.BOOLEAN,
@@ -47,7 +48,14 @@ module.exports = {
         type: Sequelize.DATE
       }
     });
+
+    await queryInterface.addIndex('Users', ['email'], {
+      unique: true
+    });
+    await queryInterface.addIndex('Users', ['phone']);
+    await queryInterface.addIndex('Users', ['type']);
   },
+
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable('Users');
   }

@@ -42,6 +42,17 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'Otp',
+    indexes: [
+      {
+        fields: ['user_id']
+      },
+      {
+        fields: ['otp_code'],
+      },
+      {
+        fields: ['expires_at'],
+      }
+    ]
   });
   
   return Otp;
