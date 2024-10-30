@@ -33,6 +33,16 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'Airport',
+    indexes: [
+      {
+        name: 'idx_airport_name',
+        fields: ['name']
+      },
+      {
+        name: 'idx_airport_city',
+        fields: ['city']
+      }
+    ]
   });
   return Airport;
 };

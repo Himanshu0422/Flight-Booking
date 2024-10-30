@@ -1,7 +1,6 @@
 'use strict';
-const {
-	Model
-} = require('sequelize');
+const { Model } = require('sequelize');
+
 module.exports = (sequelize, DataTypes) => {
 	class Flights extends Model {
 		/**
@@ -10,7 +9,7 @@ module.exports = (sequelize, DataTypes) => {
 		 * The `models/index` file will call this method automatically.
 		 */
 		static associate(models) {
-			// define association here
+			// Define associations here
 			this.belongsTo(models.Airport, {
 				as: 'departureAirport',
 				foreignKey: 'departureAirportId',
@@ -28,6 +27,7 @@ module.exports = (sequelize, DataTypes) => {
 			});
 		}
 	}
+
 	Flights.init({
 		flightNumber: {
 			type: DataTypes.STRING,
@@ -79,6 +79,34 @@ module.exports = (sequelize, DataTypes) => {
 	}, {
 		sequelize,
 		modelName: 'Flights',
+		indexes: [
+			{
+				name: 'idx_flight_number',
+				unique: true,
+				fields: ['flightNumber']
+			},
+			{
+				name: 'idx_airplane_id',
+				fields: ['airplaneId']
+			},
+			{
+				name: 'idx_departure_airport_id',
+				fields: ['departureAirportId']
+			},
+			{
+				name: 'idx_arrival_airport_id',
+				fields: ['arrivalAirportId']
+			},
+			{
+				name: 'idx_price',
+				fields: ['price']
+			},
+			{
+				name: 'idx_departure_time',
+				fields: ['departureTime']
+			},
+		]
 	});
+
 	return Flights;
 };

@@ -16,15 +16,30 @@ module.exports = {
       },
       airplaneId: {
         type: Sequelize.INTEGER,
-        allowNull: false
+        allowNull: false,
+        references: {
+          model: 'Airplanes',
+          key: 'id'
+        },
+        onDelete: 'CASCADE'
       },
       departureAirportId: {
         type: Sequelize.INTEGER,
-        allowNull: false
+        allowNull: false,
+        references: {
+          model: 'Airports',
+          key: 'id'
+        },
+        onDelete: 'CASCADE'
       },
       arrivalAirportId: {
         type: Sequelize.INTEGER,
-        allowNull: false
+        allowNull: false,
+        references: {
+          model: 'Airports',
+          key: 'id'
+        },
+        onDelete: 'CASCADE'
       },
       departureTime: {
         type: Sequelize.STRING,
@@ -58,14 +73,49 @@ module.exports = {
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.NOW
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.NOW
       }
     });
+
+    // Adding indexes
+    await queryInterface.addIndex('Flights', {
+      name: 'idx_flight_number',
+      unique: true,
+      fields: ['flightNumber']
+    });
+
+    await queryInterface.addIndex('Flights', {
+      name: 'idx_airplane_id',
+      fields: ['airplaneId']
+    });
+
+    await queryInterface.addIndex('Flights', {
+      name: 'idx_departure_airport_id',
+      fields: ['departureAirportId']
+    });
+
+    await queryInterface.addIndex('Flights', {
+      name: 'idx_arrival_airport_id',
+      fields: ['arrivalAirportId']
+    });
+
+    await queryInterface.addIndex('Flights', {
+      name: 'idx_price',
+      fields: ['price']
+    });
+
+    await queryInterface.addIndex('Flights', {
+      name: 'idx_departure_time',
+      fields: ['departureTime']
+    });
   },
+
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable('Flights');
   }

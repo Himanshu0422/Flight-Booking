@@ -19,14 +19,27 @@ module.exports = {
       },
       createdAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.NOW
       },
       updatedAt: {
         allowNull: false,
-        type: Sequelize.DATE
+        type: Sequelize.DATE,
+        defaultValue: Sequelize.NOW
       }
     });
+
+    await queryInterface.addIndex('Airplanes', {
+      name: 'idx_airplane_modelNumber',
+      fields: ['modelNumber']
+    });
+
+    await queryInterface.addIndex('Airplanes', {
+      name: 'idx_airplane_capacity',
+      fields: ['capacity']
+    });
   },
+
   async down(queryInterface, Sequelize) {
     await queryInterface.dropTable('Airplanes');
   }

@@ -28,6 +28,16 @@ module.exports = (sequelize, DataTypes) => {
   }, {
     sequelize,
     modelName: 'Airplane',
+    indexes: [
+      {
+        name: 'idx_airplane_modelNumber',
+        fields: ['modelNumber']
+      },
+      {
+        name: 'idx_airplane_capacity',
+        fields: ['capacity']
+      }
+    ]
   });
   return Airplane;
 };
