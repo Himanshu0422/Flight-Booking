@@ -4,12 +4,13 @@ const jwt = require('jsonwebtoken');
 
 class UserService {
   constructor() {
-    this.userRepository = new UserRepository();
+    this.userRepository = new UserRepository(); // Initialize UserRepository instance
   }
 
+  // Create a new user
   async createUser(data) {
     try {
-      const user = await this.userRepository.createUser(data);
+      const user = await this.userRepository.createUser(data); // Delegate to repository
       return user;
     } catch (error) {
       console.log('Something went wrong at service layer');
@@ -17,61 +18,10 @@ class UserService {
     }
   }
 
-  async updateUser(data) {
-    try {
-      const userId = data.id;
-      const { id: _, ...restData } = data;
-      const user = await this.userRepository.updateUser(userId, restData);
-      return user;
-    } catch (error) {
-      console.log('Something went wrong at service layer');
-      throw { error };
-    }
-  }
-
-  async validEmail(data) {
-    try {
-      const res = await this.userRepository.validEmail(data);
-      return res;
-    } catch (error) {
-      console.log('Something went wrong at service layer');
-      throw { error };
-    }
-  }
-
-  async changePassword(email, password) {
-    try {
-      const res = await this.userRepository.changePassword(email, password);
-      return res;
-    } catch (error) {
-      console.log('Something went wrong at service layer');
-      throw { error };
-    }
-  }
-
-  async sendOtp(data) {
-    try {
-      const otp = await this.userRepository.sendOtp(data);
-      return otp;
-    } catch (error) {
-      console.log('Something went wrong at service layer');
-      throw { error };
-    }
-  }
-
-  async verifyOtp(data) {
-    try {
-      const response = await this.userRepository.verifyOtp(data);
-      return response;
-    } catch (error) {
-      console.log('Something went wrong at service layer');
-      throw { error };
-    }
-  }
-
+  // Handle user login
   async login(data) {
     try {
-      const response = await this.userRepository.login(data);
+      const response = await this.userRepository.login(data); // Delegate to repository
       return response;
     } catch (error) {
       console.log('Something went wrong at service layer');
@@ -79,51 +29,112 @@ class UserService {
     }
   }
 
+  // Validate if the provided email is registered
+  async validEmail(email) {
+    try {
+      const response = await this.userRepository.validEmail(email); // Delegate to repository
+      return response;
+    } catch (error) {
+      console.error('Error in service layer:', error);
+      throw { success: false, message: 'Failed to validate email' };
+    }
+  }
+
+  // Change the user's password
+  async changePassword(email, password) {
+    try {
+      const response = await this.userRepository.changePassword(email, password); // Delegate to repository
+      return response;
+    } catch (error) {
+      console.error('Service Layer Error:', error);
+      throw { success: false, message: 'Failed to change password' };
+    }
+  }  
+
+  // Update user information
+  async updateUser(data) {
+    try {
+      const userId = data.id; // Extract user ID from data
+      const { id: _, ...updateData } = data; // Exclude ID from update data
+  
+      const user = await this.userRepository.updateUser(userId, updateData); // Delegate to repository
+      return user;
+    } catch (error) {
+      console.error('Service Layer Error:', error);
+      throw new Error('Error updating user');
+    }
+  }  
+
+  // Send an OTP to the user's email
+  async sendOtp(data) {
+    try {
+      const otp = await this.userRepository.sendOtp(data); // Delegate to repository
+      return otp;
+    } catch (error) {
+      console.error('Service Layer Error:', error);
+      throw new Error('Failed to send OTP');
+    }
+  }  
+
+  // Verify the OTP provided by the user
+  async verifyOtp(data) {
+    try {
+      const response = await this.userRepository.verifyOtp(data); // Delegate to repository
+      return response;
+    } catch (error) {
+      console.error('Service Layer Error:', error);
+      throw new Error('Failed to verify OTP');
+    }
+  }  
+
+  // Fetch user details by user ID
   async getUser(id) {
     try {
-      const response = await this.userRepository.getUser(id);
+      const response = await this.userRepository.getUserById(id); // Delegate to repository
       return response;
     } catch (error) {
-      console.log('Something went wrong at service layer');
-      throw { error };
+      console.error('Service Layer Error:', error);
+      throw new Error('Failed to fetch user');
     }
-  }
+  }  
 
+  // Verify the provided JWT token
   async verifyToken(token) {
     try {
-      const response = this.tokenVerification(token);
-      if (!response) {
-        throw { error: 'Invalid token' }
+      const decoded = this.tokenVerification(token); // Decode and verify the token
+  
+      const user = await this.userRepository.getUser(decoded.id); // Fetch user by decoded ID
+      if (!user.success) {
+        throw { status: 404, message: 'No user with the corresponding token exists' };
       }
-      const user = await this.userRepository.getUser(response.id);
-      if(!user) {
-          throw {error: 'No user with the corresponding token exists'};
-      }
-      return user.user.id;
+  
+      return { userId: user.data.id, email: user.data.email };
     } catch (error) {
-      console.log("Something went wrong in the auth process");
-      throw error;
+      console.error('Service Layer Error:', error);
+      throw { status: 401, message: error.message || 'Invalid token' };
     }
-  }
+  }  
 
+  // Token verification utility method
   tokenVerification(token) {
     try {
-      const response = jwt.verify(token, JWT_SECRET);
-      return response;
+      return jwt.verify(token, JWT_SECRET); // Verify the JWT token
     } catch (error) {
-      console.log("Something went wrong in token validation", error);
-      throw error;
+      console.error('Token validation error:', error);
+      throw new Error('Invalid or expired token');
     }
-  }
+  }  
 
-  async googleCallback(req, res) {
+  // Handle Google login callback
+  async googleCallback(user) {
     try {
-      const response = await this.userRepository.googleCallback(req, res);
+      const token = jwt.sign({ id: user.id }, JWT_SECRET, { expiresIn: '7d' });
+      return { token };
     } catch (error) {
-      console.log('Something went wrong at service layer');
-      throw { error };
+      console.error('Service Layer Error:', error);
+      throw new Error('Failed to process Google login at service layer');
     }
   }
 }
 
-module.exports = UserService
+module.exports = UserService;

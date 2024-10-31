@@ -1,267 +1,343 @@
+const { CLIENT_LINK } = require("../config/serverConfig");
 const UserService = require("../services/user-service");
-
 
 const userService = new UserService();
 
+// Create a new user with basic validation
 const createUser = async (req, res) => {
+  const { name, email, password, phone, countryCode } = req.body;
+
+  if (!name || !email || !password) {
+    return res.status(400).json({
+      success: false,
+      message: 'Name, email, and password are required.',
+    });
+  }
+
   try {
-    const response = await userService.createUser(req.body);
-    if (response.success === false) {
-      return res.status(401).json({
-        data: {},
+    const response = await userService.createUser({ name, email, password, phone, countryCode });
+
+    if (!response.success) {
+      return res.status(409).json({
         success: false,
         message: response.message,
       });
     }
+
     return res.status(201).json({
+      success: true,
       data: response,
-      success: true,
-      err: {},
-      message: 'Successfully created a user'
-    })
+      message: 'Successfully created a user',
+    });
   } catch (error) {
-    console.log(error);
+    console.error('Error during user creation:', error);
     return res.status(500).json({
-      data: {},
       success: false,
-      message: 'Not able to create a user',
-      err: error
+      message: 'Unable to create user. Please try again later.',
+      data: null,
+      error: error.message
     });
   }
-}
+};
 
-const updateUser = async (req, res) => {
-  try {
-    const user = await userService.updateUser(req.body);
-    return res.status(200).json({
-      data: user,
-      success: true,
-      err: {},
-      message: 'Successfully updated the user'
-    })
-  } catch (error) {
-    return res.status(500).json({
-      data: {},
-      success: false,
-      message: error.error.error.message || 'Not able to update user',
-      err: error
-    });
-  }
-}
-
-const validEmail = async (req, res) => {
-  try {
-    const response = await userService.validEmail(req.body.email);
-    return res.status(200).json({
-      data: response,
-      success: true,
-      err: {},
-      message: 'Email exists'
-    })
-  } catch (error) {
-    return res.status(500).json({
-      data: {},
-      success: false,
-      message: 'Email doesn\'t exist',
-      err: error
-    });
-  }
-}
-
-const changePassword = async (req, res) => {
-  try {
-    const { email, password } = req.body;
-    const response = await userService.changePassword(email, password);
-    return res.status(200).json({
-      data: response,
-      success: true,
-      err: {},
-      message: 'Password changed successfully'
-    })
-  } catch (error) {
-    return res.status(500).json({
-      data: {},
-      success: false,
-      message: 'Not able to change password',
-      err: error
-    });
-  }
-}
-
-const sendOtp = async (req, res) => {
-  try {
-    const response = await userService.sendOtp(req.body);
-    if (response.success === false) {
-      return res.status(401).json({
-        data: {},
-        success: false,
-        message: response.message,
-      });
-    }
-    return res.status(201).json({
-      data: response,
-      success: true,
-      err: {},
-      message: 'Otp sent successfully'
-    })
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json({
-      data: {},
-      success: false,
-      message: 'Not able to send otp',
-      err: error
-    });
-  }
-}
-
-const verifyOtp = async (req, res) => {
-  try {
-    console.log(req.body);
-    const response = await userService.verifyOtp(req.body);
-    if (response.success === false) {
-      return res.status(401).json({
-        data: {},
-        success: false,
-        message: response.message,
-      });
-    }
-    return res.status(200).json({
-      data: response,
-      success: true,
-      err: {},
-      message: 'Otp verified'
-    })
-  } catch (error) {
-    console.log(error);
-    return res.status(500).json({
-      data: {},
-      success: false,
-      message: 'Not able to verify otp',
-      err: error
-    });
-  }
-}
-
+// Handle user login with optional OTP verification status
 const login = async (req, res) => {
   try {
     const response = await userService.login(req.body);
-    if (response.success === false) {
+
+    if (!response.success) {
       return res.status(401).json({
         data: {},
         success: false,
         message: response.message,
-        ...(response.otpVerified !== null && response.otpVerified !== undefined ? { otpVerified: response.otpVerified } : {})
+        ...(response.otpVerified !== undefined && { otpVerified: response.otpVerified }),
       });
     }
-    return res.status(201).json({
+
+    return res.status(200).json({
       data: response,
       success: true,
-      err: {},
-      message: 'Login succcesfull'
-    })
+      message: 'Login successful',
+    });
   } catch (error) {
-    console.log(error);
+    console.error('Login error:', error);
     return res.status(500).json({
       data: {},
       success: false,
       message: 'Login failed',
-      err: error
+      error: error.message
     });
   }
-}
+};
 
-const getUser = async (req, res) => {
+// Check if an email is valid and send a reset email if it exists
+const validEmail = async (req, res) => {
   try {
-    const user = await userService.getUser(req.user.id);
-    if (user.success === false) {
-      return res.status(400).json({
+    const response = await userService.validEmail(req.body.email);
+
+    if (!response.success) {
+      return res.status(404).json({
         data: {},
-        success: true,
-        err: {},
-        message: user.message
-      })
+        success: false,
+        message: response.message || 'Email not found',
+      });
     }
-    return res.status(201).json({
-      data: user,
+
+    return res.status(200).json({
+      data: {},
       success: true,
-      err: {},
-      message: 'Fetched user successfuly'
+      message: 'Email exists, change password email sent',
     });
   } catch (error) {
-    console.log(error);
+    console.error('Error validating email:', error);
     return res.status(500).json({
       data: {},
       success: false,
-      message: 'User fetching failed',
-      err: error
+      message: 'Internal Server Error',
+      error: error.message
     });
   }
-}
+};
 
+// Change user password with validation
+const changePassword = async (req, res) => {
+  try {
+    const { email, password } = req.body;
+
+    if (!email || !password) {
+      return res.status(400).json({
+        data: {},
+        success: false,
+        message: 'Email and password are required',
+        error: error.message
+      });
+    }
+
+    const response = await userService.changePassword(email, password);
+
+    if (!response.success) {
+      return res.status(404).json({
+        data: {},
+        success: false,
+        message: response.message || 'User not found',
+      });
+    }
+
+    return res.status(200).json({
+      data: {},
+      success: true,
+      message: 'Password changed successfully',
+    });
+  } catch (error) {
+    console.error('Error changing password:', error);
+    return res.status(500).json({
+      data: {},
+      success: false,
+      message: 'Unable to change password',
+      error: error.message
+    });
+  }
+};
+
+// Update an existing user
+const updateUser = async (req, res) => {
+  try {
+    const user = await userService.updateUser(req.body);
+
+    if (!user) {
+      return res.status(404).json({
+        data: {},
+        success: false,
+        message: 'User not found',
+      });
+    }
+
+    return res.status(200).json({
+      data: user,
+      success: true,
+      message: 'Successfully updated the user',
+    });
+  } catch (error) {
+    console.error('Error updating user:', error);
+    return res.status(500).json({
+      data: {},
+      success: false,
+      message: error.message || 'Failed to update user',
+      error: error.message
+    });
+  }
+};
+
+// Send OTP to the user
+const sendOtp = async (req, res) => {
+  try {
+    const response = await userService.sendOtp(req.body);
+
+    if (!response.success) {
+      return res.status(404).json({
+        data: {},
+        success: false,
+        message: response.message,
+      });
+    }
+
+    return res.status(201).json({
+      data: response,
+      success: true,
+      message: 'OTP sent successfully',
+    });
+  } catch (error) {
+    console.error('Error sending OTP:', error);
+    return res.status(500).json({
+      data: {},
+      success: false,
+      message: 'Unable to send OTP',
+      error: error.message,
+    });
+  }
+};
+
+// Verify the OTP sent to the user
+const verifyOtp = async (req, res) => {
+  try {
+    const response = await userService.verifyOtp(req.body);
+
+    if (!response.success) {
+      return res.status(401).json({
+        data: {},
+        success: false,
+        message: response.message,
+      });
+    }
+
+    return res.status(200).json({
+      data: response,
+      success: true,
+      message: 'OTP verified successfully',
+    });
+  } catch (error) {
+    console.error('Error verifying OTP:', error);
+    return res.status(500).json({
+      data: {},
+      success: false,
+      message: 'Unable to verify OTP',
+      error: error.message,
+    });
+  }
+};
+
+// Get a user by their ID
 const getUserById = async (req, res) => {
   try {
     const user = await userService.getUser(req.query.id);
-    if (user.success === false) {
-      return res.status(400).json({
+
+    if (!user.success) {
+      return res.status(404).json({
         data: {},
-        success: true,
-        err: {},
-        message: user.message
-      })
+        success: false,
+        message: user.message,
+      });
     }
+
     return res.status(200).json({
-      data: user,
+      data: {
+        user: user.data
+      },
       success: true,
-      err: {},
-      message: 'Fetched user successfuly'
+      message: 'Fetched user successfully',
     });
   } catch (error) {
-    console.log(error);
+    console.error('Error fetching user:', error);
     return res.status(500).json({
       data: {},
       success: false,
       message: 'User fetching failed',
-      err: error
+      error: error.message,
     });
   }
-}
+};
 
+// Get the authenticated user
+const getUser = async (req, res) => {
+  try {
+    const user = await userService.getUser(req.user.id);
+
+    if (!user.success) {
+      return res.status(404).json({
+        data: {},
+        success: false,
+        message: user.message,
+      });
+    }
+
+    return res.status(200).json({
+      data: {
+        user: user.user
+      },
+      success: true,
+      message: 'Fetched user successfully',
+    });
+  } catch (error) {
+    console.error('Error fetching user:', error);
+    return res.status(500).json({
+      data: {},
+      success: false,
+      message: 'User fetching failed',
+      error: error.message,
+    });
+  }
+};
+
+// Verify the token from the authorization header
 const verifyToken = async (req, res) => {
   try {
     const authHeader = req.headers['authorization'];
-    const token = authHeader && authHeader.split(' ')[1];
+    if (!authHeader) {
+      return res.status(401).json({
+        success: false,
+        message: 'Authorization header missing',
+      });
+    }
+
+    const token = authHeader.split(' ')[1];
+    if (!token) {
+      return res.status(401).json({
+        success: false,
+        message: 'Token not found in authorization header',
+      });
+    }
+
     const response = await userService.verifyToken(token);
     return res.status(200).json({
       success: true,
-      err: {},
       data: response,
-      message: 'user is authenticated and token is valid'
+      message: 'User is authenticated and token is valid',
     });
   } catch (error) {
-    console.log(error);
-    return res.status(500).json({
-      message: 'Something went wrong',
-      data: {},
+    console.error('Token verification failed:', error);
+    return res.status(error.status || 500).json({
       success: false,
-      err: error
+      message: error.message || 'Something went wrong',
+      error: error,
     });
   }
-}
+};
 
+// Handle Google OAuth callback and redirect with token
 const googleCallback = async (req, res) => {
   try {
-    const googleSign = await userService.googleCallback(req, res);
+    const { token } = await userService.googleCallback(req.user);
+    return res.redirect(`${CLIENT_LINK}auth/google/callback?token=${token}`);
   } catch (error) {
-    console.log(error);
+    console.error('Google login error:', error);
     return res.status(500).json({
-      data: {},
       success: false,
       message: 'Login failed',
-      err: error
+      data: {},
+      error: error.message || 'Unexpected error',
     });
   }
-}
+};
 
 module.exports = {
   createUser,
@@ -274,5 +350,5 @@ module.exports = {
   verifyToken,
   validEmail,
   changePassword,
-  getUserById
-}
+  getUserById,
+};
