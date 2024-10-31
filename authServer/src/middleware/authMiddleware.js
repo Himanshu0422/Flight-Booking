@@ -40,7 +40,6 @@ const authenticateToken = (req, res, next) => {
     }
 
     // Attach the user data to the request object for further use
-    console.log(user);
     req.user = user;
     next();
   });
