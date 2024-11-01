@@ -119,7 +119,7 @@ const changePassword = async (req, res) => {
       return res.status(404).json({
         data: {},
         success: false,
-        message: response.message || 'User not found',
+        message: response.message || 'Error changing password.',
       });
     }
 
@@ -143,6 +143,13 @@ const changePassword = async (req, res) => {
 const updateUser = async (req, res) => {
   try {
     const user = await userService.updateUser(req.body);
+    if(user?.success == false) {
+      return res.status(404).json({
+        data: {},
+        success: false,
+        message: user.message || 'Email already taken.',
+      });
+    }
 
     if (!user) {
       return res.status(404).json({
