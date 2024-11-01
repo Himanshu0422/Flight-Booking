@@ -11,6 +11,7 @@ module.exports = {
 
     const flightsToInsert = [
       {
+        id: 1,
         flightNumber: 'AI101',
         airplaneId: 1,
         departureAirportId: 1,
@@ -26,6 +27,7 @@ module.exports = {
         updatedAt: new Date()
       },
       {
+        id: 2,
         flightNumber: 'AI102',
         airplaneId: 2,
         departureAirportId: 1,
@@ -41,6 +43,7 @@ module.exports = {
         updatedAt: new Date()
       },
       {
+        id: 3,
         flightNumber: 'AI201',
         airplaneId: 3,
         departureAirportId: 2,
@@ -56,6 +59,7 @@ module.exports = {
         updatedAt: new Date()
       },
       {
+        id: 4,
         flightNumber: 'AI202',
         airplaneId: 4,
         departureAirportId: 3,
@@ -71,6 +75,7 @@ module.exports = {
         updatedAt: new Date()
       },
       {
+        id: 5,
         flightNumber: 'AI301',
         airplaneId: 5,
         departureAirportId: 4,
