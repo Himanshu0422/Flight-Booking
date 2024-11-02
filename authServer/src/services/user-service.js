@@ -103,12 +103,12 @@ class UserService {
     try {
       const decoded = this.tokenVerification(token); // Decode and verify the token
   
-      const user = await this.userRepository.getUser(decoded.id); // Fetch user by decoded ID
+      const user = await this.userRepository.getUserById(decoded.id); // Fetch user by decoded ID
       if (!user.success) {
         throw { status: 404, message: 'No user with the corresponding token exists' };
       }
   
-      return { userId: user.data.id, email: user.data.email };
+      return { userId: user.user.id, email: user.user.email };
     } catch (error) {
       console.error('Service Layer Error:', error);
       throw { status: 401, message: error.message || 'Invalid token' };
