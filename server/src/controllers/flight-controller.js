@@ -1,100 +1,144 @@
-const {FlightService} = require('../services/index');
+const { FlightService } = require('../services/index');
 
 const flightService = new FlightService();
 
+// Controller to create a new flight
 const create = async (req, res) => {
-    try {
-        const flightRequestData = {
-            flightNumber: req.body.flightNumber,
-            airplaneId: req.body.airplaneId,
-            departureAirportId: req.body.departureAirportId,
-            arrivalAirportId: req.body.arrivalAirportId,
-            arrivalTime: req.body.arrivalTime,
-            departureTime: req.body.departureTime,
-            price: req.body.price,
-        }
+    const { flightNumber, airplaneId, departureAirportId, arrivalAirportId, arrivalTime, departureTime, price } = req.body;
 
-        const flight = await flightService.createFlight(flightRequestData);
-        return res.status(201).json({
-            data: flight,
-            success: true,
-            err: {},
-            message: 'Successfully created a flight'
-        })
-    } catch (error) {
-        console.log(error);
-        return res.status(500).json({
-            data: {},
+    if (!flightNumber || !airplaneId || !departureAirportId || !arrivalAirportId || !arrivalTime || !departureTime || !price) {
+        return res.status(400).json({
             success: false,
-            message: 'Not able to create a flight',
-            err: error
+            message: 'All fields are required.',
+            data: null,
+            error: null
         });
     }
-}
 
+    try {
+        const flightRequestData = { flightNumber, airplaneId, departureAirportId, arrivalAirportId, arrivalTime, departureTime, price };
+        const flight = await flightService.createFlight(flightRequestData);
+        return res.status(201).json({
+            success: true,
+            message: 'Successfully created a flight',
+            data: flight,
+            error: null
+        });
+    } catch (error) {
+        console.error('Error creating flight:', error);
+        return res.status(error.status || 500).json({
+            success: false,
+            message: error.message || 'Unable to create flight',
+            data: null,
+            error: error
+        });
+    }
+};
+
+// Controller to fetch all flights
 const getAll = async (req, res) => {
     try {
         const response = await flightService.getAllFlightData(req.query);
         return res.status(200).json({
-            data: response,
             success: true,
-            err: {},
-            message: 'Successfully fetched the flights'
+            message: 'Successfully fetched the flights',
+            data: response,
+            error: null
         });
     } catch (error) {
-        console.log(error);
-        return res.status(500).json({
-            data: {},
+        console.error('Error fetching flights:', error);
+        return res.status(error.status || 500).json({
             success: false,
-            message: 'Not able to fetch the flights',
-            err: error
+            message: 'Unable to fetch flights',
+            data: null,
+            error: error
         });
     }
-}
+};
 
+// Controller to fetch a flight by ID
 const get = async (req, res) => {
-    try {
-        const response = await flightService.getFlight(req.params.id);
-        return res.status(200).json({
-            data: response,
-            success: true,
-            err: {},
-            message: 'Successfully fetched the flight'
-        });
-    } catch (error) {
-        console.log(error);
-        return res.status(500).json({
-            data: {},
-            success: false,
-            message: 'Not able to fetch the flight',
-            err: error
-        });
-    }
-}
+    const { id } = req.params;
 
-const update = async (req, res) => {
-    try {
-        const response = await flightService.updateFlight(req.params.id, req.body);
-        return res.status(200).json({
-            data: response.data.id,
-            success: true,
-            err: {},
-            message: 'Successfully updated the flight'
-        });
-    } catch (error) {
-        console.log(error);
-        return res.status(500).json({
-            data: {},
+    if (!id) {
+        return res.status(400).json({
             success: false,
-            message: 'Not able to update the flight',
-            err: error
+            message: 'Flight ID is required.',
+            data: null,
+            error: null
         });
     }
-}
+
+    try {
+        const response = await flightService.getFlight(id);
+        if (!response) {
+            return res.status(404).json({
+                success: false,
+                message: 'Flight not found.',
+                data: null,
+                error: null
+            });
+        }
+        return res.status(200).json({
+            success: true,
+            message: 'Successfully fetched the flight',
+            data: response,
+            error: null
+        });
+    } catch (error) {
+        console.error('Error fetching flight:', error);
+        return res.status(error.status || 500).json({
+            success: false,
+            message: 'Unable to fetch flight',
+            data: null,
+            error: error
+        });
+    }
+};
+
+// Controller to update flight details by ID
+const update = async (req, res) => {
+    const { id } = req.params;
+
+    if (!id) {
+        return res.status(400).json({
+            success: false,
+            message: 'Flight ID is required.',
+            data: null,
+            error: null
+        });
+    }
+
+    try {
+        const response = await flightService.updateFlight(id, req.body);
+        if (!response) {
+            return res.status(404).json({
+                success: false,
+                message: 'Flight not found.',
+                data: null,
+                error: null
+            });
+        }
+        return res.status(200).json({
+            success: true,
+            message: 'Successfully updated the flight',
+            data: response,
+            error: null
+        });
+    } catch (error) {
+        console.error('Error updating flight:', error);
+        return res.status(error.status || 500).json({
+            success: false,
+            message: 'Unable to update flight',
+            data: null,
+            error: error
+        });
+    }
+};
 
 module.exports = {
     create,
     getAll,
     get,
     update
-}
+};

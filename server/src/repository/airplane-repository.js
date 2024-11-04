@@ -2,6 +2,7 @@ const { Airplane } = require('../models/index');
 const { redis } = require('../config/redis');
 
 class AirplaneRepository {
+    // Method to fetch an airplane by its ID
     async getAirplane(id) {
         try {
             const cachedAirplane = await redis.get(`airplane:${id}`);
