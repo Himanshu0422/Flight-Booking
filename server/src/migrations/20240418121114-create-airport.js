@@ -17,6 +17,22 @@ module.exports = {
         type: Sequelize.STRING,
         allowNull: false,
       },
+      longitude: {
+        type: Sequelize.FLOAT,
+        allowNull: false,
+        validate: {
+          min: -180,
+          max: 180
+        }
+      },
+      latitude: {
+        type: Sequelize.FLOAT,
+        allowNull: false,
+        validate: {
+          min: -90,
+          max: 90
+        }
+      },
       createdAt: {
         allowNull: false,
         type: Sequelize.DATE,
@@ -38,9 +54,17 @@ module.exports = {
       name: 'idx_airport_city',
       fields: ['city']
     });
+
+    await queryInterface.addIndex('Airports', {
+      name: 'idx_airport_location',
+      fields: ['longitude', 'latitude']
+    });
   },
 
   async down(queryInterface, Sequelize) {
+    await queryInterface.removeIndex('Airports', 'idx_airport_location');
+    await queryInterface.removeIndex('Airports', 'idx_airport_city');
+    await queryInterface.removeIndex('Airports', 'idx_airport_name');
     await queryInterface.dropTable('Airports');
   }
 };

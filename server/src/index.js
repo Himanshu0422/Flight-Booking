@@ -11,25 +11,32 @@ const db = require('./models/index');
 const { startRedis } = require('./config/redis');
 
 const startUpServer = () => {
-	const app = express();
+	const app = express(); // Create an instance of the express application
+	
+	// Enable CORS for all origins with credentials
 	app.use(
 		cors({
 			origin: true,
 			credentials: true,
 		})
 	);
+
+	// Parse JSON and URL-encoded data
 	app.use(bodyParser.json());
 	app.use(bodyParser.urlencoded({ extended: true }));
-	startRedis();
 
+	startRedis(); // Initialize Redis
+
+	// Use the imported API routes for the '/api' prefix
 	app.use('/api', ApiRoutes);
 
+	// Health check endpoint
 	app.get('/ping', (req, res) => {
 		console.log(`Ping received at ${new Date().toISOString()}`);
 		res.json({ message: "Server is awake" });
 	});
 
-	// Cron job to run every 14 minutes between 8:00 AM and 11:59 PM
+	// Cron job scheduled to run every 14 minutes from 8:00 AM to 11:59 PM
 	cron.schedule('*/14 8-23 * * *', async () => {
 		try {
 			console.log('Running cron job on IST schedule');
@@ -42,11 +49,17 @@ const startUpServer = () => {
 		timezone: "Asia/Kolkata"
 	});
 
-	app.listen(PORT, () => {
+	// Start the server and listen on the specified PORT
+	app.listen(PORT, async () => {
 		console.log(`Server started at ${PORT}`.bgCyan);
 		if (process.env.SYNC_DB === 'true') {
-			db.sequelize.sync({ alter: true });
-		}
+      try {
+        await db.sequelize.sync({ alter: true });
+        console.log('✅ Database synchronized successfully.'.green);
+      } catch (error) {
+        console.error('❌ Failed to sync database:', error);
+      }
+    }
 	});
 }
 

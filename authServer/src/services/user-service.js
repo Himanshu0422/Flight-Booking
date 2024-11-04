@@ -4,13 +4,13 @@ const jwt = require('jsonwebtoken');
 
 class UserService {
   constructor() {
-    this.userRepository = new UserRepository(); // Initialize UserRepository instance
+    this.userRepository = new UserRepository();
   }
 
   // Create a new user
   async createUser(data) {
     try {
-      const user = await this.userRepository.createUser(data); // Delegate to repository
+      const user = await this.userRepository.createUser(data);
       return user;
     } catch (error) {
       console.log('Something went wrong at service layer');
@@ -21,7 +21,7 @@ class UserService {
   // Handle user login
   async login(data) {
     try {
-      const response = await this.userRepository.login(data); // Delegate to repository
+      const response = await this.userRepository.login(data);
       return response;
     } catch (error) {
       console.log('Something went wrong at service layer');
@@ -32,7 +32,7 @@ class UserService {
   // Validate if the provided email is registered
   async validEmail(email) {
     try {
-      const response = await this.userRepository.validEmail(email); // Delegate to repository
+      const response = await this.userRepository.validEmail(email);
       return response;
     } catch (error) {
       console.error('Error in service layer:', error);
@@ -43,7 +43,7 @@ class UserService {
   // Change the user's password
   async changePassword(email, password) {
     try {
-      const response = await this.userRepository.changePassword(email, password); // Delegate to repository
+      const response = await this.userRepository.changePassword(email, password);
       return response;
     } catch (error) {
       console.error('Service Layer Error:', error);
@@ -57,7 +57,7 @@ class UserService {
       const userId = data.id; // Extract user ID from data
       const { id: _, ...updateData } = data; // Exclude ID from update data
   
-      const user = await this.userRepository.updateUser(userId, updateData); // Delegate to repository
+      const user = await this.userRepository.updateUser(userId, updateData);
       return user;
     } catch (error) {
       console.error('Service Layer Error:', error);
@@ -68,7 +68,7 @@ class UserService {
   // Send an OTP to the user's email
   async sendOtp(data) {
     try {
-      const otp = await this.userRepository.sendOtp(data); // Delegate to repository
+      const otp = await this.userRepository.sendOtp(data);
       return otp;
     } catch (error) {
       console.error('Service Layer Error:', error);
@@ -79,7 +79,7 @@ class UserService {
   // Verify the OTP provided by the user
   async verifyOtp(data) {
     try {
-      const response = await this.userRepository.verifyOtp(data); // Delegate to repository
+      const response = await this.userRepository.verifyOtp(data);
       return response;
     } catch (error) {
       console.error('Service Layer Error:', error);
@@ -90,7 +90,7 @@ class UserService {
   // Fetch user details by user ID
   async getUser(id) {
     try {
-      const response = await this.userRepository.getUserById(id); // Delegate to repository
+      const response = await this.userRepository.getUserById(id);
       return response;
     } catch (error) {
       console.error('Service Layer Error:', error);
@@ -101,9 +101,9 @@ class UserService {
   // Verify the provided JWT token
   async verifyToken(token) {
     try {
-      const decoded = this.tokenVerification(token); // Decode and verify the token
+      const decoded = this.tokenVerification(token);
   
-      const user = await this.userRepository.getUserById(decoded.id); // Fetch user by decoded ID
+      const user = await this.userRepository.getUserById(decoded.id);
       if (!user.success) {
         throw { status: 404, message: 'No user with the corresponding token exists' };
       }
@@ -118,7 +118,7 @@ class UserService {
   // Token verification utility method
   tokenVerification(token) {
     try {
-      return jwt.verify(token, JWT_SECRET); // Verify the JWT token
+      return jwt.verify(token, JWT_SECRET);
     } catch (error) {
       console.error('Token validation error:', error);
       throw new Error('Invalid or expired token');

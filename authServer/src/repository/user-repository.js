@@ -27,14 +27,13 @@ class UserRepository {
   async createUser(data) {
     const { name, email, password, phone, countryCode } = data;
     try {
-      const hashedPassword = await bcrypt.hash(password, 10); // Hash the password
-      const existingUser = await User.findOne({ where: { email } }); // Check for existing user
+      const hashedPassword = await bcrypt.hash(password, 10);
+      const existingUser = await User.findOne({ where: { email } });
 
       if (existingUser) {
-        return { success: false, message: "User already exists" }; // User already exists
+        return { success: false, message: "User already exists" };
       }
 
-      // Create a new user in the database
       const user = await User.create({
         name,
         email,
@@ -66,7 +65,7 @@ class UserRepository {
         return {
           success: false,
           message: "This email is used by another login method.",
-        }; // Check user type
+        };
       }
 
       // Compare provided password with stored hashed password
@@ -85,7 +84,7 @@ class UserRepository {
 
       // Generate JWT token for the authenticated user
       const token = jwt.sign({ id: user.id }, JWT_SECRET_KEY, {
-        expiresIn: "7d", // Token expiry time
+        expiresIn: "7d",
       });
 
       return {
@@ -151,11 +150,11 @@ class UserRepository {
         return { success: false, message: "New password cannot be the same as the old password" };
       }
   
-      const hashedPassword = await bcrypt.hash(password, 10); // Hash the new password
+      const hashedPassword = await bcrypt.hash(password, 10);
       user.password = hashedPassword;
       await user.save();
   
-      return { success: true }; // Return success
+      return { success: true };
     } catch (error) {
       console.error("Repository Layer Error:", error);
       throw { success: false, message: "Error changing password" };
@@ -182,14 +181,14 @@ class UserRepository {
         data.otpVerified = false; // Reset OTP verification status
       }
 
-      const [updated] = await User.update(data, { where: { id: userId } }); // Update user data
+      const [updated] = await User.update(data, { where: { id: userId } });
 
       if (!updated) {
         throw new Error("User not found");
       }
 
-      const user = await User.findByPk(userId); // Fetch updated user
-      await redis.set(`user_${userId}`, JSON.stringify(user), "EX", 3600); // Cache the user data
+      const user = await User.findByPk(userId);
+      await redis.set(`user_${userId}`, JSON.stringify(user), "EX", 3600);
 
       return user;
     } catch (error) {
@@ -210,7 +209,7 @@ class UserRepository {
 
       // Generate a 5-digit OTP code
       const otpCode = Math.floor(10000 + Math.random() * 90000).toString();
-      const expiresAt = new Date(Date.now() + 15 * 60 * 1000); // Set expiration time for the OTP
+      const expiresAt = new Date(Date.now() + 15 * 60 * 1000);
 
       // Store the OTP in the database
       await Otp.create({
@@ -227,7 +226,7 @@ class UserRepository {
         text: `Your OTP code is ${otpCode}. It will expire in 15 minutes.`,
       });
 
-      await redis.set(`otp_${user.id}`, otpCode, "EX", 900); // Cache the OTP for quick access
+      await redis.set(`otp_${user.id}`, otpCode, "EX", 900);
 
       return {
         success: true,
@@ -236,7 +235,7 @@ class UserRepository {
       };
     } catch (error) {
       console.error("Repository Layer Error:", error);
-      throw new Error("Failed to send OTP"); // Handle OTP sending error
+      throw new Error("Failed to send OTP");
     }
   }
 
@@ -255,7 +254,7 @@ class UserRepository {
         where: {
           user_id: user.id,
           otp_code: otp,
-          expires_at: { [Op.gt]: new Date() }, // Check if OTP is not expired
+          expires_at: { [Op.gt]: new Date() },
           is_used: false,
         },
       });
@@ -268,10 +267,10 @@ class UserRepository {
       otpRecord.is_used = true;
       await otpRecord.save();
 
-      user.otpVerified = true; // Set OTP as verified
+      user.otpVerified = true;
       await user.save();
 
-      await redis.del(`otp_${user.id}`); // Remove OTP from Redis
+      await redis.del(`otp_${user.id}`);
 
       return this._generateTokenForUser(user); // Generate token for user
     } catch (error) {
@@ -307,7 +306,7 @@ class UserRepository {
   // Generate JWT token for the user
   _generateTokenForUser(user) {
     const token = jwt.sign({ id: user.id }, JWT_SECRET_KEY, {
-      expiresIn: "7d", // Set token expiration
+      expiresIn: "7d",
     });
     return {
       success: true,
@@ -325,7 +324,7 @@ class UserRepository {
 
   // Mark the OTP as used in the database
   async _markOtpUsed(userId) {
-    await Otp.update({ is_used: true }, { where: { user_id: userId } }); // Update OTP status
+    await Otp.update({ is_used: true }, { where: { user_id: userId } });
   }
 
   // Send a password change email to the user

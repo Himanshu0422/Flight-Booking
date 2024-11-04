@@ -1,7 +1,6 @@
 'use strict';
-const {
-  Model
-} = require('sequelize');
+const { Model } = require('sequelize');
+
 module.exports = (sequelize, DataTypes) => {
   class Airport extends Model {
     /**
@@ -18,7 +17,6 @@ module.exports = (sequelize, DataTypes) => {
         as: 'arrivalFlights',
         foreignKey: 'arrivalAirportId'
       });
-
     }
   }
   Airport.init({
@@ -29,6 +27,22 @@ module.exports = (sequelize, DataTypes) => {
     city: {
       type: DataTypes.STRING,
       allowNull: false,
+    },
+    longitude: {
+      type: DataTypes.FLOAT,
+      allowNull: false,
+      validate: {
+        min: -180,
+        max: 180
+      }
+    },
+    latitude: {
+      type: DataTypes.FLOAT,
+      allowNull: false,
+      validate: {
+        min: -90,
+        max: 90
+      }
     }
   }, {
     sequelize,
@@ -41,6 +55,10 @@ module.exports = (sequelize, DataTypes) => {
       {
         name: 'idx_airport_city',
         fields: ['city']
+      },
+      {
+        name: 'idx_airport_location',
+        fields: ['longitude', 'latitude']
       }
     ]
   });
