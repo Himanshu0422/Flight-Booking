@@ -2,9 +2,9 @@ const { BookedFlights } = require('../models/index');
 const { redis } = require('../config/redis');
 
 class BookedFlightRepository {
-    async create(data) {
+    async create(data, transaction) {
         try {
-            const bookedFlight = await BookedFlights.create(data);
+            const bookedFlight = await BookedFlights.create({ ...data }, { transaction });
             await redis.del(`bookedFlights:flightId:${data.flightId}:date:${data.bookingDate}`);
             return bookedFlight;
         } catch (error) {
