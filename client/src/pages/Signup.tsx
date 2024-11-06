@@ -5,8 +5,8 @@ import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
 import { z } from "zod";
+import Image from "../components/common/Image";
 import AuthForm from "../components/SignUpPage/AuthForm";
-import Image from "../components/SignUpPage/Image";
 import SocialLogin from "../components/SignUpPage/SocialLogin";
 import ToggleSwitch from "../components/SignUpPage/ToggleSwitch";
 import { AppDispatch } from "../redux/store";
@@ -33,29 +33,40 @@ const Signup: React.FC = () => {
   });
 
   const emailSchema = z.string().email("Please enter a valid email address.");
+  const passwordSchema = z.string().min(4, "Password must be at least 6 characters.");
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const { name, value } = e.target;
     if (name === "email") {
       const result = emailSchema.safeParse(value);
-      if (!result.success) {
-        setEmailError(result.error.errors[0].message);
-      } else {
-        setEmailError(null);
-      }
+      setEmailError(result.success ? null : result.error.errors[0].message);
     }
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 
+  const validateFormData = (): boolean => {
+    if (!formData.email || !formData.password || (!isLogin && !formData.name)) {
+      toast.error("Please fill in all required fields.");
+      return false;
+    }
+    if (!emailSchema.safeParse(formData.email).success) {
+      setEmailError("Invalid email format.");
+      return false;
+    }
+    if (!passwordSchema.safeParse(formData.password).success) {
+      toast.error("Password must be at least 6 characters.");
+      return false;
+    }
+    return true;
+  };
+
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>): Promise<void> => {
     e.preventDefault();
+    if (!validateFormData()) return;
+
     const payload = isLogin
       ? { email: formData.email, password: formData.password }
-      : {
-          name: formData.name,
-          email: formData.email,
-          password: formData.password,
-        };
+      : { name: formData.name, email: formData.email, password: formData.password };
 
     try {
       if (isLogin) {
@@ -66,7 +77,7 @@ const Signup: React.FC = () => {
       } else {
         await dispatch(signUp(payload)).unwrap();
         toast.success("User created");
-        navigate("/verify-otp");
+        navigate("/verify-otp", { state: { email: formData.email } });
       }
     } catch (error: any) {
       const message = error?.response?.data?.message || "An error occurred.";
