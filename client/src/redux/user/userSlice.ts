@@ -79,9 +79,6 @@ const userSlice = createSlice({
       state.type = action.payload.type;
       state.token = action.payload.token;
     });
-    builder.addCase(updateUser.rejected, (state, action: any) => {
-      toast.error(action.payload.response.data.message)
-    })
   }
 });
 

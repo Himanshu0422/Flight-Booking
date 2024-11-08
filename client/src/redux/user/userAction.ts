@@ -112,7 +112,6 @@ export const updateUser = createAsyncThunk(
         phone: response.data.data.phone,
         countryCode: response.data.data.countryCode,
         type: response.data.data.type,
-        token: response.data.data.token
       };
     } catch (error) {
       return thunkApi.rejectWithValue(error as SerializedError);
@@ -137,7 +136,7 @@ export const changePassword = createAsyncThunk (
   async (payload: object, thunkApi: any) => {
     try {
       const res = await user.changePassword(payload);
-      return res.data.data;
+      return res.data;
     } catch (error) {
       return thunkApi.rejectWithValue(error as SerializedError);
     }
