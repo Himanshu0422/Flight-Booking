@@ -1,22 +1,30 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, useRef } from "react";
+import toast from "react-hot-toast";
 import OtpInput from "react-otp-input";
 import { useDispatch, useSelector } from "react-redux";
-import { useNavigate } from "react-router-dom";
+import { useLocation, useNavigate } from "react-router-dom";
+import Image from "../components/common/Image";
 import { AppDispatch, RootState } from "../redux/store";
 import { sendOtp, updateUser, verifyOtp } from "../redux/user/userAction";
-import toast from "react-hot-toast";
+import { gsap } from "gsap";
 
 const VerifyOTP = () => {
+  const location = useLocation();
+  const emailFromNavigation = location.state?.email;
   const navigate = useNavigate();
   const dispatch = useDispatch<AppDispatch>();
 
   const { id, email } = useSelector((state: RootState) => state.user);
 
   const [otp, setOtp] = useState("");
-  const [otpsent, setOtpSent] = useState(false);
+  const [otpSent, setOtpSent] = useState(false);
   const [otpError, setOtpError] = useState<string | null>(null);
   const [isChangingEmail, setIsChangingEmail] = useState(false);
-  const [newEmail, setNewEmail] = useState(email);
+  const [newEmail, setNewEmail] = useState(email || emailFromNavigation);
+  const [resendCooldown, setResendCooldown] = useState(0);
+
+  const formRef = useRef<HTMLFormElement>(null);
+  const h2Ref = useRef<HTMLHeadingElement>(null);
 
   const handleOtpChange = (otp: string) => {
     setOtp(otp);
@@ -31,12 +39,12 @@ const VerifyOTP = () => {
 
     if (isChangingEmail) {
       try {
-        await dispatch(updateUser({id, email:newEmail})).unwrap();
+        await dispatch(updateUser({ id, email: newEmail })).unwrap();
         await dispatch(sendOtp({ email: newEmail })).unwrap();
         toast.success("OTP sent to new email successfully");
         setIsChangingEmail(false);
       } catch (error: any) {
-        toast.error(error.response.data.message);
+        toast.error(error.response?.data?.message || "An error occurred.");
       }
     } else {
       if (otp.length === 5) {
@@ -49,7 +57,7 @@ const VerifyOTP = () => {
           toast.success("OTP verified");
           navigate("/home");
         } catch (error: any) {
-          toast.error(error.response.data.message);
+          toast.error(error.response?.data?.message || "An error occurred.");
         }
       } else {
         setOtpError("Please enter a valid 5-digit OTP.");
@@ -58,18 +66,40 @@ const VerifyOTP = () => {
   };
 
   const sendOtpToEmail = async () => {
+    if (resendCooldown > 0) return;
+
     try {
-      await dispatch(sendOtp({ email: email })).unwrap();
+      await dispatch(sendOtp({ email: newEmail })).unwrap();
       toast.success("OTP sent successfully");
+      setOtpSent(true);
+      setResendCooldown(30); // Set cooldown to 30 seconds
     } catch (error: any) {
-      toast.error(error.response.data.message);
+      toast.error(error.response?.data?.message || "An error occurred.");
     }
   };
 
   useEffect(() => {
-    if(otpsent === false){
+    if (!otpSent) {
       sendOtpToEmail();
-      setOtpSent(true);
+    }
+
+    const cooldownInterval = setInterval(() => {
+      setResendCooldown((prev) => (prev > 0 ? prev - 1 : 0));
+    }, 1000);
+
+    return () => clearInterval(cooldownInterval);
+  }, [otpSent]);
+
+  // GSAP Animation on mount
+  useEffect(() => {
+    if (h2Ref.current && formRef.current) {
+      gsap.from(h2Ref.current, { y: -50, opacity: 0, duration: 1 });
+      gsap.from(formRef.current, {
+        y: 50,
+        opacity: 0,
+        duration: 1,
+        delay: 0.2,
+      });
     }
   }, []);
 
@@ -77,15 +107,15 @@ const VerifyOTP = () => {
     <div className="flex h-screen">
       <div className="w-full md:w-1/2 bg-white items-center justify-center p-8">
         <div className="w-full h-full flex flex-col items-center justify-center">
-          <h2 className="text-3xl font-semibold mb-6 text-gray-900 text-center w-[90%] sm:w-[65%] mmd:w-[50%] md:w-[80%] lg:w-[60%] llg:w-[50%]">
+          <h2 ref={h2Ref} className="text-3xl font-semibold mb-6 text-gray-900 text-center w-[90%] sm:w-[65%] mmd:w-[50%] md:w-[80%] lg:w-[60%] llg:w-[50%]">
             {isChangingEmail ? "Change Email" : "Verify OTP 📩"}
           </h2>
           <form
+            ref={formRef}
             className="w-[90%] sm:w-[65%] mmd:w-[50%] md:w-[80%] lg:w-[60%] llg:w-[50%]"
             onSubmit={handleVerify}
           >
             {isChangingEmail ? (
-              // Email input field if changing email
               <div className="mb-4">
                 <input
                   type="email"
@@ -96,7 +126,6 @@ const VerifyOTP = () => {
                 />
               </div>
             ) : (
-              // OTP input field if verifying OTP
               <>
                 <div className="mb-4">
                   <OtpInput
@@ -122,14 +151,29 @@ const VerifyOTP = () => {
                   )}
                 </div>
 
-                <div className="flex items-center justify-end mt-2 cursor-pointer">
-                <a
-                  className="inline-block align-baseline text-sm text-blue-500 hover:text-blue-700"
-                  onClick={() => setIsChangingEmail(true)}
-                >
-                  Change Email?
-                </a>
-              </div>
+                <div className="flex items-center justify-between mt-2 cursor-pointer">
+                  <button
+                    type="button"
+                    className="inline-block align-baseline text-sm text-blue-500 hover:text-blue-700"
+                    onClick={() => setIsChangingEmail(true)}
+                  >
+                    Change Email?
+                  </button>
+                  <button
+                    type="button"
+                    onClick={sendOtpToEmail}
+                    disabled={resendCooldown > 0}
+                    className={`text-sm ${
+                      resendCooldown > 0
+                        ? "text-gray-400 cursor-not-allowed"
+                        : "text-blue-500 hover:text-blue-700"
+                    }`}
+                  >
+                    {resendCooldown > 0
+                      ? `Resend OTP in ${resendCooldown}s`
+                      : "Resend OTP"}
+                  </button>
+                </div>
               </>
             )}
 
@@ -144,13 +188,7 @@ const VerifyOTP = () => {
           </form>
         </div>
       </div>
-      <div className="hidden md:w-1/2 md:flex items-center justify-center">
-        <img
-          src={require("../assets/signupImage.jpg")}
-          className="h-[95%] w-[95%] object-cover rounded-xl"
-          alt="Verify OTP"
-        />
-      </div>
+      <Image src={require("../assets/signupImage.jpg")} alt="VerifyOtp" />
     </div>
   );
 };
