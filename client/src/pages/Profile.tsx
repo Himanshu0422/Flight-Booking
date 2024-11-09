@@ -1,6 +1,7 @@
 import { TextInput } from "@mantine/core";
 import Cookies from "js-cookie";
 import React, { useEffect, useMemo, useState } from "react";
+import toast from "react-hot-toast";
 import { PhoneInput } from "react-international-phone";
 import "react-international-phone/style.css";
 import { useDispatch, useSelector } from "react-redux";
@@ -9,17 +10,16 @@ import countryList from "react-select-country-list";
 import { z } from "zod";
 import { AppDispatch, RootState } from "../redux/store";
 import { updateUser, validateEmail } from "../redux/user/userAction";
-import toast from "react-hot-toast";
 
 const Profile = () => {
   const dispatch = useDispatch<AppDispatch>();
   const navigate = useNavigate();
   const user = useSelector((state: RootState) => state.user);
   const [profileData, setProfileData] = useState({
-    name: user.name,
-    email: user.email,
-    phone: user.phone,
-    countryCode: user.countryCode,
+    name: user.name || '',
+    email: user.email || '',
+    phone: user.phone || '',
+    countryCode: user.countryCode || '+91',
   });
   const [initialData, setInitialData] = useState(profileData);
 
@@ -27,16 +27,16 @@ const Profile = () => {
     setProfileData({
       name: user.name,
       email: user.email,
-      phone: user.phone,
+      phone: user.phone!,
       countryCode: user.countryCode || '+91',
     });
     setInitialData({
       name: user.name,
       email: user.email,
-      phone: user.phone,
+      phone: user.phone!,
       countryCode: user.countryCode || '+91',
     });
-  }, [user.email]);
+  }, [user]);
 
   const [emailError, setEmailError] = useState<string | null>(null);
 
@@ -64,40 +64,53 @@ const Profile = () => {
   };
 
   const handleSave = async () => {
-    if (profileData.email !== initialData.email) {
-      await dispatch(
-        updateUser({
-          id: user.id,
-          name: profileData.name,
-          email: profileData.email,
-          phone: profileData.phone,
-          countryCode: profileData.countryCode,
-        })
-      ).unwrap();
-      setInitialData(profileData);
-      Cookies.remove("token");
-      navigate("/verify-otp");
-    } else {
-      dispatch(
-        updateUser({
-          id: user.id,
-          name: profileData.name,
-          email: profileData.email,
-          phone: profileData.phone,
-          countryCode: profileData.countryCode,
-        })
-      );
-      setInitialData(profileData);
+    try {
+      if (profileData.email !== initialData.email) {
+        await dispatch(
+          updateUser({
+            id: user.id,
+            name: profileData.name,
+            email: profileData.email,
+            phone: profileData.phone,
+            countryCode: profileData.countryCode,
+          })
+        ).unwrap();
+        setInitialData(profileData);
+        Cookies.remove("token");
+        navigate("/verify-otp", {state: {
+          email: profileData.email
+        }});
+      } else {
+        const res = await dispatch(
+          updateUser({
+            id: user.id,
+            name: profileData.name,
+            email: profileData.email,
+            phone: profileData.phone,
+            countryCode: profileData.countryCode,
+          })
+        ).unwrap();
+        if (res) {
+          setInitialData(profileData);
+          toast.success('User updated successfully.');
+        }
+      }
+    } catch (error: any) {
+      toast.error(error?.response.data.message || "Please try again later.");
     }
   };
 
   const changePassword = async () => {
-    const res = await dispatch(validateEmail({ email:user.email }));
-    if (res.payload) {
-      toast.success("Change password link sent to email");
-      navigate("/home");
-    } else {
-      toast.error("Email doesn't exist");
+    try {
+      const res = await dispatch(validateEmail({ email: user.email }));
+      if (res.type === "/validateEmail/fulfilled") {
+        toast.success("Change password link sent to email");
+        navigate("/home");
+      } else {
+        toast.error(res.payload.response.data.message || 'Email not found.');
+      }
+    } catch (error: any) {
+      toast.error(error?.message || "Please try again later.");
     }
   };
 
@@ -107,13 +120,6 @@ const Profile = () => {
       <h1 className="text-3xl font-semibold text-gray-700 mb-6">
         Profile Page
       </h1>
-
-      {/* Profile Image */}
-      {/* <div className="flex items-center justify-center mb-6">
-        <div className="rounded-full bg-gray-200 w-32 h-32 flex items-center justify-center">
-          <span className="text-5xl text-gray-400">👤</span>
-        </div>
-      </div> */}
 
       {/* Form Section */}
       <div className="flex flex-col items-center justify-center gap-6 w-full max-w-md bg-white p-6 rounded-md shadow-md">
@@ -156,16 +162,18 @@ const Profile = () => {
         />
       </div>
 
-      <div className="flex justify-center mt-6 w-full max-w-md">
-        <button
-          onClick={changePassword}
-          className="mt-4 border border-blue-500 text-blue-500 transition py-2 px-4 rounded w-full"
-          disabled={!!emailError}
-        >
-          Change Password
-        </button>
-      </div>
-      <div className="flex justify-center w-full max-w-md">
+      {user.type === 0 && (
+        <div className="flex justify-center mt-6 w-full max-w-md">
+          <button
+            onClick={changePassword}
+            className="mt-4 border border-blue-500 text-blue-500 transition py-2 px-4 rounded w-full"
+            disabled={!!emailError}
+          >
+            Change Password
+          </button>
+        </div>
+      )}
+      <div className="flex justify-center w-full max-w-md mt-6">
         <button
           onClick={handleSave}
           className="mt-4 bg-orange-400 transition text-white py-2 px-4 rounded w-full"
