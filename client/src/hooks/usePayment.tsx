@@ -21,7 +21,7 @@ const usePayment = () => {
   );
 
   const processPayment = useCallback(
-    async (bookedSeats: any, price: number, booking_id: number) => {
+    async (bookedSeats: any, price: number, booking_id: number, navigateToHome?: boolean) => {
       dispatch(setLoading(true));
 
       try {
@@ -56,7 +56,16 @@ const usePayment = () => {
           prefill: {
             name: user.name,
             email: user.email,
-            contact: "9999999999",
+            contact: user.phone || "",
+          },
+          modal: {
+            ondismiss: () => {
+              toast('Payment pending')
+              dispatch(emptyPassengers());
+              dispatch(resetState());
+              dispatch(resetSingleFlight());
+              navigateToHome && navigate("/home");
+            },
           },
         };
 

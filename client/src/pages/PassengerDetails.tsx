@@ -3,8 +3,8 @@ import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
 import DetailsCard from "../components/PassengerDetails/DetailsCard";
-import FlightCard from "../components/common/FlightCard";
 import OrderDetailsCard from "../components/PassengerDetails/OrderDetailsCard";
+import FlightCard from "../components/common/FlightCard";
 import PassengerCard from "../components/common/PassengerCard";
 import usePayment from "../hooks/usePayment";
 import { bookFlight } from "../redux/flights/bookingAction";
@@ -86,7 +86,7 @@ const PassengerDetails = () => {
       if(singleReturnFlight.id){
         price+=singleReturnFlight.price
       }
-      processPayment(bookingData.bookedSeats, price, res.payload.data.booking.id);
+      processPayment(bookingData.bookedSeats, price, res.payload.data.booking.id, true);
     }
   };
 
