@@ -1,6 +1,7 @@
 import Cookies from 'js-cookie';
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
+import SimpleLoader from '../components/common/SimpleLoader';
 
 const GoogleAuthCallback = () => {
   const navigate = useNavigate();
@@ -26,7 +27,7 @@ const GoogleAuthCallback = () => {
     handleGoogleAuth();
   }, [navigate]);
 
-  return <div>Loading...</div>;
+  return <SimpleLoader />;
 };
 
 export default GoogleAuthCallback;

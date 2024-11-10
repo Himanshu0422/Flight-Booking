@@ -11,7 +11,9 @@ const History = () => {
   const booking = useSelector((state: RootState) => state.booking);
 
   useEffect(() => {
-    dispatch(bookings({ userId: user.id, page:booking.page, token: user.token }));
+    if(user.id && user.token) {
+      dispatch(bookings({ userId: user.id, page:booking.page, token: user.token }));
+    }
 
     return () => {
       dispatch(resetPage());
