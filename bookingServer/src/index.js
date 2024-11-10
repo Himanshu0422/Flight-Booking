@@ -35,7 +35,7 @@ const setupAndStartServer = () => {
     console.log(`Server started on port ${PORT}`.bgMagenta);
 
     // Sync the database if the DB_SYNC environment variable is set to true
-    if (process.env.SYNC_DB === 'true') {
+    if (process.env.DB_SYNC === 'true') {
       try {
         await db.sequelize.sync({ alter: true });
         console.log('✅ Database synchronized successfully.'.green);
