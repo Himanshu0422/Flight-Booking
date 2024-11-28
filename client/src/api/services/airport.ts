@@ -8,4 +8,5 @@ class airport{
   }
 }
 
-export default new airport()
+const airportInstance = new airport();
+export default airportInstance;

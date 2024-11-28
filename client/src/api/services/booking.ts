@@ -14,4 +14,5 @@ class booking{
   }
 }
 
-export default new booking()
+const bookingInstance = new booking();
+export default bookingInstance;

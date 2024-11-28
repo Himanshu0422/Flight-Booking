@@ -47,7 +47,7 @@ const usePayment = () => {
           currency: paymentResponse.data.currency,
           order_id: paymentResponse.data.id,
           handler: async (response: any) => {
-            toast.success("Booking confirmed");
+            toast.success("Booking created.");
             dispatch(emptyPassengers());
             dispatch(resetState());
             dispatch(resetSingleFlight());
