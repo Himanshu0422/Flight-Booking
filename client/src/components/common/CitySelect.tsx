@@ -2,9 +2,12 @@ import React, { useEffect } from "react";
 import { GiAirplaneArrival, GiAirplaneDeparture } from "react-icons/gi";
 import { GoArrowSwitch } from "react-icons/go";
 import { useDispatch, useSelector } from "react-redux";
+import useCurrentLocation from "../../hooks/useCurrentLocation";
 import { getAllAirports } from "../../redux/airports/airportAction";
 import { AppDispatch, RootState } from "../../redux/store";
+import { calculateDistance } from "../../utils/calculateDistance";
 import CustomSelectCity from "./CustomSelectCity";
+import SimpleLoader from "./SimpleLoader";
 
 interface CitySelectProps {
   departureCity: string | null;
@@ -13,29 +16,61 @@ interface CitySelectProps {
   setArrivalCity: (city: string) => void;
 }
 
+interface Airport {
+  id: number;
+  name: string;
+  city: string;
+  latitude: number;
+  longitude: number;
+}
+
 const CitySelect: React.FC<CitySelectProps> = ({
   departureCity,
   setDepartureCity,
   arrivalCity,
   setArrivalCity,
 }) => {
-  const handleDepartureChange = (
-    event: React.ChangeEvent<HTMLInputElement>
-  ) => {
+  const dispatch = useDispatch<AppDispatch>();
+  const { location, loading } = useCurrentLocation();
+  const { airports } = useSelector((state: RootState) => state.airport);
+
+  useEffect(() => {
+    dispatch(getAllAirports());
+  }, [dispatch]);
+
+  useEffect(() => {
+    const savedCity = sessionStorage.getItem("departureCity");
+    if (!savedCity && location.latitude && location.longitude && airports.length) {
+      const nearestAirport = airports.reduce<{ airport: Airport | null; distance: number }>(
+        (closest:any, airport:any) => {
+          const distance = calculateDistance(
+            location.latitude!,
+            location.longitude!,
+            airport.latitude,
+            airport.longitude,
+            "K"
+          );
+          return distance < closest.distance
+            ? { airport, distance }
+            : closest;
+        },
+        { airport: null, distance: Infinity }
+      );
+
+      if (nearestAirport.airport) {
+        setDepartureCity(nearestAirport.airport.city);
+        sessionStorage.setItem("departureCity", JSON.stringify(nearestAirport.airport));
+      }
+    }
+  }, [airports, location, setDepartureCity]);
+
+  const handleDepartureChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setDepartureCity(event.target.value);
   };
 
   const handleArrivalChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setArrivalCity(event.target.value);
   };
-
-  const dispatch = useDispatch<AppDispatch>();
-
-	useEffect(() => {
-		dispatch(getAllAirports())
-	}, [])
-
-  const {airports} = useSelector((state:RootState) => state.airport)
 
   return (
     <div className="flex flex-1 h-full max-sm:flex-col justify-around items-center gap-5 border p-3 rounded-xl">
@@ -68,6 +103,7 @@ const CitySelect: React.FC<CitySelectProps> = ({
           />
         </div>
       </div>
+      {loading && <SimpleLoader />}
     </div>
   );
 };
