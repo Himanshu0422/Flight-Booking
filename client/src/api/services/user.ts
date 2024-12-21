@@ -29,4 +29,5 @@ class user {
   }
 }
 
-export default new user()
+const userInstance = new user();
+export default userInstance;

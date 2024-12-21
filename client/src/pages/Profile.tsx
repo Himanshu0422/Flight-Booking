@@ -1,12 +1,12 @@
 import { TextInput } from "@mantine/core";
 import Cookies from "js-cookie";
-import React, { useEffect, useMemo, useState } from "react";
+import debounce from "lodash.debounce";
+import React, { useCallback, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { PhoneInput } from "react-international-phone";
 import "react-international-phone/style.css";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import countryList from "react-select-country-list";
 import { z } from "zod";
 import { AppDispatch, RootState } from "../redux/store";
 import { updateUser, validateEmail } from "../redux/user/userAction";
@@ -39,28 +39,33 @@ const Profile = () => {
   }, [user]);
 
   const [emailError, setEmailError] = useState<string | null>(null);
+  const [phoneError, setPhoneError] = useState<string | null>(null);
 
   const emailSchema = z.string().email("Please enter a valid email address.");
+  const phoneSchema = z
+    .string()
+    .min(7, "Phone number must be at least 7 digits.")
+    .max(15, "Phone number cannot exceed 15 digits.");
 
-  const options = useMemo(() => {
-    return countryList()
-      .getData()
-      .map((country) => ({
-        label: country.label,
-        value: country.value,
-      }));
-  }, []);
+  const validateField = useCallback(
+    debounce((field: string, value: string) => {
+      if (field === "email") {
+        const result = emailSchema.safeParse(value);
+        setEmailError(result.success ? null : result.error.errors[0].message);
+      } else if (field === "phone") {
+        const result = phoneSchema.safeParse(value);
+        setPhoneError(result.success ? null : result.error.errors[0].message);
+      }
+    }, 300),
+    []
+  );
 
   const handleInputChange = (field: string, value: string) => {
+    validateField(field, value)
     setProfileData((prev) => ({
       ...prev,
       [field]: value,
     }));
-
-    if (field === "email") {
-      const result = emailSchema.safeParse(value);
-      setEmailError(result.success ? null : result.error.errors[0].message);
-    }
   };
 
   const handleSave = async () => {
@@ -158,6 +163,7 @@ const Profile = () => {
           value={profileData.phone}
           onChange={(e) => handleInputChange("phone", e.target.value)}
           className="w-full"
+          error={phoneError}
           type="number"
         />
       </div>

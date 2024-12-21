@@ -1,4 +1,5 @@
-import React, { useEffect } from "react";
+import throttle from 'lodash.throttle';
+import React, { useCallback, useEffect } from "react";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import { useParams } from "react-router-dom";
@@ -90,6 +91,11 @@ const PassengerDetails = () => {
     }
   };
 
+  const throttledHandleSubmit = useCallback(
+    throttle(() => handleSubmit(), 2000),
+    [handleSubmit]
+  );
+
   return (
     <div className="bg-gray-100 min-h-[calc(100vh-75px)] py-10 flex flex-col items-center space-y-5">
       <div className="w-[50%] max-lg:w-[70%] max-md:w-[90%]">
@@ -118,7 +124,7 @@ const PassengerDetails = () => {
         Add Passenger
       </button>
       <button
-        onClick={() => handleSubmit()}
+        onClick={() => throttledHandleSubmit()}
         className="mt-4 bg-orange-400 text-white py-2 px-4 rounded w-[50%] max-lg:w-[70%] max-md:w-[90%]"
       >
         Book Now

@@ -2,7 +2,7 @@ import { TextInput } from "@mantine/core";
 import React from "react";
 import { FormData } from "../../pages/Signup";
 
-interface AuthForm{
+interface AuthFormProp {
   isLogin: boolean,
   formData: FormData,
   emailError: string | null,
@@ -16,7 +16,7 @@ const AuthForm = ({
   emailError,
   handleChange,
   handleSubmit,
-} : AuthForm) => (
+} : AuthFormProp) => (
   <form
     className="form w-[90%] sm:w-[65%] mmd:w-[50%] md:w-[80%] lg:w-[70%] llg:w-[55%]"
     onSubmit={handleSubmit}
