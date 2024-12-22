@@ -1,5 +1,5 @@
 import dayjs, { Dayjs } from "dayjs";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { toast } from "react-hot-toast";
 import { CiSearch } from "react-icons/ci";
 import { useSelector } from "react-redux";
@@ -29,7 +29,7 @@ const SearchFlight: React.FC = () => {
   const searchFlights = useSearchFlights();
 
   const [searchParams, setSearchParams] = useState<SearchParams>({
-    departureCity: departureCity || "",
+    departureCity: departureCity || '',
     arrivalCity: arrivalCity || "",
     departureDate: departureDate || dayjs(new Date()),
     returnDate: returnDate || null,
@@ -56,8 +56,14 @@ const SearchFlight: React.FC = () => {
     }
   };
 
+  useEffect(() => {
+    const getItem = sessionStorage.getItem('departureCity');
+    const departureCityFromStorage = JSON.parse(getItem!);
+    handleInputChange("departureCity", departureCityFromStorage?.city)
+  }, []);
+
   return (
-    <div className="bg-white p-4 space-y-5 rounded-2xl search-flight-main">
+    <div className="bg-[#fffffff0] p-4 space-y-5 rounded-2xl search-flight-main">
       <div className="ml-2">
         <i className="fa-solid fa-plane"></i> Search Flights
       </div>

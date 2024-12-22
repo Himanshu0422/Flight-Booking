@@ -1,6 +1,6 @@
 import { Select, TextInput } from "@mantine/core";
 import dayjs from "dayjs";
-import React, { useMemo, useState } from "react";
+import React, { useMemo, useState, useCallback } from "react";
 import { PhoneInput } from "react-international-phone";
 import "react-international-phone/style.css";
 import { useDispatch } from "react-redux";
@@ -8,6 +8,7 @@ import { updatePassengerDetails } from "../../redux/passengers/passengerActions"
 import DatePickerModal from "./DatePickerModal";
 import countryList from "react-select-country-list";
 import { z } from "zod";
+import debounce from "lodash.debounce";
 
 const PassengerCard = ({
   passenger,
@@ -23,6 +24,7 @@ const PassengerCard = ({
   const dispatch = useDispatch();
   const [open, setOpen] = useState(false);
   const [emailError, setEmailError] = useState<string | null>(null);
+  const [phoneError, setPhoneError] = useState<string | null>(null);
 
   const options = useMemo(() => {
     return countryList()
@@ -33,18 +35,30 @@ const PassengerCard = ({
       }));
   }, []);
 
-  // Zod schema for email validation
+  // Zod schema for validation
   const emailSchema = z.string().email("Please enter a valid email address.");
+  const phoneSchema = z
+    .string()
+    .min(7, "Phone number must be at least 7 digits.")
+    .max(15, "Phone number cannot exceed 15 digits.");
+
+  // Debounced validation
+  const validateField = useCallback(
+    debounce((field: string, value: string) => {
+      if (field === "email") {
+        const result = emailSchema.safeParse(value);
+        setEmailError(result.success ? null : result.error.errors[0].message);
+      } else if (field === "phoneNumber") {
+        const result = phoneSchema.safeParse(value);
+        setPhoneError(result.success ? null : result.error.errors[0].message);
+      }
+    }, 300),
+    []
+  );
 
   const handleInputChange = (field: string, value: string) => {
-    if (field === "email") {
-      const result = emailSchema.safeParse(value);
-      if (!result.success) {
-        setEmailError(result.error.errors[0].message);
-      } else {
-        setEmailError(null);
-      }
-    }
+    // Trigger validation
+    validateField(field, value);
 
     dispatch(
       updatePassengerDetails(index, {
@@ -112,6 +126,7 @@ const PassengerCard = ({
           onChange={(e) => handleInputChange("phoneNumber", e.target.value)}
           className="w-[45%]"
           type="number"
+          error={phoneError}
           disabled={fromHistory}
         />
         <Select
@@ -174,7 +189,7 @@ const PassengerCard = ({
         selectedDate={passenger.dob ? dayjs(passenger.dob) : null}
         handleDateChange={handleDateChange}
         title="Select Date of Birth"
-        maxDate={dayjs(new Date())}
+        maxDate={dayjs().subtract(5, 'year')}
       />
     </div>
   );

@@ -1,6 +1,6 @@
 import { useGSAP } from "@gsap/react";
 import { gsap } from "gsap";
-import React, { useEffect, useState } from "react";
+import React, { useCallback, useEffect, useState } from "react";
 import toast from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import { useLocation, useNavigate } from "react-router-dom";
@@ -12,6 +12,7 @@ import ToggleSwitch from "../components/SignUpPage/ToggleSwitch";
 import { AppDispatch } from "../redux/store";
 import { login, signUp } from "../redux/user/userAction";
 import { setEmail } from "../redux/user/userSlice";
+import debounce from "lodash.debounce";
 
 export interface FormData {
   name: string;
@@ -35,12 +36,19 @@ const Signup: React.FC = () => {
   const emailSchema = z.string().email("Please enter a valid email address.");
   const passwordSchema = z.string().min(4, "Password must be at least 6 characters.");
 
+  const validateField = useCallback(
+    debounce((field: string, value: string) => {
+      if (field === "email") {
+        const result = emailSchema.safeParse(value);
+        setEmailError(result.success ? null : result.error.errors[0].message);
+      }
+    }, 300),
+    []
+  );
+
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>): void => {
     const { name, value } = e.target;
-    if (name === "email") {
-      const result = emailSchema.safeParse(value);
-      setEmailError(result.success ? null : result.error.errors[0].message);
-    }
+    validateField(name, value)
     setFormData((prevData) => ({ ...prevData, [name]: value }));
   };
 

@@ -4,7 +4,7 @@ import SearchFlight from './components/SearchFlight';
 
 const Main: React.FC = () => {
     const backgroundStyles: React.CSSProperties = {
-        backgroundImage: `url(${require('../../assets/background-image.png')})`,
+        backgroundImage: `url(${require('../../assets/background-image.webp')})`,
     };
 
     return (

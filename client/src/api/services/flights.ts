@@ -13,4 +13,5 @@ class flights {
   }
 }
 
-export default new flights()
+const flightsInstance = new flights();
+export default flightsInstance;

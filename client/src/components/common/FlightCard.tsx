@@ -1,10 +1,8 @@
+import dayjs, { Dayjs } from "dayjs";
 import React from "react";
 import { GiAirplaneDeparture } from "react-icons/gi";
 import { Flight } from "../../redux/flights/flightSlice";
 import { convertTo12HourFormat, getDay } from "../../utils/Date";
-import { useSelector } from "react-redux";
-import { RootState } from "../../redux/store";
-import dayjs, { Dayjs } from "dayjs";
 
 const FlightCard = ({ flight, isDeparture, departureDate, returnDate }: { flight: Flight, isDeparture:boolean, departureDate:Dayjs, returnDate:Dayjs | null }) => {
   const { time: departureTime, period: departurePeriod } =
