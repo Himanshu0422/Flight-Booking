@@ -7,7 +7,6 @@ import { getAllAirports } from "../../redux/airports/airportAction";
 import { AppDispatch, RootState } from "../../redux/store";
 import { calculateDistance } from "../../utils/calculateDistance";
 import CustomSelectCity from "./CustomSelectCity";
-import SimpleLoader from "./SimpleLoader";
 
 interface CitySelectProps {
   departureCity: string | null;
@@ -31,7 +30,7 @@ const CitySelect: React.FC<CitySelectProps> = ({
   setArrivalCity,
 }) => {
   const dispatch = useDispatch<AppDispatch>();
-  const { location, loading } = useCurrentLocation();
+  const { location } = useCurrentLocation();
   const { airports } = useSelector((state: RootState) => state.airport);
 
   useEffect(() => {
@@ -40,9 +39,17 @@ const CitySelect: React.FC<CitySelectProps> = ({
 
   useEffect(() => {
     const savedCity = sessionStorage.getItem("departureCity");
-    if (!savedCity && location.latitude && location.longitude && airports.length) {
-      const nearestAirport = airports.reduce<{ airport: Airport | null; distance: number }>(
-        (closest:any, airport:any) => {
+    if (
+      !savedCity &&
+      location.latitude &&
+      location.longitude &&
+      airports.length
+    ) {
+      const nearestAirport = airports.reduce<{
+        airport: Airport | null;
+        distance: number;
+      }>(
+        (closest: any, airport: any) => {
           const distance = calculateDistance(
             location.latitude!,
             location.longitude!,
@@ -50,21 +57,24 @@ const CitySelect: React.FC<CitySelectProps> = ({
             airport.longitude,
             "K"
           );
-          return distance < closest.distance
-            ? { airport, distance }
-            : closest;
+          return distance < closest.distance ? { airport, distance } : closest;
         },
         { airport: null, distance: Infinity }
       );
 
       if (nearestAirport.airport) {
         setDepartureCity(nearestAirport.airport.city);
-        sessionStorage.setItem("departureCity", JSON.stringify(nearestAirport.airport));
+        sessionStorage.setItem(
+          "departureCity",
+          JSON.stringify(nearestAirport.airport)
+        );
       }
     }
   }, [airports, location, setDepartureCity]);
 
-  const handleDepartureChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleDepartureChange = (
+    event: React.ChangeEvent<HTMLInputElement>
+  ) => {
     setDepartureCity(event.target.value);
   };
 
@@ -103,7 +113,6 @@ const CitySelect: React.FC<CitySelectProps> = ({
           />
         </div>
       </div>
-      {loading && <SimpleLoader />}
     </div>
   );
 };
