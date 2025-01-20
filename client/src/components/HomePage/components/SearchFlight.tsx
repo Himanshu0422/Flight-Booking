@@ -29,7 +29,7 @@ const SearchFlight: React.FC = () => {
   const searchFlights = useSearchFlights();
 
   const [searchParams, setSearchParams] = useState<SearchParams>({
-    departureCity: departureCity || '',
+    departureCity: departureCity || "",
     arrivalCity: arrivalCity || "",
     departureDate: departureDate || dayjs(new Date()),
     returnDate: returnDate || null,
@@ -47,7 +47,7 @@ const SearchFlight: React.FC = () => {
     e.preventDefault();
     try {
       const res = await searchFlights(searchParams);
-      if(res){
+      if (res) {
         navigate("/search-flights");
       }
     } catch (error) {
@@ -57,10 +57,19 @@ const SearchFlight: React.FC = () => {
   };
 
   useEffect(() => {
-    const getItem = sessionStorage.getItem('departureCity');
-    const departureCityFromStorage = JSON.parse(getItem!);
-    handleInputChange("departureCity", departureCityFromStorage?.city)
-  }, []);
+    const intervalId = setInterval(() => {
+      const storedItem = sessionStorage.getItem("departureCity");
+      if (storedItem) {
+        const departureCityFromStorage = JSON.parse(storedItem);
+        if (departureCityFromStorage?.city && !searchParams.departureCity) {
+          handleInputChange("departureCity", departureCityFromStorage.city);
+          clearInterval(intervalId);
+        }
+      }
+    }, 1000);
+
+    return () => clearInterval(intervalId);
+  }, [searchParams.departureCity]);
 
   return (
     <div className="bg-[#fffffff0] p-4 space-y-5 rounded-2xl search-flight-main">
