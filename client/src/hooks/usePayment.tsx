@@ -21,7 +21,12 @@ const usePayment = () => {
   );
 
   const processPayment = useCallback(
-    async (bookedSeats: any, price: number, booking_id: number, navigateToHome?: boolean) => {
+    async (
+      bookedSeats: any,
+      price: number,
+      booking_id: number,
+      navigateToHome?: boolean
+    ) => {
       dispatch(setLoading(true));
 
       try {
@@ -42,7 +47,7 @@ const usePayment = () => {
         );
 
         const options = {
-          key: process.env.RAZORPAY_KEY,
+          key: process.env.REACT_APP_RAZORPAY_KEY,
           amount: paymentResponse.data.amount,
           currency: paymentResponse.data.currency,
           order_id: paymentResponse.data.id,
@@ -60,7 +65,7 @@ const usePayment = () => {
           },
           modal: {
             ondismiss: () => {
-              toast('Payment pending')
+              toast("Payment pending");
               dispatch(emptyPassengers());
               dispatch(resetState());
               dispatch(resetSingleFlight());
