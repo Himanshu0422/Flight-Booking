@@ -17,7 +17,9 @@ const BookingDetails = () => {
   const { processPayment } = usePayment();
 
   const getBooking = async () => {
-    const res = await dispatch(getBookingById({ bookingId, token:user.token }));
+    const res = await dispatch(
+      getBookingById({ bookingId, token: user.token })
+    );
     setBooking(res.payload);
   };
 
@@ -29,7 +31,7 @@ const BookingDetails = () => {
 
   useEffect(() => {
     getBooking();
-  }, []);
+  }, [user?.id]);
 
   return (
     <div className="bg-gray-100 min-h-[calc(100vh-75px)] py-10 flex flex-col items-center space-y-5">

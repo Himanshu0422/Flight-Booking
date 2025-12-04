@@ -1,4 +1,4 @@
-import throttle from 'lodash.throttle';
+import throttle from "lodash.throttle";
 import React, { useCallback, useEffect } from "react";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
@@ -18,12 +18,16 @@ import { getDate } from "../utils/Date";
 const PassengerDetails = () => {
   const { flightId, returnFlightId } = useParams();
   const dispatch = useDispatch<AppDispatch>();
-  const {processPayment} = usePayment();
+  const { processPayment } = usePayment();
 
   const singleFlight = useSelector((state: RootState) => state.singleFlight);
-  const singleReturnFlight = useSelector((state: RootState) => state.singleReturnFlight);
+  const singleReturnFlight = useSelector(
+    (state: RootState) => state.singleReturnFlight
+  );
   const user = useSelector((state: RootState) => state.user);
-  const { passenger, departureDate, returnDate } = useSelector((state: RootState) => state.search);
+  const { passenger, departureDate, returnDate } = useSelector(
+    (state: RootState) => state.search
+  );
   const { passengers } = useSelector((state: RootState) => state.passengers);
 
   const allDetailsFilled = () => {
@@ -34,15 +38,15 @@ const PassengerDetails = () => {
   };
 
   const userDetailsFilled = () => {
-    if(!user.name || !user.email || !user.phone){
+    if (!user.name || !user.email || !user.phone) {
       return false;
     }
-    return true
-  }
+    return true;
+  };
 
   useEffect(() => {
     dispatch(getFlight(flightId!));
-    if(returnFlightId) {
+    if (returnFlightId) {
       dispatch(getReturnFlight(returnFlightId));
     }
   }, [dispatch, flightId, returnFlightId]);
@@ -56,7 +60,7 @@ const PassengerDetails = () => {
   };
 
   const handleSubmit = async () => {
-    if(!userDetailsFilled()){
+    if (!userDetailsFilled()) {
       toast.error("Please fill all the details of user.");
       return;
     }
@@ -68,26 +72,31 @@ const PassengerDetails = () => {
         return;
       }
       const bookingData = {
-        flightId: singleFlight.flightNumber,
+        flightId: singleFlight.id,
         userId: user.id,
         bookedSeats: passenger,
         bookingDate: getDate(departureDate),
-        ...(singleReturnFlight?.flightNumber && {
-          returnFlightId: singleReturnFlight.flightNumber,
-          returnBookingDate: getDate(returnDate)
-        })
+        ...(singleReturnFlight?.id && {
+          returnFlightId: singleReturnFlight.id,
+          returnBookingDate: getDate(returnDate),
+        }),
       };
       const payload = {
         bookingData,
         passengersData: passengers,
-        email: user.email
+        email: user.email,
       };
-      const res = await dispatch(bookFlight({...payload, token:user.token}));
+      const res = await dispatch(bookFlight({ ...payload, token: user.token }));
       let price = singleFlight.price;
-      if(singleReturnFlight.id){
-        price+=singleReturnFlight.price
+      if (singleReturnFlight.id) {
+        price += singleReturnFlight.price;
       }
-      processPayment(bookingData.bookedSeats, price, res.payload.data.booking.id, true);
+      processPayment(
+        bookingData.bookedSeats,
+        price,
+        res.payload.data.booking.id,
+        true
+      );
     }
   };
 
@@ -104,9 +113,26 @@ const PassengerDetails = () => {
           Fill in your personal data and review your order
         </div>
       </div>
-      {singleFlight.departureTime && <FlightCard flight={singleFlight} isDeparture={true} departureDate={departureDate} returnDate={returnDate} />}
-      {returnFlightId && <FlightCard flight={singleReturnFlight} isDeparture={false} departureDate={departureDate} returnDate={returnDate} />}
-      <OrderDetailsCard passenger={passenger} baseFare={singleFlight.price + singleReturnFlight.price} />
+      {singleFlight.departureTime && (
+        <FlightCard
+          flight={singleFlight}
+          isDeparture={true}
+          departureDate={departureDate}
+          returnDate={returnDate}
+        />
+      )}
+      {returnFlightId && (
+        <FlightCard
+          flight={singleReturnFlight}
+          isDeparture={false}
+          departureDate={departureDate}
+          returnDate={returnDate}
+        />
+      )}
+      <OrderDetailsCard
+        passenger={passenger}
+        baseFare={singleFlight.price + singleReturnFlight.price}
+      />
       <DetailsCard />
       {passengers.map((passenger: Passenger, index: number) => (
         <PassengerCard

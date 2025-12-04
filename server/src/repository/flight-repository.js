@@ -82,11 +82,11 @@ class FlightRepository {
 
             if (cachedFlight) {
                 console.log('Serving flight from cache');
-                return JSON.parse(cachedFlight); 
+                return JSON.parse(cachedFlight);
             }
 
             const flight = await Flights.findOne({
-                where: { flightNumber: flightId },
+                where: { id: flightId },
                 include: [
                     {
                         model: Airplane,
@@ -153,7 +153,7 @@ class FlightRepository {
                         attributes: ['name', 'city']
                     }
                 ],
-                order: [['departureTime', 'ASC']], 
+                order: [['departureTime', 'ASC']],
                 attributes: ['id', 'flightNumber', 'departureTime', 'arrivalTime', 'price', 'flightTime', 'nextDay', 'isInternational'], // Flight attributes to fetch
                 limit: pageSize,
                 offset: offset
