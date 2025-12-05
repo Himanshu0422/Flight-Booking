@@ -23,9 +23,8 @@ export interface Flight {
   price: number;
   nextDay: number;
   flightTime: string;
-  isInternational: boolean
+  isInternational: boolean;
 }
-
 
 interface FlightState {
   departureFlight: Flight[];
@@ -36,11 +35,11 @@ interface FlightState {
   totalReturnPages: number;
   totalFlights: number;
   filterTime: Dayjs | null;
-  isDeparture: boolean
-  maxPrice: number,
-  minPrice: number,
-  departureAirportId: string,
-  returnAirportId: string
+  isDeparture: boolean;
+  maxPrice: number;
+  minPrice: number;
+  departureAirportId: string | number;
+  returnAirportId: string | number;
 }
 
 const initialState: FlightState = {
@@ -55,15 +54,18 @@ const initialState: FlightState = {
   maxPrice: 50000,
   minPrice: 2000,
   isDeparture: true,
-  departureAirportId: '',
-  returnAirportId: ''
-}
+  departureAirportId: "",
+  returnAirportId: "",
+};
 
 const flightSlice = createSlice({
   name: "flight",
   initialState,
   reducers: {
-    setDepartureFlight: (state: FlightState, action: PayloadAction<Flight[]>) => {
+    setDepartureFlight: (
+      state: FlightState,
+      action: PayloadAction<Flight[]>
+    ) => {
       state.departureFlight = action.payload;
     },
     resetDepartureFlightState: (state: FlightState) => {
@@ -82,53 +84,65 @@ const flightSlice = createSlice({
       state.returnPage += 1;
     },
     resetDeparturePage: (state: FlightState) => {
-      state.departurePage = 0
+      state.departurePage = 0;
     },
     resetReturnPage: (state: FlightState) => {
-      state.returnPage = 0
+      state.returnPage = 0;
     },
-    setFilterTime: (state: FlightState, action: PayloadAction<Dayjs | null>) => {
-      state.filterTime = action.payload
+    setFilterTime: (
+      state: FlightState,
+      action: PayloadAction<Dayjs | null>
+    ) => {
+      state.filterTime = action.payload;
     },
     setisDeparture: (state: FlightState, action: PayloadAction<boolean>) => {
-      state.isDeparture = action.payload
+      state.isDeparture = action.payload;
     },
     setMaxPrice: (state: FlightState, action: PayloadAction<number>) => {
-      state.maxPrice = action.payload
+      state.maxPrice = action.payload;
     },
     setMinPrice: (state: FlightState, action: PayloadAction<number>) => {
-      state.minPrice = action.payload
+      state.minPrice = action.payload;
     },
-    setDepartureAirportId: (state: FlightState, action: PayloadAction<string>) => {
-      state.departureAirportId = action.payload
+    setDepartureAirportId: (
+      state: FlightState,
+      action: PayloadAction<string | number>
+    ) => {
+      state.departureAirportId = action.payload;
     },
-    setReturnAirportId: (state: FlightState, action: PayloadAction<string>) => {
-      state.returnAirportId = action.payload
+    setReturnAirportId: (
+      state: FlightState,
+      action: PayloadAction<string | number>
+    ) => {
+      state.returnAirportId = action.payload;
     },
     resetState: () => {
-      return initialState
-    }
+      return initialState;
+    },
   },
   extraReducers: (builder) => {
     builder.addCase(getFlightsData.fulfilled, (state, action) => {
       if (action.payload.type === "Departure") {
-        if(action.payload.page === 1){
-          state.departureFlight = action.payload.data
-        }else {
-          state.departureFlight = [...state.departureFlight, ...action.payload.data];
+        if (action.payload.page === 1) {
+          state.departureFlight = action.payload.data;
+        } else {
+          state.departureFlight = [
+            ...state.departureFlight,
+            ...action.payload.data,
+          ];
         }
         state.totalFlights = action.payload.totalFlights;
-        state.totalDeparturePages = action.payload.totalPages
-        state.departurePage = action.payload.page
+        state.totalDeparturePages = action.payload.totalPages;
+        state.departurePage = action.payload.page;
       } else if (action.payload.type === "Return") {
-        if(action.payload.page === 1){
-          state.returnFlight = action.payload.data
-        }else {
-          state.returnFlight = [...state.returnFlight,  ...action.payload.data];
+        if (action.payload.page === 1) {
+          state.returnFlight = action.payload.data;
+        } else {
+          state.returnFlight = [...state.returnFlight, ...action.payload.data];
         }
         state.totalFlights = action.payload.totalFlights;
-        state.totalReturnPages = action.payload.totalPages
-        state.returnPage = action.payload.page
+        state.totalReturnPages = action.payload.totalPages;
+        state.returnPage = action.payload.page;
       }
     });
     builder.addCase(getFlightsData.rejected, (state, action) => {
@@ -152,7 +166,7 @@ export const {
   setMinPrice,
   setDepartureAirportId,
   setReturnAirportId,
-  resetState
+  resetState,
 } = flightSlice.actions;
 
 export default flightSlice.reducer;

@@ -18,8 +18,16 @@ export const getFlightsData = createAsyncThunk(
     thunkApi: any
   ) => {
     try {
-      const { departureAirportId, arrivalAirportId, date, time, type, page, minPrice, maxPrice } =
-        data;
+      const {
+        departureAirportId,
+        arrivalAirportId,
+        date,
+        time,
+        type,
+        page,
+        minPrice,
+        maxPrice,
+      } = data;
       const response = await flights.getFlightsData({
         departureAirportId,
         arrivalAirportId,
@@ -27,7 +35,7 @@ export const getFlightsData = createAsyncThunk(
         time,
         page,
         minPrice,
-        maxPrice
+        maxPrice,
       });
 
       return {
@@ -35,7 +43,7 @@ export const getFlightsData = createAsyncThunk(
         type,
         page,
         totalPages: response.data.data.pagination.totalPages,
-        totalFlights: response.data.data.pagination.totalFlights
+        totalFlights: response.data.data.pagination.totalFlights,
       };
     } catch (error) {
       return thunkApi.rejectWithValue(error as SerializedError);
@@ -44,29 +52,29 @@ export const getFlightsData = createAsyncThunk(
 );
 
 export const getFlight = createAsyncThunk(
-  'flight:id',
-  async (id: string, thunkApi: any) => {
+  "flight:id",
+  async (id: string | number, thunkApi: any) => {
     try {
       const response = await flights.getFlight(id);
       return {
-        data: response.data.data
-      }
+        data: response.data.data,
+      };
     } catch (error) {
       return thunkApi.rejectWithValue(error as SerializedError);
     }
   }
-)
+);
 
 export const getReturnFlight = createAsyncThunk(
-  'returnflight:id',
-  async (id: string, thunkApi: any) => {
+  "returnflight:id",
+  async (id: string | number, thunkApi: any) => {
     try {
       const response = await flights.getFlight(id);
       return {
-        data: response.data.data
-      }
+        data: response.data.data,
+      };
     } catch (error) {
       return thunkApi.rejectWithValue(error as SerializedError);
     }
   }
-)
+);

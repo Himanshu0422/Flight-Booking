@@ -1,8 +1,16 @@
 import React from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { useNavigate } from "react-router-dom";
-import { getFlight, getReturnFlight } from "../../../redux/flights/flightsAction";
-import { Flight, setDepartureAirportId, setisDeparture, setReturnAirportId } from "../../../redux/flights/flightSlice";
+import {
+  getFlight,
+  getReturnFlight,
+} from "../../../redux/flights/flightsAction";
+import {
+  Flight,
+  setDepartureAirportId,
+  setisDeparture,
+  setReturnAirportId,
+} from "../../../redux/flights/flightSlice";
 import { AppDispatch, RootState } from "../../../redux/store";
 import { convertTo12HourFormat, getDay } from "../../../utils/Date";
 import Button from "../../common/Button";
@@ -17,7 +25,6 @@ interface FlightCardProps {
 }
 
 const FlightCard: React.FC<FlightCardProps> = ({ flight, isDeparture }) => {
-
   const dispatch = useDispatch<AppDispatch>();
 
   const { time: departureTime, period: departurePeriod } =
@@ -27,23 +34,25 @@ const FlightCard: React.FC<FlightCardProps> = ({ flight, isDeparture }) => {
   );
 
   const navigate = useNavigate();
-  const { departureDate, returnDate } = useSelector((state: RootState) => state.search);
+  const { departureDate, returnDate } = useSelector(
+    (state: RootState) => state.search
+  );
   const flightDate = isDeparture ? departureDate : returnDate;
 
   const handleClick = () => {
     if (isDeparture) {
-      dispatch(getFlight(flight.flightNumber))
-      dispatch(setDepartureAirportId(flight.flightNumber))
-      if(!returnDate){
-        dispatch(setReturnAirportId(''));
+      dispatch(getFlight(flight.id));
+      dispatch(setDepartureAirportId(flight.id));
+      if (!returnDate) {
+        dispatch(setReturnAirportId(""));
         dispatch(resetSingleReturnFlight());
-        navigate(`/passenger-details/${flight.flightNumber}`)
-      }else {
+        navigate(`/passenger-details/${flight.id}`);
+      } else {
         dispatch(setisDeparture(false));
       }
     } else {
-      dispatch(getReturnFlight(flight.flightNumber))
-      dispatch(setReturnAirportId(flight.flightNumber))
+      dispatch(getReturnFlight(flight.id));
+      dispatch(setReturnAirportId(flight.id));
       dispatch(setisDeparture(true));
     }
   };

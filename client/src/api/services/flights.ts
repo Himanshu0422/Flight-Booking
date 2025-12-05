@@ -5,10 +5,10 @@ class flights {
   getAirportData(data: object) {
     return http.get(GET_AIRPORT, data);
   }
-  getFlightsData(params: object){
+  getFlightsData(params: object) {
     return http.get(GET_FLIGHTS, params);
   }
-  getFlight(flightId: string){
+  getFlight(flightId: number | string) {
     return http.get(`${GET_FLIGHTS}/${flightId}`);
   }
 }
