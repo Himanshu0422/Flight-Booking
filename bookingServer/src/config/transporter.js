@@ -1,13 +1,18 @@
 const nodemailer = require('nodemailer');
 const { EMAIL_USER, EMAIL_PASS } = require('./serverConfig');
 
-// Create a transporter object using the default SMTP transport
 const transporter = nodemailer.createTransport({
-  service: 'Gmail',
+  host: 'smtp.gmail.com',
+  port: 587,        // Gmail TLS port (Render supports this)
+  secure: false,    // important: TLS upgrades later
   auth: {
-      user: EMAIL_USER,
-      pass: EMAIL_PASS
-  }
+    user: EMAIL_USER,
+    pass: EMAIL_PASS // Must be app password
+  },
+  tls: {
+    rejectUnauthorized: false
+  },
+  connectionTimeout: 10000
 });
 
-module.exports = transporter
+module.exports = transporter;
