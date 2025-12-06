@@ -139,27 +139,27 @@ class UserRepository {
   async changePassword(email, password) {
     try {
       const user = await User.findOne({ where: { email } });
-  
+
       if (!user) {
         return { success: false, message: "User not found" };
       }
-  
+
       // Check if the new password is the same as the current password
       const isMatch = await bcrypt.compare(password, user.password);
       if (isMatch) {
         return { success: false, message: "New password cannot be the same as the old password" };
       }
-  
+
       const hashedPassword = await bcrypt.hash(password, 10);
       user.password = hashedPassword;
       await user.save();
-  
+
       return { success: true };
     } catch (error) {
       console.error("Repository Layer Error:", error);
       throw { success: false, message: "Error changing password" };
     }
-  }  
+  }
 
   // Update user information
   async updateUser(userId, data) {
@@ -220,11 +220,11 @@ class UserRepository {
       });
 
       // Send the OTP code to the user's email
-      await transporter.sendMail({
-        to: email,
-        subject: "Your OTP Code",
-        text: `Your OTP code is ${otpCode}. It will expire in 15 minutes.`,
-      });
+      // await transporter.sendMail({
+      //   to: email,
+      //   subject: "Your OTP Code",
+      //   text: `Your OTP code is ${otpCode}. It will expire in 15 minutes.`,
+      // });
 
       await redis.set(`otp_${user.id}`, otpCode, "EX", 900);
 
@@ -338,7 +338,7 @@ class UserRepository {
       };
 
       // Send the email
-      await transporter.sendMail(mailOptions);
+      // await transporter.sendMail(mailOptions);
       return { success: true, message: "Change password email sent" };
     } catch (error) {
       console.error("Error sending change password email:", error);

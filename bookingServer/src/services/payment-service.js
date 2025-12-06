@@ -17,7 +17,7 @@ class PaymentService {
         if (!options || !options.amount || !options.currency) {
             throw new Error('Invalid options for order creation');
         }
-    
+
         try {
             const res = await this.razorpay.orders.create(options);
             return res;
@@ -26,14 +26,14 @@ class PaymentService {
             throw new Error('Failed to create Razorpay order');
         }
     }
-    
+
     async createPayment(data, transaction) {
         if (!data || !data.payment_id || !data.booking_id || !data.user_id || !data.amount) {
             throw new Error('Invalid payment data');
         }
-    
+
         return await PaymentRepository.createPayment(data, transaction);
-    }    
+    }
 
     async verifyPaymentSignature(signature, body) {
         if (!signature || !body) {
@@ -50,9 +50,9 @@ class PaymentService {
         if (!payment_id || !status) {
             throw new Error('Payment ID and status are required');
         }
-    
+
         return await PaymentRepository.updatePaymentStatus(payment_id, status, payment_details, transaction);
-    }    
+    }
 
     async findPaymentById(payment_id) {
         if (!payment_id) {
@@ -80,11 +80,11 @@ class PaymentService {
 
             const email = user.data.data.user.email;
 
-            await transporter.sendMail({
-                to: email,
-                subject: 'Payment Successful',
-                text: 'Your payment has been successfully processed and your booking is confirmed.',
-            });
+            // await transporter.sendMail({
+            //     to: email,
+            //     subject: 'Payment Successful',
+            //     text: 'Your payment has been successfully processed and your booking is confirmed.',
+            // });
         } catch (error) {
             console.error('Error sending confirmation email:', error);
             throw new Error('Failed to send confirmation email');
